@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<project basedir=".." default="build">
+  <!-- This nant script is used by the SharpSvn buildbot -->
+  
+  <property name="programfilesX86" value="C:\Program Files (x86)" overwrite="false" />
+  <property name="nantExe" value="${assembly::get-location(nant::get-assembly())}" />
+  <property name="sevenZipExe" value="${path::combine(assembly::get-location(nant::get-assembly()), '../7z.exe')}" />
+  <property name="buildImports" value="true" overwrite="false" />
+  <property name="svnDist" value="false" overwrite="false" />
+  
+  <if test="${property::exists('build.include')}">
+    <include buildfile="${build.include}" />
+  </if>
+  
+  <target name="prepare">
+    <exec program="svn.exe" output=".svn-info"><arg line="info . --xml" /></exec>
+    <xmlpeek file=".svn-info" xpath="/info/entry/url" property="svn_url" />
+    <xmlpeek file=".svn-info" xpath="/info/entry/@revision" property="svn_rev" />
+    <exec program="svn.exe" unless="${svnDist}">
+      <arg line="checkout ${svn_url}" unless="${directory::exists('v40')}" />
+      <arg line="update"                  if="${directory::exists('v40')}" />
+      <arg line="-r ${svn_rev} v40/" />      
+    </exec>
+    
+    <delete dir="release" if="${directory::exists('release')}" />
+    <mkdir dir="release" />
+  </target>
+  
+  <target name="build" depends="prepare">
+    <exec program="svn.exe" output=".svn-info"><arg line="info imports\default.build --xml" /></exec>
+    <xmlpeek file=".svn-info" xpath="/info/entry/commit/@revision" property="imports-rev" />
+    <xmlpeek file=".svn-info" xpath="/info/entry/@revision" property="checkout-rev" />    
+    
+    <loadfile file="imports/build/.imports-rev" property="last-rev" if="${file::exists('imports/build/.imports-rev')}" />
+    <if test="${property::exists('last-rev') and (last-rev != imports-rev)}">
+      <exec program="cmd.exe" failonerror="false">
+        <arg line="/c rmdir imports\build imports\release imports\svn-dist\build imports\svn-dist\release v40\imports\build v40\imports\release /s /q" />
+      </exec>
+    </if>
+  
+    <exec program="cmd.exe" workingdir="imports" if="${buildImports}" unless="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86 &amp;&amp;' />
+      <arg line='"${nantExe}" build"' />
+    </exec>
+    
+    <exec program="cmd.exe" workingdir="imports" if="${buildImports}" unless="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86_amd64 &amp;&amp;' />
+      <arg line='"${nantExe}" build"' />
+    </exec>
+    
+    <exec program="cmd.exe" workingdir="v40\imports" if="${buildImports}" unless="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86 &amp;&amp;' />
+      <arg line='"${nantExe}" build"' />
+    </exec>
+    
+    <exec program="cmd.exe" workingdir="v40\imports" if="${buildImports}" unless="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86_amd64 &amp;&amp;' />
+      <arg line='"${nantExe}" build"' />
+    </exec>
+
+    <exec program="cmd.exe" workingdir="imports\svn-dist" if="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86 &amp;&amp;' />
+      <arg line='"${nantExe}" build-svn-dist"' />
+    </exec>
+    
+    <exec program="cmd.exe" workingdir="imports\svn-dist" if="${svnDist}">
+      <arg line='/s /c ""${programfilesX86}\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86_amd64 &amp;&amp;' />
+      <arg line='"${nantExe}" build-svn-dist"' />
+    </exec>
+
+
+    <echo file="imports/build/.imports-rev" message="${imports-rev}" />
+
+    <exec program="svn.exe" output=".svn-info-svn">
+      <arg line="info --xml" />
+      <arg value="imports\build\win32\libgit2" unless="${svnDist}" />
+      <arg value="imports\svn-dist\build\win32\subversion" if="${svnDist}" />
+    </exec>
+    <xmlpeek file=".svn-info-svn" xpath="/info/entry/url" property="svn-tag" />
+    <property name="svn-tag" value="${path::get-file-name(string::replace(svn-tag,'://', '/'))}" />
+    <property name="svn-ver" value="${string::replace(string::replace(string::replace(string::replace(string::replace(svn-tag, 'v', '', '-alpha', '.'), '-beta', '.'),'-rc', '.'), '.x', '.0')}" />
+    <choose>
+      <when test="${svn-tag == 'trunk'}">
+        <property name="versionBase" value="0.9999" />
+      </when>
+      <when test="${svn-tag != svn-ver}">
+        <property name="v" value="0" />
+        <property name="v" value="1" if="${string::contains(svn-tag, 'alpha')}" />
+        <property name="v" value="2" if="${string::contains(svn-tag, 'beta')}" />
+        <property name="v" value="3" if="${string::contains(svn-tag, 'rc')}" />
+        <property name="versionBase" value="0.${(version::get-minor(version::parse(svn-ver))-1) * 100 + 99 + int::parse(v)}" />
+      </when>
+      <otherwise>
+        <property name="versionBase" value="0.${(version::get-minor(version::parse(svn-ver))) * 100 + version::get-build(version::parse(svn-ver))}" />
+      </otherwise>
+    </choose>
+    
+    <if test="${svnDist}">
+      <property name="versionBase" value="0.${version::get-minor(version::parse(svn-ver))}" />
+      <choose>
+        <when test="${svn-tag == svn-ver}">
+          <property name="checkout-rev" value="${version::get-build(version::parse(svn-ver))}" />
+        </when>
+        <otherwise>
+          <property name="checkout-rev" value="0" />      
+        </otherwise>
+      </choose>
+    </if>
+
+    <echo append="false" file="msbuildprops.txt">/P:AnnotatePdbFile=true
+/P:ForceAssemblyCopyright="Copyright (c) 2013-${datetime::get-year(datetime::now())} The SharpSvn Project. This product and its sourcecode are licensed under the Apache 2.0 license. Check http://sharpsvn.net/ for details."
+/P:ForceAssemblyCompany="SharpGit - http://sharpsvn.net/"
+/P:ForceAssemblyProduct="SharpGit - Subversion support for .Net"
+</echo>
+    <if test="${property::exists('CCNetNumericLabel')}">
+      <echo append="true" file="msbuildprops.txt">/P:ForceAssemblyVersion="${versionBase}.${checkout-rev}.${CCNetNumericLabel}"
+</echo>
+
+      <echo file="release\_${versionBase}.${checkout-rev}.${CCNetNumericLabel}_.txt">${versionBase}.${checkout-rev}.${CCNetNumericLabel}</echo>
+      <echo file="release\ver.txt" message="${versionBase}.${checkout-rev}.${CCNetNumericLabel}" />
+    </if>    
+  </target>
+  
+  <target name="package" if="${property::exists('CCNetNumericLabel')}">
+    <property name="artifactLabel" value="${CCNetNumericLabel}" />
+    
+    <if test="${file::exists('release/ver.txt')}">
+      <loadfile file="release/ver.txt" property="sharpsvnVersion" />
+
+      <property name="artifactLabel" value="${sharpsvnVersion}" />      
+    </if>
+
+    <exec program="${sevenZipExe}">
+      <arg line="a -y" />
+      <arg value="release\${CCNetProject}-${artifactLabel}.7z" />
+      <arg value="release" />
+    </exec>
+
+    <mkdir dir="D:\artifacts\${CCNetProject}" />
+    <delete file="D:\artifacts\${CCNetProject}\${CCNetProject}-${artifactLabel}.7z" />
+    <move todir="D:\artifacts\${CCNetProject}" file="release\${CCNetProject}-${artifactLabel}.7z"  />
+    <echo  file="D:\artifacts\${CCNetProject}\_last.txt" message="${CCNetProject}-${artifactLabel}.7z" />
+  </target>
+  
+  <target name="clean-imports">
+  </target>
+  
+  <target name="buildbot-build" depends="build"></target>
+  <target name="buildbot-package" depends="build,package"></target>
+</project>
