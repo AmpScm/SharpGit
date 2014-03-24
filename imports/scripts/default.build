@@ -78,7 +78,7 @@
     </delete>
   </target>
 
-  <target name="build" depends="download,extract,checkout, libgit2-build, ,apr-build, aprutil-build, copy-result">
+  <target name="build" depends="download,extract,checkout, libgit2-build, zlib-build, apr-build, aprutil-build, copy-result">
 
   </target>
 
