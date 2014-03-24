@@ -69,4 +69,27 @@
     </copy>
   </target>
 
+  <target name="copy-result" depends="libgit2-build,misc-copy,copy-licenses">
+    <copy todir="${releaseLib}">
+      <fileset basedir="${intDir}/lib">
+        <include name="*.lib" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/include">
+      <fileset basedir="${intDir}/include">
+        <include name="**" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/lib" if="${platform == 'win32'}">
+      <fileset basedir="${intDir}/lib">
+        <include name="**" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/lib-x64" if="${platform == 'x64'}">
+      <fileset basedir="${intDir}/lib">
+        <include name="**" />
+      </fileset>
+    </copy>
+    <copy tofile="${release}/include/sharpgit-imports.h" file="${downloads}/../scripts/sharpgit-imports.h" if="${applyMerges=='true'}"/>
+  </target>
 </project>
