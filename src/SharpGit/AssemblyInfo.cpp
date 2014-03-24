@@ -81,10 +81,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 //#include "../../imports/release/include/sharpsvn-imports.h"
 [assembly:AssemblyVersionAttribute("0.2000.*")]; 
 
-#pragma comment(lib, "intl3_svn.lib")
 #pragma comment(lib, "xml.lib")
-#pragma comment(lib, "libsvn_subr-1.lib")
-#pragma comment(lib, "sqlite3.lib")
 
 
 #if (APR_MAJOR_VERSION == 0)

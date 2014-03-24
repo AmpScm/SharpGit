@@ -124,7 +124,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -135,12 +135,10 @@
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying libraries</Message>
-      <Command>$(SolutionDir)Copy-Dependencies.cmd "$(TargetDir)." "$(Configuration)" "$(Platform)" ""</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>../../imports/release/debug-lib/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\imports\release\lib;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AssemblyLinkResource>$(TargetDir)SharpPlink-$(Platform).svnExe;%(AssemblyLinkResource)</AssemblyLinkResource>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <TargetMachine>MachineX86</TargetMachine>
@@ -153,7 +151,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;.;.\GitClient;..\..\imports\release\include\apr-1;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -164,12 +162,10 @@
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying libraries</Message>
-      <Command>$(SolutionDir)Copy-Dependencies.cmd "$(TargetDir)" "$(Configuration)" "$(Platform)" ""</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>../../imports/release/debug-lib-x64/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\imports\release\lib-x64;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AssemblyLinkResource>$(TargetDir)SharpPlink-$(Platform).svnExe;%(AssemblyLinkResource)</AssemblyLinkResource>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <TargetMachine>MachineX64</TargetMachine>
@@ -181,7 +177,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;.;.\GitClient;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -192,12 +188,10 @@
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying libraries</Message>
-      <Command>$(SolutionDir)Copy-Dependencies.cmd "$(TargetDir)." "$(Configuration)" "$(Platform)" ""</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>../../imports/release/lib/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\imports\release\lib;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AssemblyLinkResource>$(TargetDir)SharpPlink-$(Platform).svnExe;%(AssemblyLinkResource)</AssemblyLinkResource>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
@@ -210,7 +204,7 @@
     </Midl>
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;.;.\GitClient;..\..\imports\release\include\apr-1;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -221,12 +215,10 @@
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying libraries</Message>
-      <Command>$(SolutionDir)Copy-Dependencies.cmd "$(TargetDir)." "$(Configuration)" "$(Platform)" ""</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>../../imports/release/lib-x64/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\imports\release\lib-x64;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AssemblyLinkResource>$(TargetDir)SharpPlink-$(Platform).svnExe;%(AssemblyLinkResource)</AssemblyLinkResource>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX64</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
@@ -301,6 +293,11 @@
     <ClInclude Include="Plumbing\GitTree.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UnmanagedStructs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpGit-Additions\SharpGit-Additions.vcxproj">
+      <Project>{234035df-232d-483e-a602-6327c234df27}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
