@@ -2,7 +2,6 @@
 <project basedir=".." default="build">
   <property name="Configuration" value="Release" overwrite="false" />
   <property name="dllPrefix" value="SharpSvn-" overwrite="false" />
-  <property name="dbDllName" value="${dllPrefix}-DB${string::replace(dbVersion, '.','-')}" overwrite="false" />
   <property name="static" value="true" overwrite="false" />
   <property name="applyMerges" value="true" overwrite="false" />
   <property name="applyPatches" value="true" overwrite="false" />
@@ -47,6 +46,7 @@
 
   <include buildfile="zlib.build" />
   <include buildfile="apr.build" />
+  <include buildfile="aprutil.build" />
   <include buildfile="libgit2.build" />
   <include buildfile="libssh2.build" />
   
@@ -78,7 +78,7 @@
     </delete>
   </target>
 
-  <target name="build" depends="download,extract,checkout, libgit2-build, copy-result">
+  <target name="build" depends="download,extract,checkout, libgit2-build, ,apr-build, aprutil-build, copy-result">
 
   </target>
 
