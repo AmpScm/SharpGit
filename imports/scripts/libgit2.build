@@ -2,7 +2,7 @@
 <project basedir=".." default="build">
   <property name="libgit2Dir" value="${buildRoot}/${platform}/libgit2" />
 
-  <target name="libgit2-build" depends="download,extract,checkout" if="${buildLibgit2}">
+  <target name="libgit2-build" depends="download,extract,checkout,apr-build" if="${buildLibgit2}">
     <OnceBlock file="build/libgit2-${libgit2Version}_${platform}.build">
       <mkdir dir="${libgit2Dir}/build" />
     
