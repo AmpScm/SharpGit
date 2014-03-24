@@ -7,15 +7,7 @@
   <property name="applyMerges" value="true" overwrite="false" />
   <property name="applyPatches" value="true" overwrite="false" />
   <property name="enableIpv6" value="true" overwrite="false" />
-  <property name="svnStatic" value="false" overwrite="false" />
-  <property name="svnAddSharpSvn" value="false" overwrite="false" />
-  <property name="javaHome" value="" overwrite="false" />
-  <property name="buildSubversion" value="true" overwrite="false" />
-  <property name="svn-dev" value="false" overwrite="false" />
-  <property name="enableAprCrypto" value="true" overwrite="false" />
-  <property name="buildJavaHL" value="true" overwrite="false" />
   <property name="ltcg" value="false" overwrite="false" />
-  <property name="getSvnBook" value="false" overwrite="false" />
 
 
   <if test="${platform != 'win32' and platform != 'x64'}">
@@ -43,33 +35,6 @@
   <property name="MSBuildExe" value="MSBuild.exe" />
   <property name="MSBuildExe" value="${environment::get-variable('WINDIR')}\Microsoft.NET\Framework\v3.5\MSBuild.exe" if="${VSversion=='2008'}" />
 
-  <property name="buildHttpd" value="false" overwrite="false" />
-  <property name="buildNeon" value="false" overwrite="false" />
-
-  <foreach item="Folder" property="jhbp">
-    <in>
-     <items basedir="${path::get-full-path(path::combine(environment::get-variable('ProgramFiles'), '..'))}">
-       <include name="${environment::get-variable('ProgramFiles')}" />
-       <include name="Program Files (x86)" />
-       <include name="Program Files" />
-     </items>
-    </in>
-    <do>
-      <property name="jhb" value="${path::combine(jhbp, 'Java')}" />
-      <foreach item="Folder" property="jh" in="${jhb}" if="${directory::exists(jhb)}">
-        <do>
-          <property name="javaHome" value="${jh}" if="${javaHome=='' and file::exists(path::combine(jh,'bin/javah.exe'))}" />
-        </do>
-      </foreach>
-    </do>
-  </foreach>
-  <echo message="Found Java support in: ${javaHome}" if="${javaHome!=''}" />
-  <setenv>
-    <variable name="OPENSSL_STATIC" value="1" />
-    <variable name="ENABLE_IPV6" value="1" if="${enableIpv6=='true'}" />
-    <variable name="PATH" value="${environment::get-variable('PATH')};${javaHome}\bin" if="${javaHome!=''}" />
-  </setenv>
-
   <property name="Configuration" value="release" />
   <property name="release" value="release" />
 
@@ -79,32 +44,13 @@
   <include buildfile="prepare.build" />
   
   <include buildfile="cmake.build" />
-  <include buildfile="scons.build" />
 
-  <include buildfile="bdb.build" />
   <include buildfile="zlib.build" />
-  <include buildfile="openssl.build" />
-  <include buildfile="serf.build" />
-  <include buildfile="neon.build" />
-  <include buildfile="httpd.build" />
-  <include buildfile="pcre.build" />
   <include buildfile="apr.build" />
-  <include buildfile="aprutil.build" />
-  <include buildfile="sasl.build" />
-  <include buildfile="gettext.build" />
-  <include buildfile="sharpintl.build" />
-  <include buildfile="subversion.build" />
-  <include buildfile="sqlite.build" />
-  <include buildfile="swig.build" />
   <include buildfile="libgit2.build" />
   <include buildfile="libssh2.build" />
   
-  
   <include buildfile="dev.build" />
-
-  <setenv>
-    <variable name="PATH" value="${environment::get-variable('PATH')};${path::get-full-path(nasmDir)}"/>
-  </setenv>
 
   <target name="clean">
     <delete>
@@ -132,22 +78,7 @@
     </delete>
   </target>
 
-  <target name="win32" depends="x86">
-  </target>
-
-  <target name="x86">
-    <exec program="${environment::get-variable('comspec')}">
-      <arg line='/s /c ""${vcVarsPath}\vcvarsall.bat" x86 &amp;&amp; nant "-buildfile:${project::get-buildfile-path()}" /D:platform=win32 build"' />
-    </exec>
-  </target>
-
-  <target name="x64">
-    <exec program="${environment::get-variable('comspec')}">
-      <arg line='/s /c ""${vcVarsPath}\vcvarsall.bat" x86_amd64 &amp;&amp; nant "-buildfile:${project::get-buildfile-path()}" /D:platform=x64 build"' />
-    </exec>
-  </target>
-
-  <target name="build" depends="download,extract,checkout, svn-build, libgit2-build, copy-result">
+  <target name="build" depends="download,extract,checkout, libgit2-build">
 
   </target>
 
