@@ -302,17 +302,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UnmanagedStructs.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharpPlink\SharpPlink.vcxproj">
-      <Project>{f47e6f0f-0639-45ae-b029-7edd8cd5910a}</Project>
-      <CopyLocal>true</CopyLocal>
-      <Private>true</Private>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
