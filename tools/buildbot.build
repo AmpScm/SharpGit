@@ -78,10 +78,11 @@
     </exec>
     <xmlpeek file=".svn-info-svn" xpath="/info/entry/url" property="svn-tag" />
     <property name="svn-tag" value="${path::get-file-name(string::replace(svn-tag,'://', '/'))}" />
-    <property name="svn-ver" value="${string::replace(string::replace(string::replace(string::replace(string::replace(svn-tag, 'v', ''), '-alpha', '.'), '-beta', '.'),'-rc', '.'), '.x', '.0')}" />
+    <property name="svn-tag" value="${string::replace(svn-tag, 'v', '')}" />
+    <property name="svn-ver" value="${string::replace(string::replace(string::replace(string::replace(svn-tag, '-alpha', '.'), '-beta', '.'),'-rc', '.'), '.x', '.0')}" />
     <choose>
       <when test="${svn-tag == 'trunk'}">
-        <property name="versionBase" value="0.9999" />
+        <property name="versionBase" value="0.59999" />
       </when>
       <when test="${svn-tag != svn-ver}">
         <property name="v" value="0" />
