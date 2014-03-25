@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using SharpGit.Plumbing;
+using Assert = NUnit.Framework.Assert;
 
 namespace SharpGit.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class GitClientTests
     {
         string GetTempPath()
@@ -16,7 +17,7 @@ namespace SharpGit.Tests
             return Path.Combine(Path.GetTempPath(), "gittest\\"+Guid.NewGuid().ToString("N"));
         }
 
-        [Test]
+        [TestMethod]
         public void MinVersion()
         {
             Assert.That(GitClient.Version, Is.GreaterThanOrEqualTo(new Version(0, 17)));
@@ -26,7 +27,7 @@ namespace SharpGit.Tests
             Assert.That(GitClient.GitLibraries, Is.Not.Empty);
         }
 
-        [Test]
+        [TestMethod]
         public void UseGitClient()
         {
             GitCommitArgs ga = new GitCommitArgs();
@@ -281,7 +282,7 @@ namespace SharpGit.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public void CreateGitRepository()
         {
             string dir = GetTempPath();
@@ -333,7 +334,7 @@ namespace SharpGit.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public void StatusTests()
         {
             string[] A = new string[] { "A/a", "A/b", "A/c", "A/d" };

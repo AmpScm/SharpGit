@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using SharpGit.Diff;
+using Assert = NUnit.Framework.Assert;
 
 namespace SharpGit.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class DiffTests
     {
 
-        [Test]
+        [TestMethod]
         public void SimpleDiff()
         {
             string[] items = { "A", "B", "C", "D", "E", "F", "G" };
@@ -66,7 +67,7 @@ namespace SharpGit.Tests
 
         }
 
-        [Test]
+        [TestMethod]
         public void SimpleBaseDiff()
         {
             string[] items = { "A", "B", "C", "D", "E", "F", "G" };
