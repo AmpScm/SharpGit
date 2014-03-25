@@ -91,6 +91,7 @@ namespace SharpGit {
 
             GitPool()
             {
+                GitBase::EnsureInitialized();
                 _pool = svn_pool_create(nullptr);
             }
 
@@ -135,6 +136,10 @@ namespace SharpGit {
         {}
 
     public:
+        GitArgs()
+        {
+            GitBase::EnsureInitialized();
+        }
 
     internal:
         literal int WrappedError = 1099001;
