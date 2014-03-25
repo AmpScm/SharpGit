@@ -10,26 +10,48 @@ static bool apr_initialized = false;
 
 static GitPool::GitPool()
 {
-    if (apr_initialized)
-        return;
-    apr_initialized = true;
-
-    apr_initialize();
-
-    apr_pool_t* pool = svn_pool_create(nullptr);
-
-    apr_allocator_t* allocator = apr_pool_allocator_get(pool);
-
-    if (allocator)
-    {
-        apr_allocator_max_free_set(allocator, 1); // Keep a maximum of 1 free block
-    }
-
-    svn_utf_initialize2(TRUE, pool);
-
-    git_threads_init();
+    GitBase::EnsureInitialized();
 }
 
+void GitBase::EnsureInitialized()
+{
+    static volatile LONG ensurer = 0;
+
+    if (::InterlockedCompareExchange(&ensurer, 1, 0) < 2)
+    {
+        System::Threading::Monitor::Enter(_ensurerLock);
+        try
+        {
+            if (!_aprInitialized)
+            {
+                _aprInitialized = true;
+
+                apr_initialize();
+
+                apr_pool_t* pool = svn_pool_create(nullptr);
+
+                apr_allocator_t* allocator = apr_pool_allocator_get(pool);
+
+                if (allocator)
+                {
+                    apr_allocator_max_free_set(allocator, 1); // Keep a maximum of 1 free block
+                }
+
+                svn_utf_initialize2(TRUE, pool);
+
+                git_threads_init();
+
+            LONG v = ::InterlockedExchange(&ensurer, 2);
+
+            System::Diagnostics::Debug::Assert(v == 1);
+            }
+        }
+        finally
+        {
+            System::Threading::Monitor::Exit(_ensurerLock);
+        }
+    }
+}
 GitPool::!GitPool()
 {
     if (_pool)

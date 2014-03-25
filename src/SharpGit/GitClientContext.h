@@ -51,8 +51,12 @@ namespace SharpGit {
 
         public ref class GitBase : public System::MarshalByRefObject
         {
+            static bool _aprInitialized;
+            initonly static Object^ _ensurerLock = gcnew Object();
+
         internal:
-            GitBase() {}
+            GitBase() { EnsureInitialized(); }
+            static void EnsureInitialized();
 
         internal:
             static System::String^ Utf8_PtrToString(const char *ptr);
