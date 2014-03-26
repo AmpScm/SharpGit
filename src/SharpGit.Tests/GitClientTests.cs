@@ -132,7 +132,8 @@ namespace SharpGit.Tests
                 ga.LogMessage = "A log message to remember";
 
                 // The passed path is currently just used to find the local repository
-                lastCommit = new GitId("c860e9b866737faae5a047d4dbd07a082b5c0bc9");
+                lastCommit = new GitId("996cf198b49ed6fce3bcba232e2d88eb473560f9");
+
                 Assert.That(git.Commit(repoDir, ga, out commit));
                 Assert.That(commit, Is.EqualTo(lastCommit));
 
@@ -217,7 +218,8 @@ namespace SharpGit.Tests
                 Assert.That(commit.Committer.Name, Is.EqualTo("Other"));
                 Assert.That(commit.Committer.EmailAddress, Is.EqualTo("committer@example.com"));
 
-                // Assert.That(commit.Committer.TimeOffsetInMinutes, Is.EqualTo(120)); // CEST dependent
+                Assert.That(commit.Committer.TimeOffsetInMinutes, Is.EqualTo(120), "Time offset"); // CEST dependent
+                Assert.That(commit.Committer.When, Is.EqualTo(ct), "Exact time");
                 Assert.That(commit.LogMessage, Is.EqualTo("A log message to remember\n"));
 
                 Assert.That(commit.Parents, Is.Not.Empty);
@@ -247,7 +249,7 @@ namespace SharpGit.Tests
                 ta.LogMessage = "Some message";
                 ga.Author.TimeOffsetInMinutes = 120;
                 Assert.That(commit.Tag("MyTag", ta, out id));
-                Assert.That(id, Is.EqualTo(new GitId("30b346d4c69ebb408c5bd0f4d662b6615d09ce24")));
+                Assert.That(id, Is.EqualTo(new GitId("db31f8333fc64d7e7921ea91f6e007b755dcfcbb")));
 
                 GitTag tag;
                 Assert.That(repo1.Lookup(id, out tag));

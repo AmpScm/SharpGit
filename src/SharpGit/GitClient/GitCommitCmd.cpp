@@ -17,7 +17,6 @@ const git_signature * GitSignature::Alloc(GitRepository^ repository, GitPool ^po
     git_signature *sig = (git_signature *)pool->Alloc(sizeof(*sig));
 
     sig->when.time = (When.ToFileTimeUtc() - DELTA_EPOCH_AS_FILETIME) / 10000000i64;
-    sig->when.time -= 60 * _offset;
     sig->when.offset = _offset;
 
     String ^name = Name;

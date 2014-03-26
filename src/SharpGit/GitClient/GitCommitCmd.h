@@ -22,7 +22,7 @@ namespace SharpGit {
             _name = from->name ? Utf8_PtrToString(from->name) : nullptr;
             _email = from->email ? Utf8_PtrToString(from->email) : nullptr;
 
-            __int64 when = from->when.time + (__int64)(60 * from->when.offset); // Handle offset
+            __int64 when = from->when.time;
 
             _when = DateTime::FromFileTimeUtc(when * 10000000i64 + DELTA_EPOCH_AS_FILETIME);
             _offset = from->when.offset;
@@ -54,12 +54,7 @@ namespace SharpGit {
                     _when = DateTime(value.Ticks, System::DateTimeKind::Utc);
 
                 // But also store the current offset at the time of setting
-                {
-                    DateTime now = DateTime::Now;
-                    DateTime utcNow = now.ToUniversalTime();
-
-                    _offset = (int)Math::Round((now-utcNow).TotalMinutes);
-                }
+                _offset = TimeSpan(value.Ticks - _when.Ticks).TotalMinutes;
             }
         }
 
