@@ -54,7 +54,7 @@ namespace SharpGit {
                     _when = DateTime(value.Ticks, System::DateTimeKind::Utc);
 
                 // But also store the current offset at the time of setting
-                _offset = TimeSpan(value.Ticks - _when.Ticks).TotalMinutes;
+                _offset = (int)Math::Round(TimeSpan(value.Ticks - _when.Ticks).TotalMinutes);
             }
         }
 
