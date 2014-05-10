@@ -70,31 +70,20 @@ bool GitObject::Tag(String ^tagName, GitTagArgs ^args, [Out] GitId ^%id)
         const char *msg;
         if (normalize || strip)
         {
+            git_buf result = GIT_BUF_INIT_CONST("", 0);
             String^ msgString = args->LogMessage ? args->LogMessage : "";
             msgString = msgString->Replace("\r", "");
             msg = pool.AllocString(msgString);
             size_t sz = strlen(msg);
             sz += sz/4 + 4;
-            char *result = (char*)pool.Alloc(sz+1);
 
-            int r = git_message_prettify(result, sz, msg, strip);
-
-            if (r < 0)
-            {
-                int len = git_message_prettify(NULL, 0, msg, strip);
-
-                if (len >= 0)
-                {
-                    result = (char*)pool.Alloc(sz+1);
-
-                    r = git_message_prettify(result, sz, msg, strip);
-                }
-            }
+            int r = git_message_prettify(&result, msg, strip);
 
             if (r < 0)
                 return args->HandleGitError(this, r);
 
-            msg = result;
+            msg = apr_pstrdup(pool.Handle, result.ptr);
+            git_buf_free(&result);
         }
         else
             msg = args->LogMessage ? pool.AllocString(args->LogMessage) : "";
@@ -221,7 +210,8 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitArgs^ args,
 
     GitPool pool(_repository->Pool);
     git_reference *result;
-    int r = git_branch_create(&result, _repository->Handle, pool.AllocString(name), commit->Handle, FALSE /* force */);
+    int r = git_branch_create(&result, _repository->Handle, pool.AllocString(name), commit->Handle, FALSE /* force */,
+                              nullptr /* ### signature */, nullptr /* ### log_message */);
 
     if (!r)
         branch = gcnew GitBranch(_repository, name, gcnew GitReference(_repository, result));

@@ -82,6 +82,8 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:AssemblyVersionAttribute("0.2000.*")]; 
 
 #pragma comment(lib, "xml.lib")
+#pragma comment(lib, "libssh2.lib")
+#pragma comment(lib, "libeay32.lib")
 
 
 #if (APR_MAJOR_VERSION == 0)

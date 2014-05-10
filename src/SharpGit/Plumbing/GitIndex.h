@@ -276,7 +276,7 @@ namespace SharpGit {
                 GitId^ get()
                 {
                     if (!_index->IsDisposed)
-                        return gcnew GitId(_entry->oid);
+                        return gcnew GitId(_entry->id);
 
                     return nullptr;
                 }

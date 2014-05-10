@@ -8,11 +8,11 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-const git_checkout_opts * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
+const git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
 {
-    git_checkout_opts *opts = (git_checkout_opts *)pool->Alloc(sizeof(*opts));
+    git_checkout_options *opts = (git_checkout_options *)pool->Alloc(sizeof(*opts));
 
-    opts->version = GIT_CHECKOUT_OPTS_VERSION;
+    git_checkout_init_options(opts, GIT_CHECKOUT_OPTIONS_VERSION);
 
     if (! DryRun)
     {

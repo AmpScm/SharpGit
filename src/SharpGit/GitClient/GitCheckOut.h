@@ -25,7 +25,7 @@ namespace SharpGit {
     public ref class GitCheckOutArgs : public GitClientRemoteArgs
     {
     internal:
-        const git_checkout_opts * MakeCheckOutOptions(GitPool ^pool);
+        const git_checkout_options * MakeCheckOutOptions(GitPool ^pool);
 
     private:
         bool _dryRun;

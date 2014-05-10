@@ -18,7 +18,7 @@ const git_clone_options * GitCloneArgs::MakeCloneOptions(GitPool ^pool)
     opts->version = GIT_CLONE_OPTIONS_VERSION;
     opts->bare = CreateBareRepository;
 
-    const git_checkout_opts *coo = MakeCheckOutOptions(pool);
+    const git_checkout_options *coo = MakeCheckOutOptions(pool);
     opts->checkout_opts = *coo;
 
     git_remote_callbacks * cb = (git_remote_callbacks *)pool->Alloc(sizeof(*cb));
