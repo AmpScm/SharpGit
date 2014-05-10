@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SharpGit-x64</id>
+    <title>SharpGit-x64</title>
+    <version>$version$</version>
+    <authors>SharpSvn Project</authors>
+    <owners>SharpSvn Project</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://sharpsvn.net/</projectUrl>
+    <iconUrl>http://sharpsvn.open.collab.net/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SharpGit is a SharpSvn like api for Git basd on libgit2. This is the x64/64-bit version, See SharpGit-x86 for the 32 bit version</description>
+    <copyright>(C) Copyright 2013-2014 The SharpSvn Project</copyright>
+    <tags>Git libgit2 SharpSvn</tags>
+  </metadata>
+  <files>
+    <!-- DotNet 2.0 compatible version -->
+    <file src="net20/x64/SharpGit.dll" target="lib/net20" />
+    <file src="net20/x64/SharpGit.xml" target="lib/net20" />
+    <file src="net20/x64/SharpGit.pdb" target="lib/net20" />
+    <!-- DotNet 4.0+ version -->
+    <file src="net40/x64/SharpGit.dll" target="lib/net40" />
+    <file src="net40/x64/SharpGit.xml" target="lib/net40" />
+    <file src="net40/x64/SharpGit.pdb" target="lib/net40" />
+  </files>
+</package>

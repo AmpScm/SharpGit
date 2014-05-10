@@ -166,13 +166,13 @@
     </copy>
     
     <copy todir="release/net40/x86">
-      <fileset basedir="net40/src/SharpGit/bin/Win32/release">
+      <fileset basedir="v40/src/SharpGit/bin/Win32/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
       </fileset>
     </copy>
     <copy todir="release/net40/x64">
-      <fileset basedir="net40/src/SharpGit/bin/x64/release">
+      <fileset basedir="v40/src/SharpGit/bin/x64/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
       </fileset>
@@ -183,11 +183,24 @@
       <arg value="release\${CCNetProject}-${artifactLabel}.7z" />
       <arg value="release" />
     </exec>
-
-    <mkdir dir="D:\artifacts\${CCNetProject}" />
-    <delete file="D:\artifacts\${CCNetProject}\${CCNetProject}-${artifactLabel}.7z" />
-    <move todir="D:\artifacts\${CCNetProject}" file="release\${CCNetProject}-${artifactLabel}.7z"  />
-    <echo  file="D:\artifacts\${CCNetProject}\_last.txt" message="${CCNetProject}-${artifactLabel}.7z" />
+    
+    <foreach item="File" property="file" if="${property::exists('nugetExe')}">
+      <in>
+        <items basedir="src/nuget">
+          <include name="*.nuspec" />
+        </items>
+      </in>
+      <do>
+        <exec program="${nugetExe}">
+          <arg line='pack "${file}"' />
+          <arg line='-BasePath release' />
+          <arg line='-OutputDirectory release' />
+          <arg line='-Version "${artifactLabel}"' />
+          <arg line='-NonInteractive' />
+          <arg line='-Symbols' />
+        </exec>
+      </do>
+    </foreach>
   </target>
   
   <target name="clean-imports">
