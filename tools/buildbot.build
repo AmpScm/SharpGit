@@ -121,8 +121,8 @@
 
     <echo append="false" file="msbuildprops.txt">/P:AnnotatePdbFile=true
 /P:ForceAssemblyCopyright="Copyright (c) 2012-${datetime::get-year(datetime::now())} The SharpSvn Project. This product and its sourcecode are licensed under the Apache 2.0 license. Check http://sharpsvn.net/ for details."
-/P:ForceAssemblyCompany="SharpGit - http://sharpsvn.net/"
-/P:ForceAssemblyProduct="SharpGit - Subversion support for .Net"
+/P:ForceAssemblyCompany="SharpGit - http://sharpgit.net/"
+/P:ForceAssemblyProduct="SharpGit - Git support for .Net"
 </echo>
     <if test="${property::exists('CCNetNumericLabel')}">
       <echo append="true" file="msbuildprops.txt">/P:ForceAssemblyVersion="${versionBase}.${checkout-rev}.${CCNetNumericLabel}"

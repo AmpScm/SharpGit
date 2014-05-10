@@ -40,14 +40,14 @@ using SharpGit::Implementation::GitLibraryAttribute;
 // associated with an assembly.
 //
 [assembly:AssemblyTitleAttribute("SharpGit - Git for .Net 2.0-3.5 and 4.0")];
-[assembly:AssemblyDescriptionAttribute("SharpGit (Compiled statically with libgit2 " LIBGIT2_VERSION
+[assembly:AssemblyDescriptionAttribute("SharpGit, compiled statically with libgit2 " LIBGIT2_VERSION
                                        ", apr " APR_VERSION_STRING
                                        ", apr-util " APU_VERSION_STRING
                                        ", eXpat " EXPAT_VERSION
                                        ", LibSSH2 " LIBSSH2_VERSION
                                        ", " OPENSSL_VERSION_TEXT
                                        ", ZLib " ZLIB_VERSION
-                                       " and some platform support libraries of Subversion " SVN_VER_NUMBER ")")];
+                                       " and some platform support libraries of Subversion " SVN_VER_NUMBER)];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("SharpSvn Project")];
 [assembly:AssemblyProductAttribute("SharpGit")];
