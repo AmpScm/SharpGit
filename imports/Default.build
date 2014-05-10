@@ -29,7 +29,7 @@
 
   <!-- Building only -->
   <property name="nasmVersion" value="2.10.01" overwrite="false" />
-  <property name="cmakeVersion" value="2.8.12.1" overwrite="false" />
+  <property name="cmakeVersion" value="2.8.12.2" overwrite="false" />
   
   <!-- For testcase -->
   <property name="nunitVersion" value="2.6.2" overwrite="false" />
