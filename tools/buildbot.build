@@ -120,7 +120,7 @@
     </if>
 
     <echo append="false" file="msbuildprops.txt">/P:AnnotatePdbFile=true
-/P:ForceAssemblyCopyright="Copyright (c) 2013-${datetime::get-year(datetime::now())} The SharpSvn Project. This product and its sourcecode are licensed under the Apache 2.0 license. Check http://sharpsvn.net/ for details."
+/P:ForceAssemblyCopyright="Copyright (c) 2012-${datetime::get-year(datetime::now())} The SharpSvn Project. This product and its sourcecode are licensed under the Apache 2.0 license. Check http://sharpsvn.net/ for details."
 /P:ForceAssemblyCompany="SharpGit - http://sharpsvn.net/"
 /P:ForceAssemblyProduct="SharpGit - Subversion support for .Net"
 </echo>
@@ -201,6 +201,54 @@
         </exec>
       </do>
     </foreach>
+    
+    <if test="${property::exists('collabUploadCredentials') and property::exists('collabUploadExe')}">
+        
+        <exec program="${collabUploadExe}">
+          <arg line="${collabUploadCredentials}" />
+          <arg line="--site https://sharpsvn.open.collab.net" />
+          <arg line="--max-uploads 15" />
+          <arg line="--keep 28.0:00" />
+          <!--arg line="- -result resulting.uri" /-->
+          
+          <arg line="--folder 739" />
+          
+          <arg value="--description" />
+            <arg value="SharpSVN Build ${artifactLabel}" />
+          <arg value="release\${CCNetProject}-${artifactLabel}.7z" />
+        </exec>
+        
+        <exec program="${collabUploadExe}">
+          <arg line="${collabUploadCredentials}" />
+          <arg line="--site https://sharpsvn.open.collab.net" />
+          <arg line="--max-uploads 30" />
+          <arg line="--keep 28.0:00" />
+          <!--arg line="- -result resulting.uri" /-->
+          
+          <arg line="--folder 740" />
+          
+          <arg value="--description" />
+            <arg value="SharpSVN Build ${artifactLabel}" />
+          <arg value="release/SharpGit-x86.${artifactLabel}.nupkg" />
+          <arg value="release/SharpGit-x86.${artifactLabel}.symbols.nupkg" />
+        </exec>
+        
+        <exec program="${collabUploadExe}">
+          <arg line="${collabUploadCredentials}" />
+          <arg line="--site https://sharpsvn.open.collab.net" />
+          <arg line="--max-uploads 30" />
+          <arg line="--keep 28.0:00" />
+          <!--arg line="- -result resulting.uri" /-->
+          
+          <arg line="--folder 741" />
+          
+          <arg value="--description" />
+            <arg value="SharpSVN Build ${artifactLabel}" />
+          <arg value="release/SharpGit-x64.${artifactLabel}.nupkg" />
+          <arg value="release/SharpGit-x64.${artifactLabel}.symbols.nupkg" />
+        </exec>
+        
+      </if>
   </target>
   
   <target name="clean-imports">
