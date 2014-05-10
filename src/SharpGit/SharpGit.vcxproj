@@ -145,6 +145,7 @@
       <IgnoreSpecificDefaultLibraries>MSVCRT.lib</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
       <KeyFile>SharpGit.snk</KeyFile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -172,6 +173,7 @@
       <IgnoreSpecificDefaultLibraries>MSVCRT.lib</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
       <KeyFile>SharpGit.snk</KeyFile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -196,6 +198,10 @@
       <TargetMachine>MachineX86</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
       <KeyFile>SharpGit.snk</KeyFile>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <SetChecksum>true</SetChecksum>
+      <OptimizeReferences>true</OptimizeReferences>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -223,6 +229,10 @@
       <TargetMachine>MachineX64</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
       <KeyFile>SharpGit.snk</KeyFile>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <SetChecksum>true</SetChecksum>
+      <OptimizeReferences>true</OptimizeReferences>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
