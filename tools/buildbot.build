@@ -100,7 +100,7 @@
         <property name="v" value="1" if="${string::contains(svn-tag, 'alpha')}" />
         <property name="v" value="2" if="${string::contains(svn-tag, 'beta')}" />
         <property name="v" value="3" if="${string::contains(svn-tag, 'rc')}" />
-        <property name="versionBase" value="0.${(version::get-minor(version::parse(svn-ver))-1) * 100 + 99 + int::parse(v)}" />
+        <property name="versionBase" value="0.${(version::get-minor(version::parse(svn-ver))-1) * 100 + 90 + int::parse(v)}" />
       </when>
       <otherwise>
         <property name="versionBase" value="0.${(version::get-minor(version::parse(svn-ver))) * 100 + version::get-build(version::parse(svn-ver))}" />
