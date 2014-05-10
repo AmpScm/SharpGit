@@ -45,12 +45,12 @@ using SharpGit::Implementation::GitLibraryAttribute;
                                        ", apr-util " APU_VERSION_STRING
                                        ", eXpat " EXPAT_VERSION
                                        ", LibSSH2 " LIBSSH2_VERSION
-                                       ", OpenSSL" OPENSSL_VERSION_TEXT
+                                       ", " OPENSSL_VERSION_TEXT
                                        ", ZLib " ZLIB_VERSION
                                        " and some platform support libraries of Subversion " SVN_VER_NUMBER)];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("SharpSvn Project")];
-[assembly:AssemblyProductAttribute("SharpSvn")];
+[assembly:AssemblyProductAttribute("SharpGit")];
 [assembly:AssemblyCopyrightAttribute("Copyright (c) SharpSvn Project 2013")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
