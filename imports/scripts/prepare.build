@@ -12,9 +12,6 @@
   <property name="cmakeFilename" value="cmake-${cmakeVersion}-win32-x86.zip" />
   <property name="cmakeDir" value="build/cmake-${cmakeVersion}-win32-x86" />
 
-  <property name="sharpZipFilename" value="SharpZipLib_${sharpZipVersion}_Bin.zip" />
-  <property name="sharpZipLibDir" value="${'build/sharpzip-' + sharpZipVersion}" />
-
   <property name="ltcgFlags" value="" />
   <property name="ltcgFlags" value="-GL" if="${ltcg}" />
   <property name="ltcgFlags" value="${ltcgFlags} -Gw" if="${int::parse(VSversion) &gt;= 2013}" />
@@ -26,11 +23,6 @@
       src="http://launchpad.net/nunitv2/trunk/${nunitVersionMMR}/+download/${nunitFilename}"
       dest="${downloads + nunitFilename}"
       unless="${file::exists(downloads + nunitFilename)}" />
-
-    <get
-      src="http://switch.dl.sourceforge.net/sourceforge/sharpdevelop/${sharpZipFilename}"
-      dest="${downloads + sharpZipFilename}"
-      unless="${file::exists(downloads + sharpZipFilename)}" />
 
     <get src="http://www.cmake.org/files/v${cmakeVersionMM}/${cmakeFilename}"
       dest="${downloads + cmakeFilename}"
@@ -45,11 +37,6 @@
       todir="build"
       unless="${directory::exists(nunitDir)}" />
       
-    <unzip
-      zipfile="${downloads + sharpZipFilename}"
-      todir="${sharpZipLibDir}"
-      unless="${directory::exists(sharpZipLibDir)}" />
-
     <unzip
       zipfile="${downloads + cmakeFilename}"
       todir="build"

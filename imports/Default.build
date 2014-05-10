@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <project basedir="." default="build">
   <property name="svnBuildType" value="tag" overwrite="false" />
-  <property name="libgit2BuildType" value="tag" overwrite="false" />
+  <property name="libgit2BuildType" value="trunk" overwrite="false" />
   <property name="serfBuildType" value="tag" overwrite="false" />
   <property name="libgit2BuildType" value="tag" overwrite="false" />
   <property name="httpdBuildType" value="tag" overwrite="false" />
@@ -31,7 +31,6 @@
   
   <!-- For testcase -->
   <property name="nunitVersion" value="2.6.2" overwrite="false" />
-  <property name="sharpZipVersion" value="0860" overwrite="false" />
   <property name="junitVersion" value="4.8.1" overwrite="false" />
 
   <!-- Prefer http or https -->
@@ -39,10 +38,6 @@
 
   <!-- Prefix to use for dependency DLL's -->
   <property name="dllPrefix" value="SharpSvn-" overwrite="false" />
-  <property name="svnDll" value="svnDll" overwrite="false" />
-
-  <property name="vcVarsPath" value="C:\Program Files\Microsoft Visual Studio 9.0\VC" />
-  <property name="buildJavaHL" value="false" overwrite="false" />
 
   <include buildfile="scripts/default.build" />
 
