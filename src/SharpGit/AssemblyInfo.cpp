@@ -19,6 +19,10 @@
 #pragma warning(disable: 4634) // XML document comment: cannot be applied:  Discarding XML document comment for invalid target.
 
 #include <apr-1/apr_version.h>
+#include <apr-1/apu_version.h>
+#include <openssl/opensslv.h>
+#include <zlib.h>
+#include <expat.h>
 #include <svn_version.h>
 
 using namespace System;
@@ -29,15 +33,21 @@ using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 using SharpGit::Implementation::GitLibraryAttribute;
 
+#define EXPAT_VERSION APR_STRINGIFY(XML_MAJOR_VERSION) "." APR_STRINGIFY(XML_MINOR_VERSION) "." APR_STRINGIFY(XML_MICRO_VERSION)
+
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
 [assembly:AssemblyTitleAttribute("SharpGit - Git for .Net 2.0-3.5 and 4.0")];
 [assembly:AssemblyDescriptionAttribute("SharpGit (Compiled statically with libgit2 " LIBGIT2_VERSION
-									   ", apr " APR_VERSION_STRING
-									   " and the platform and diff libraries of Subversion " SVN_VER_NUMBER
-									   ". if available this library also uses our compilation of Putty's Plink)")];
+                                       ", apr " APR_VERSION_STRING
+                                       ", apr-util " APU_VERSION_STRING
+                                       ", eXpat " EXPAT_VERSION
+                                       ", LibSSH2 " LIBSSH2_VERSION
+                                       ", OpenSSL" OPENSSL_VERSION_TEXT
+                                       ", ZLib " ZLIB_VERSION
+                                       " and some platform support libraries of Subversion " SVN_VER_NUMBER)];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("SharpSvn Project")];
 [assembly:AssemblyProductAttribute("SharpSvn")];
@@ -47,8 +57,13 @@ using SharpGit::Implementation::GitLibraryAttribute;
 
 [assembly:GitLibrary("Libgit2", LIBGIT2_VERSION)]
 [assembly:GitLibrary("Apr", APR_VERSION_STRING)];
+[assembly:GitLibrary("Apr-Util", APR_VERSION_STRING)];
+[assembly:GitLibrary("eXpat", EXPAT_VERSION)];
+[assembly:GitLibrary("LibSSH2", LIBSSH2_VERSION)];
+[assembly:GitLibrary("OpenSSL", OPENSSL_VERSION_TEXT, SkipPrefix = true)];
 [assembly:GitLibrary("Subversion", SVN_VER_NUMBER)];
-[assembly:GitLibrary("SharpPlink", "", DynamicallyLinked=true, UseSharpGitVersion=true, Optional=true)];
+[assembly:GitLibrary("ZLib", ZLIB_VERSION)];
+
 
 //
 // Version information for an assembly consists of the following four values:
@@ -67,7 +82,9 @@ using SharpGit::Implementation::GitLibraryAttribute;
 
 [assembly:CLSCompliantAttribute(true)];
 
+#if __CLR_VER < 40000000
 [assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+#endif
 
 [assembly:RuntimeCompatibility(WrapNonExceptionThrows = true)];
 #pragma comment(lib, "ole32.lib")
