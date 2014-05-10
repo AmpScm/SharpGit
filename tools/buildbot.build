@@ -93,7 +93,7 @@
     <property name="svn-ver" value="${string::replace(string::replace(string::replace(string::replace(svn-tag, '-alpha', '.'), '-beta', '.'),'-rc', '.'), '.x', '.0')}" />
     <choose>
       <when test="${svn-tag == 'trunk'}">
-        <property name="versionBase" value="0.59999" />
+        <property name="versionBase" value="0.2099" />
       </when>
       <when test="${svn-tag != svn-ver}">
         <property name="v" value="0" />
