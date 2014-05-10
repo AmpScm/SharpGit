@@ -101,6 +101,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #pragma comment(lib, "xml.lib")
 #pragma comment(lib, "libssh2.lib")
 #pragma comment(lib, "libeay32.lib")
+#pragma comment(lib, "zlib.lib")
 
 
 #if (APR_MAJOR_VERSION == 0)
