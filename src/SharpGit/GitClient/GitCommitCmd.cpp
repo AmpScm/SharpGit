@@ -154,7 +154,7 @@ bool GitClient::Commit(System::Collections::Generic::ICollection<String^> ^paths
     if (repo.Commit(tree, safe_cast<ICollection<GitCommit^>^>(parents), args, commitId))
     {
         if (state == GitRepositoryState::Merge)
-            return repo.MergeCleanup(args);
+            return repo.CleanupState(args);
         else
             return true;
     }

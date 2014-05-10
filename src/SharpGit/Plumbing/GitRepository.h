@@ -11,7 +11,12 @@ namespace SharpGit {
 
         public ref class GitRepositoryCreateArgs : GitArgs
         {
+        internal:
+            git_repository_init_options * MakeInitOptions(GitPool ^pool);
+
+        private:
             bool _bare;
+            bool _noCreateDir;
         public:
             property bool CreateBareRepository
             {
@@ -22,6 +27,18 @@ namespace SharpGit {
                 void set(bool value)
                 {
                     _bare = value;
+                }
+            }
+
+            property bool CreateDirectory
+            {
+                bool get()
+                {
+                    return !_noCreateDir;
+                }
+                void set(bool value)
+                {
+                    _noCreateDir = !value;
                 }
             }
         };
@@ -181,8 +198,10 @@ namespace SharpGit {
             bool CheckOut(GitTree^ tree);
             bool CheckOut(GitTree^ tree, GitCheckOutArgs^ args);
 
-            bool MergeCleanup();
-            bool MergeCleanup(GitArgs ^args);
+            /// <summary>Remove all the metadata associated with an ongoing command like merge, revert, cherry-pick, etc.</summary>
+            bool CleanupState();
+            /// <summary>Remove all the metadata associated with an ongoing command like merge, revert, cherry-pick, etc.</summary>
+            bool CleanupState(GitArgs ^args);
 
         public:
             property bool IsEmpty

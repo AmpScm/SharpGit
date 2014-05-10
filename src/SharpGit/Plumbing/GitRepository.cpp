@@ -21,6 +21,20 @@ using System::Collections::Generic::List;
 
 struct git_repository {};
 
+git_repository_init_options * GitRepositoryCreateArgs::MakeInitOptions(GitPool ^pool)
+{
+    git_repository_init_options *opts = (git_repository_init_options *)pool->Alloc(sizeof(*opts));
+
+    git_repository_init_init_options(opts, GIT_REPOSITORY_INIT_OPTIONS_VERSION);
+
+    if (CreateBareRepository)
+        opts->flags |= GIT_REPOSITORY_INIT_BARE;
+    if (CreateDirectory)
+        opts->flags |= GIT_REPOSITORY_INIT_MKDIR;
+
+    return opts;
+}
+
 void GitRepository::ClearReferences()
 {
     try
@@ -136,7 +150,7 @@ bool GitRepository::CreateAndOpen(String ^repositoryPath, GitRepositoryCreateArg
 
     GitPool pool;
     git_repository *repository;
-    int r = git_repository_init(&repository, pool.AllocDirent(repositoryPath), args->CreateBareRepository);
+    int r = git_repository_init_ext(&repository, pool.AllocDirent(repositoryPath), args->MakeInitOptions(%pool));
 
     if (r)
         return args->HandleGitError(this, r);
@@ -419,18 +433,18 @@ bool GitRepository::CheckOut(GitTree ^tree, GitCheckOutArgs ^args)
     return args->HandleGitError(this, r);
 }
 
-bool GitRepository::MergeCleanup()
+bool GitRepository::CleanupState()
 {
-    return MergeCleanup(gcnew GitNoArgs());
+    return CleanupState(gcnew GitNoArgs());
 }
 
-bool GitRepository::MergeCleanup(GitArgs ^args)
+bool GitRepository::CleanupState(GitArgs ^args)
 {
     if (! args)
         throw gcnew ArgumentNullException("args");
 
     AssertOpen();
-    int r = -1; // ### git_repository_merge_cleanup(Handle);
+    int r = git_repository_state_cleanup(Handle);
 
     return args->HandleGitError(this, r);
 }
