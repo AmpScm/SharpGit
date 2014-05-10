@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>SharpSvn.1.9-x86</id>
-    <title>SharpSvn 1.9-x86</title>    
+    <id>SharpGit-x86</id>
+    <title>SharpGit-x86</title>    
     <version>$version$</version>
     <authors>SharpSvn Project</authors>
     <owners>SharpSvn Project</owners>
@@ -10,26 +10,18 @@
     <projectUrl>http://sharpsvn.net/</projectUrl>
     <iconUrl>http://sharpsvn.open.collab.net/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>SharpSvn is a binding of the Subversion Client API for .NET based on the Subversion 1.9-alpha. This is the x86/32-bit version, See SharpSvn.1.9-x64 for the 64 bit version.</description>
-    <copyright>(C) Copyright 2006-2014 The SharpSvn Project</copyright>
-    <tags>Subversion Svn SharpSvn</tags>
+    <description>SharpGit is a SharpSvn like api for Git basd on libgit2. This is the x86/32-bit version, See SharpGit-x64 for the 64 bit version</description>
+    <copyright>(C) Copyright 2013-2014 The SharpSvn Project</copyright>
+    <tags>Git libgit2 SharpSvn</tags>
   </metadata>
   <files>
     <!-- DotNet 2.0 compatible version -->
-    <file src="net20/x86/SharpSvn.dll" target="lib/net20" />
-    <file src="net20/x86/SharpSvn.xml" target="lib/net20" />
-    <file src="net20/x86/SharpSvn-DB44-20-win32.svnDll" target="lib/net20" />
-    <file src="net20/x86/SharpSvn.pdb" target="lib/net20" />
-    <file src="net20/x86/SharpSvn.UI.dll" target="lib/net20" />
-    <file src="net20/x86/SharpSvn.UI.xml" target="lib/net20" />
-    <file src="net20/x86/SharpSvn.UI.pdb" target="lib/net20" />
+    <file src="net20/x86/SharpGit.dll" target="lib/net20" />
+    <file src="net20/x86/SharpGit.xml" target="lib/net20" />
+    <file src="net20/x86/SharpGit.pdb" target="lib/net20" />
     <!-- DotNet 4.0+ version -->
-    <file src="net40/x86/SharpSvn.dll" target="lib/net40" />
-    <file src="net40/x86/SharpSvn.xml" target="lib/net40" />
-    <file src="net40/x86/SharpSvn-DB44-20-win32.svnDll" target="lib/net40" />
-    <file src="net40/x86/SharpSvn.pdb" target="lib/net40" />
-    <file src="net40/x86/SharpSvn.UI.dll" target="lib/net40" />
-    <file src="net40/x86/SharpSvn.UI.xml" target="lib/net40" />
-    <file src="net40/x86/SharpSvn.UI.pdb" target="lib/net40" />
+    <file src="net40/x86/SharpGit.dll" target="lib/net40" />
+    <file src="net40/x86/SharpGit.xml" target="lib/net40" />
+    <file src="net40/x86/SharpGit.pdb" target="lib/net40" />
   </files>
 </package>
