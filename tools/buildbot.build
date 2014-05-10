@@ -214,7 +214,7 @@
           <arg line="--folder 739" />
           
           <arg value="--description" />
-            <arg value="SharpSVN Build ${artifactLabel}" />
+            <arg value="SharpGit Build ${artifactLabel}" />
           <arg value="release\${CCNetProject}-${artifactLabel}.7z" />
         </exec>
         
@@ -228,7 +228,7 @@
           <arg line="--folder 740" />
           
           <arg value="--description" />
-            <arg value="SharpSVN Build ${artifactLabel}" />
+            <arg value="SharpGit Build ${artifactLabel}" />
           <arg value="release/SharpGit-x86.${artifactLabel}.nupkg" />
           <arg value="release/SharpGit-x86.${artifactLabel}.symbols.nupkg" />
         </exec>
@@ -243,7 +243,7 @@
           <arg line="--folder 741" />
           
           <arg value="--description" />
-            <arg value="SharpSVN Build ${artifactLabel}" />
+            <arg value="SharpGit Build ${artifactLabel}" />
           <arg value="release/SharpGit-x64.${artifactLabel}.nupkg" />
           <arg value="release/SharpGit-x64.${artifactLabel}.symbols.nupkg" />
         </exec>
