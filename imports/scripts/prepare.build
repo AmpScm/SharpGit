@@ -12,6 +12,9 @@
   <property name="cmakeFilename" value="cmake-${cmakeVersion}-win32-x86.zip" />
   <property name="cmakeDir" value="build/cmake-${cmakeVersion}-win32-x86" />
 
+  <property name="nasmFilename" value="nasm-${nasmVersion}-win32.zip" />
+  <property name="nasmDir" value="${buildRoot}\nasm-${nasmVersion}" />
+  
   <property name="ltcgFlags" value="" />
   <property name="ltcgFlags" value="-GL" if="${ltcg}" />
   <property name="ltcgFlags" value="${ltcgFlags} -Gw" if="${int::parse(VSversion) &gt;= 2013}" />
@@ -36,6 +39,15 @@
       zipfile="${downloads + nunitFilename}"
       todir="build"
       unless="${directory::exists(nunitDir)}" />
+
+    <get src="http://www.nasm.us/pub/nasm/releasebuilds/${nasmVersion}/win32/${nasmFilename}"
+      dest="${downloads + nasmFilename}"
+      unless="${file::exists(downloads + nasmFilename)}" />
+
+    <unzip
+      zipfile="${downloads + nasmFilename}"
+      todir="build"
+      unless="${directory::exists(nasmDir)}" />
       
     <unzip
       zipfile="${downloads + cmakeFilename}"
@@ -52,6 +64,15 @@
       <arg value="${zlibDir}" />
     </Svn>
     
+    <Svn
+      verbose="true"
+      unless="${directory::exists(opensslDir)}">
+      
+      <arg value="co" />
+      <arg value="https://github.com/openssl/openssl.git/tags/OpenSSL_${string::replace(opensslVersion,'.','_')}/" />
+      <arg value="${opensslDir}" />
+    </Svn>
+
     <Svn
       verbose="true"
       unless="${directory::exists(aprDir)}">

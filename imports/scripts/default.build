@@ -47,10 +47,15 @@
   <include buildfile="zlib.build" />
   <include buildfile="apr.build" />
   <include buildfile="aprutil.build" />
-  <include buildfile="libgit2.build" />
+  <include buildfile="openssl.build" />
   <include buildfile="libssh2.build" />
+  <include buildfile="libgit2.build" />
   
   <include buildfile="dev.build" />
+
+  <setenv>
+    <variable name="PATH" value="${environment::get-variable('PATH')};${path::get-full-path(nasmDir)}"/>
+  </setenv>
 
   <target name="clean">
     <delete>
@@ -87,11 +92,6 @@
       <fileset basedir="${nunitDir}/bin">
         <include name="nunit.framework.dll" />
         <include name="nunit.framework.xml" />
-      </fileset>
-    </copy>
-    <copy todir="${release}/lib-AnyCPU">
-      <fileset basedir="${sharpZipLibDir}/net-20">
-        <include name="ICSharpCode.SharpZipLib.dll" />
       </fileset>
     </copy>
   </target>

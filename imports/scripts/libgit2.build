@@ -2,7 +2,7 @@
 <project basedir=".." default="build">
   <property name="libgit2Dir" value="${buildRoot}/${platform}/libgit2" />
 
-  <target name="libgit2-build" depends="download,extract,checkout" if="${buildLibgit2}">
+  <target name="libgit2-build" depends="download,extract,checkout,zlib-build,libssh2-build">
     <OnceBlock file="build/libgit2-${libgit2Version}_${platform}.build">
       <mkdir dir="${libgit2Dir}/build" />
     
@@ -13,6 +13,11 @@
         <arg value="-DSTATIC_CRT=OFF" />
         <arg value="-DSTDCALL=OFF" />
         <arg value="-DTHREADSAFE=ON" />
+        <arg value="-DBIN_INSTALL_DIR=${release}/bin" />
+        <arg value="-DLIB_INSTALL_DIR=${release}/lib" />
+        <arg value="-DINCLUDE_INSTALL_DIR=${release}/include" />
+        <arg value="-DLIBSSH2_INCLUDE_DIR=${path::get-full-path(libssh2Dir + '/include')}" />
+        <arg value="-DLIBSSH2_LIBRARY=${path::get-full-path(libssh2Dir + '/libssh2.lib')}" />
       </CMake>
       
       <FilterFile file="${libgit2Dir}/git2.${vcproj}" generated="true">
