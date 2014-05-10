@@ -47,7 +47,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
                                        ", LibSSH2 " LIBSSH2_VERSION
                                        ", " OPENSSL_VERSION_TEXT
                                        ", ZLib " ZLIB_VERSION
-                                       " and some platform support libraries of Subversion " SVN_VER_NUMBER)];
+                                       " and some platform support libraries of Subversion " SVN_VER_NUMBER ")")];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("SharpSvn Project")];
 [assembly:AssemblyProductAttribute("SharpGit")];
