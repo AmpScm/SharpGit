@@ -17,3 +17,6 @@ struct apr_hash_index_t
 
 struct git_branch_iterator
 {};
+
+struct git_remote
+{};

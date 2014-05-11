@@ -8,10 +8,20 @@ namespace SharpGit {
         public ref class GitRemote : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
+            git_remote *_remote;
+            String^ _name;
 
         private:
-            GitRemote()
-              {}
+            GitRemote(GitRepository ^repository, git_remote *remote);
+
+            ~GitRemote();
+            !GitRemote();
+
+        public:
+            property String^ Name
+            {
+                String ^ get();
+            }
         };
 
         public ref class GitRemoteCollection sealed : public Implementation::GitBase,
