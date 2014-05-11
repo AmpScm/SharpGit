@@ -259,6 +259,7 @@
     <ClCompile Include="Plumbing\GitObject.cpp" />
     <ClCompile Include="Plumbing\GitObjectDatabase.cpp" />
     <ClCompile Include="Plumbing\GitReference.cpp" />
+    <ClCompile Include="Plumbing\GitRemote.cpp" />
     <ClCompile Include="Plumbing\GitRepository.cpp" />
     <ClCompile Include="Plumbing\GitTag.cpp" />
     <ClCompile Include="Plumbing\GitTree.cpp" />
@@ -298,6 +299,7 @@
     <ClInclude Include="Plumbing\GitObject.h" />
     <ClInclude Include="Plumbing\GitObjectDatabase.h" />
     <ClInclude Include="Plumbing\GitReference.h" />
+    <ClInclude Include="Plumbing\GitRemote.h" />
     <ClInclude Include="Plumbing\GitRepository.h" />
     <ClInclude Include="Plumbing\GitTag.h" />
     <ClInclude Include="Plumbing\GitTree.h" />

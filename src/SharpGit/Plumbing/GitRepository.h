@@ -52,6 +52,7 @@ namespace SharpGit {
         ref class GitObject;
         ref class GitBranchCollection;
         ref class GitReferenceCollection;
+        ref class GitRemoteCollection;
 
         public enum class GitRepositoryState
         {
@@ -74,6 +75,7 @@ namespace SharpGit {
             GitPool _pool;
             GitBranchCollection^ _branches;
             GitReferenceCollection^ _references;
+            GitRemoteCollection^ _remotes;
 
             GitRepository(git_repository *repository)
             {
@@ -214,6 +216,11 @@ namespace SharpGit {
                 bool get();
             }
 
+            property bool IsShallow
+            {
+                bool get();
+            }
+
             property String^ RepositoryDirectory
             {
                 String^ get();
@@ -249,8 +256,8 @@ namespace SharpGit {
                     if (IsDisposed)
                         return false;
 
-            return (git_repository_head_unborn(_repository) == 1);
-                        }
+                    return (git_repository_head_unborn(_repository) == 1);
+                }
             }
 
             property GitBranchCollection^ Branches
@@ -261,6 +268,11 @@ namespace SharpGit {
             property GitReferenceCollection^ References
             {
                 GitReferenceCollection^ get();
+            }
+
+            property GitRemoteCollection^ Remotes
+            {
+                GitRemoteCollection^ get();
             }
 
         public:

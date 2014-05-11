@@ -173,6 +173,13 @@ bool GitRepository::IsBare::get()
     return git_repository_is_bare(_repository) != 0;
 }
 
+bool GitRepository::IsShallow::get()
+{
+    AssertOpen();
+
+    return git_repository_is_shallow(_repository) != 0;
+}
+
 String^ GitRepository::RepositoryDirectory::get()
 {
     AssertOpen();
