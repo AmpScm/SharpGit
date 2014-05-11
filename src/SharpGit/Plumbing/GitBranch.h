@@ -120,9 +120,9 @@ namespace SharpGit {
 
         public:
             bool Create(GitCommit^ commit, String^ name);
-            bool Create(GitCommit^ commit, String^ name, GitArgs^ args);
+            bool Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args);
             bool Create(GitCommit^ commit, String^ name, [Out] GitBranch^% branch);
-            bool Create(GitCommit^ commit, String^ name, GitArgs^ args, [Out] GitBranch^% branch);
+            bool Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args, [Out] GitBranch^% branch);
 
         private:
             IEnumerable<GitBranch^>^ GetEnumerable(git_branch_t flags);

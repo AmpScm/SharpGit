@@ -303,3 +303,33 @@ GitId^ GitId::FromPrefix(String ^idPrefix)
 
     return gcnew GitId(String::Concat(idPrefix, add));
 }
+
+
+const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
+{
+    bool normalize = NormalizeLogMessage;
+    bool strip = StripLogMessageComments;
+    const char *msg;
+
+    if (normalize || strip)
+    {
+        git_buf result = GIT_BUF_INIT_CONST("", 0);
+        String^ msgString = LogMessage ? LogMessage : "";
+        msgString = msgString->Replace("\r", "");
+        msg = pool->AllocString(msgString);
+        size_t sz = strlen(msg);
+        sz += sz/4 + 4;
+
+        int r = git_message_prettify(&result, msg, strip);
+
+        if (r < 0)
+            HandleGitError(this, r);
+
+        msg = apr_pstrdup(pool->Handle, result.ptr);
+        git_buf_free(&result);
+    }
+    else
+        msg = LogMessage ? pool->AllocString(LogMessage) : "";
+
+    return msg;
+}

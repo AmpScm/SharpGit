@@ -65,34 +65,11 @@ bool GitObject::Tag(String ^tagName, GitTagArgs ^args, [Out] GitId ^%id)
     int r;
     if (!args->LightWeight)
     {
-        bool normalize = args->NormalizeLogMessage;
-        bool strip = args->StripLogMessageComments;
-        const char *msg;
-        if (normalize || strip)
-        {
-            git_buf result = GIT_BUF_INIT_CONST("", 0);
-            String^ msgString = args->LogMessage ? args->LogMessage : "";
-            msgString = msgString->Replace("\r", "");
-            msg = pool.AllocString(msgString);
-            size_t sz = strlen(msg);
-            sz += sz/4 + 4;
-
-            int r = git_message_prettify(&result, msg, strip);
-
-            if (r < 0)
-                return args->HandleGitError(this, r);
-
-            msg = apr_pstrdup(pool.Handle, result.ptr);
-            git_buf_free(&result);
-        }
-        else
-            msg = args->LogMessage ? pool.AllocString(args->LogMessage) : "";
-
         r = git_tag_create(&result, Repository->Handle,
             pool.AllocString(tagName),
             Handle,
-            args->Tagger->Alloc(Repository, %pool),
-            msg,
+            args->Signature->Alloc(Repository, %pool),
+            args->AllocLogMessage(%pool),
             args->OverwriteExisting);
     }
     else
@@ -186,7 +163,7 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name)
     return Create(commit, name, gcnew GitNoArgs(), ignored);
 }
 
-bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitArgs^ args)
+bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args)
 {
     GitBranch ^ignored;
     return Create(commit, name, args, ignored);
@@ -197,7 +174,7 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name, [Out] GitBranc
     return Create(commit, name, gcnew GitNoArgs(), branch);
 }
 
-bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitArgs^ args, [Out] GitBranch^% branch)
+bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args, [Out] GitBranch^% branch)
 {
     if (_repository->IsDisposed)
         throw gcnew ObjectDisposedException("repository");
@@ -211,7 +188,8 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitArgs^ args,
     GitPool pool(_repository->Pool);
     git_reference *result;
     int r = git_branch_create(&result, _repository->Handle, pool.AllocString(name), commit->Handle, FALSE /* force */,
-                              nullptr /* ### signature */, nullptr /* ### log_message */);
+                              args->Signature->Alloc(_repository, %pool),
+                              args->AllocLogMessage(%pool));
 
     if (!r)
         branch = gcnew GitBranch(_repository, name, gcnew GitReference(_repository, result));

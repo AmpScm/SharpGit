@@ -235,11 +235,209 @@ namespace SharpGit {
         }
     };
 
+        public ref class GitSignature : public GitBase
+    {
+        literal __int64 DELTA_EPOCH_AS_FILETIME = 116444736000000000i64;
+        DateTime _when;
+        String ^_name;
+        String ^_email;
+        bool _readOnly;
+        int _offset;
+
+    internal:
+        const git_signature * Alloc(GitRepository^ repository, GitPool ^pool);
+
+    internal:
+        GitSignature(const git_signature *from)
+        {
+            _name = from->name ? Utf8_PtrToString(from->name) : nullptr;
+            _email = from->email ? Utf8_PtrToString(from->email) : nullptr;
+
+            __int64 when = from->when.time;
+
+            _when = DateTime::FromFileTimeUtc(when * 10000000i64 + DELTA_EPOCH_AS_FILETIME);
+            _offset = from->when.offset;
+            _readOnly = true;
+        }
+
+        GitSignature()
+        {
+            When = DateTime::UtcNow;
+        }
+
+    public:
+        /// <summary>When the signature was added (as/auto-converted as GMT DateTime)</summary>
+        property DateTime When
+        {
+            DateTime get()
+            {
+                return _when;
+            }
+            void set(DateTime value)
+            {
+                if (_readOnly)
+                    throw gcnew InvalidOperationException();
+
+                // Always store as UTC
+                if (value.Kind != System::DateTimeKind::Unspecified)
+                    _when = value.ToUniversalTime();
+                else
+                    _when = DateTime(value.Ticks, System::DateTimeKind::Utc);
+
+                // But also store the current offset at the time of setting
+                _offset = (int)Math::Round(TimeSpan(value.Ticks - _when.Ticks).TotalMinutes);
+            }
+        }
+
+        /// <summary>The user name. When using for commit preparation NULL represents the configured value</summary>
+        property String^ Name
+        {
+            String^ get()
+            {
+                return _name;
+            }
+            void set(String ^value)
+            {
+                if (_readOnly)
+                    throw gcnew InvalidOperationException();
+
+                _name = value;
+            }
+        }
+
+        /// <summary>The email address. When using for commit preparation NULL represents the configured value</summary>
+        property String^ EmailAddress
+        {
+            String^ get()
+            {
+                return _email;
+            }
+            void set(String ^value)
+            {
+                if (_readOnly)
+                    throw gcnew InvalidOperationException();
+                _email = value;
+            }
+        }
+
+        property int TimeOffsetInMinutes
+        {
+            int get()
+            {
+                return _offset;
+            }
+            void set(int value)
+            {
+                if (_readOnly)
+                    throw gcnew InvalidOperationException();
+
+                // Not strictly OK, but should avoid most problems
+                if ((value / 60) * 60 != value)
+                    throw gcnew InvalidOperationException();
+
+                _offset = value;
+            }
+        }
+
+        virtual String^ ToString() override
+        {
+            System::Text::StringBuilder ^sb = gcnew System::Text::StringBuilder();
+
+            if (Name)
+                sb->Append(Name);
+
+            if (EmailAddress)
+            {
+                if (Name)
+                    sb->Append(' ');
+
+                sb->Append('<');
+                sb->Append(EmailAddress);
+                sb->Append('>');
+            }
+            if (Name || EmailAddress)
+                sb->Append(' ');
+
+            sb->Append(When);
+
+            return sb->ToString();
+        }
+    };
+
+
     public ref class GitClientArgs abstract : public GitArgs
     {
     };
 
-    private ref class GitNoArgs sealed : GitArgs
+    ref class GitSignature;
+
+    public ref class GitCreateRefArgs abstract : public GitClientArgs
+    {
+        String ^_logMessage;
+        initonly GitSignature ^_committer;
+        bool _noNormalize;
+        bool _stripComments;
+
+    protected public:
+        GitCreateRefArgs()
+        {
+            _committer = gcnew GitSignature();
+
+            // By default use the exact same timestamp for both
+            DateTime now = DateTime::UtcNow;
+            _committer->When = now;
+        }
+
+    internal:
+        const char * AllocLogMessage(GitPool ^pool);
+
+    public:
+        property String ^ LogMessage
+        {
+            String ^get()
+            {
+                return _logMessage;
+            }
+            void set(String ^value)
+            {
+                _logMessage = value;
+            }
+        }
+
+        property GitSignature^ Signature
+        {
+            GitSignature^ get()
+            {
+                return _committer;
+            }
+        }
+
+        property bool NormalizeLogMessage
+        {
+            bool get()
+            {
+                return !_noNormalize;
+            }
+            void set(bool value)
+            {
+                _noNormalize = !value;
+            }
+        }
+
+        property bool StripLogMessageComments
+        {
+            bool get()
+            {
+                return _stripComments;
+            }
+            void set(bool value)
+            {
+                _stripComments = value;
+            }
+        }
+    };
+
+    private ref class GitNoArgs sealed : GitCreateRefArgs
     {
     };
 

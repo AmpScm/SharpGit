@@ -33,15 +33,15 @@ namespace SharpGit.Tests
             GitCommitArgs ga = new GitCommitArgs();
             ga.Author.Name = "Tester";
             ga.Author.EmailAddress = "author@example.com";
-            ga.Committer.Name = "Other";
-            ga.Committer.EmailAddress = "committer@example.com";
+            ga.Signature.Name = "Other";
+            ga.Signature.EmailAddress = "committer@example.com";
 
             // Use stable time and offset to always produce the same hash
             DateTime ct = new DateTime(2002, 01, 01, 0, 0, 0, DateTimeKind.Utc);
             ga.Author.When = ct;
             ga.Author.TimeOffsetInMinutes = 120;
-            ga.Committer.When = ct;
-            ga.Committer.TimeOffsetInMinutes = 120;
+            ga.Signature.When = ct;
+            ga.Signature.TimeOffsetInMinutes = 120;
 
             string repoDir = GetTempPath();
             string repo2Dir = GetTempPath();
@@ -243,9 +243,9 @@ namespace SharpGit.Tests
                 Assert.That(commit.Tree.Peel<GitObject>(), Is.Null);
 
                 GitTagArgs ta = new GitTagArgs();
-                ta.Tagger.When = ct;
-                ta.Tagger.Name = "Me";
-                ta.Tagger.EmailAddress = "me@myself.and.I";
+                ta.Signature.When = ct;
+                ta.Signature.Name = "Me";
+                ta.Signature.EmailAddress = "me@myself.and.I";
                 ta.LogMessage = "Some message";
                 ga.Author.TimeOffsetInMinutes = 120;
                 Assert.That(commit.Tag("MyTag", ta, out id));
