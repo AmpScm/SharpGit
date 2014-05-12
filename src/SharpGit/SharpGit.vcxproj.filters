@@ -89,6 +89,9 @@
     <ClCompile Include="Plumbing\GitRemote.cpp">
       <Filter>Plumbing</Filter>
     </ClCompile>
+    <ClCompile Include="Plumbing\GitBranch.cpp">
+      <Filter>Plumbing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />

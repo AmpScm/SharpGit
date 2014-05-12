@@ -8,6 +8,7 @@ namespace SharpGit {
     ref class GitCheckOutArgs;
 
     namespace Plumbing {
+        ref class GitBranch;
 
         public ref class GitRepositoryCreateArgs : GitArgs
         {
@@ -233,9 +234,14 @@ namespace SharpGit {
             }
 
         public:
-            property GitReference^ Head
+            property GitReference^ HeadReference
             {
                 GitReference^ get();
+            }
+
+            property GitBranch^ HeadBranch
+            {
+                GitBranch^ get();
             }
 
             property bool IsHeadDetached

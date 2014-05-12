@@ -114,7 +114,7 @@ bool GitClient::Commit(System::Collections::Generic::ICollection<String^> ^paths
         return false;
 
     List<GitCommit^>^ parents = gcnew List<GitCommit^>();
-    GitReference^ head = repo.Head;
+    GitReference^ head = repo.HeadReference;
 
     GitRepositoryState state = repo.RepositoryState;
 

@@ -28,7 +28,7 @@ String^ GitReference::Name::get()
     return _name;
 }
 
-git_reference* GitReference::Handle::get()
+const git_reference* GitReference::Handle::get()
 {
     if (IsDisposed)
         throw gcnew ObjectDisposedException("reference");
@@ -58,7 +58,7 @@ bool GitReference::Delete(GitArgs ^args)
     if (!args)
         throw gcnew ArgumentNullException("args");
 
-    int r = git_reference_delete(Handle);
+    int r = git_reference_delete(const_cast<git_reference*>(Handle));
 
     try
     {

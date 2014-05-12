@@ -98,11 +98,28 @@ bool GitRepository::Locate(String ^path, GitArgs ^args)
 
     const char *ceiling_dirs = nullptr;
 
+    char *dirent = const_cast<char*>(pool.AllocDirent(path));
+
+    {
+        char *star = strchr(dirent, '*');
+        char *q = strchr(dirent, '?');
+
+        if (star || q)
+        {
+            q = (q && (q < star)) ? q : star;
+
+            while (q > dirent && *q != '/')
+              q--;
+
+            *q = 0;
+        }
+    }
+
     git_repository *repository;
     int r = git_repository_open_ext(&repository,
-                                                                    pool.AllocDirent(path),
-                                                                    GIT_REPOSITORY_OPEN_CROSS_FS,
-                                                                    ceiling_dirs);
+                                    dirent,
+                                    GIT_REPOSITORY_OPEN_CROSS_FS,
+                                    ceiling_dirs);
 
     if (r)
         return args->HandleGitError(this, r);
@@ -281,7 +298,7 @@ const char *GitRepository::MakeRelpath(String ^path, GitPool ^pool)
     return svn_dirent_skip_ancestor(wrk_path, item_path);
 }
 
-GitReference^ GitRepository::Head::get()
+GitReference^ GitRepository::HeadReference::get()
 {
     if (IsDisposed)
         return nullptr;

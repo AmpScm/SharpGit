@@ -253,6 +253,7 @@
     <ClCompile Include="GitClient\GitStage.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
+    <ClCompile Include="Plumbing\GitBranch.cpp" />
     <ClCompile Include="Plumbing\GitCommit.cpp" />
     <ClCompile Include="Plumbing\GitConfiguration.cpp" />
     <ClCompile Include="Plumbing\GitIndex.cpp" />

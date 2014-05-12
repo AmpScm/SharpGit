@@ -64,9 +64,9 @@ namespace SharpGit {
                 _name = name;
             }
 
-            property git_reference* Handle
+            property const git_reference* Handle
             {
-                git_reference* get();
+                const git_reference* get();
             }
 
         private:

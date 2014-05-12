@@ -9,7 +9,9 @@ namespace SharpGit {
             initonly GitRepository ^_repository;
             initonly String ^_name;
             initonly int _type;
+            bool _resolvedUpstream;
             GitReference^ _reference;
+            GitReference^ _upstreamReference;
 
         internal:
             GitBranch(GitRepository^ repository, String ^name, git_branch_t type)
@@ -86,6 +88,36 @@ namespace SharpGit {
                 bool get()
                 {
                     return 0 != (_type & GIT_BRANCH_REMOTE);
+                }
+            }
+
+            property bool IsHead
+            {
+                bool get();
+            }
+
+            property String ^ RemoteName
+            {
+                String ^ get();
+            }
+
+            property GitReference ^ UpstreamReference
+            {
+                GitReference ^ get()
+                {
+                    if (!_upstreamReference && !_resolvedUpstream)
+                    {
+                        _resolvedUpstream = true;
+
+                        git_reference *ref;
+
+                        if (!git_branch_upstream(&ref, Reference->Handle))
+                        {
+                            _upstreamReference = gcnew GitReference(_repository, ref);
+                        }
+                    }
+
+                    return _upstreamReference;
                 }
             }
         };

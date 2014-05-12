@@ -189,14 +189,14 @@ namespace SharpGit.Tests
             using (GitRepository repo1 = new GitRepository(repoDir))
             using (GitRepository repo2 = new GitRepository(repo2Dir))
             {
-                GitReference head = repo1.Head;
+                GitReference head = repo1.HeadReference;
                 Assert.That(head, Is.Not.Null, "Has head");
 
                 Assert.That(head.Name, Is.EqualTo("refs/heads/master"));
                 //Assert.That(repo2.Head, Is.Not.Null);
                 
                 GitId headId;
-                Assert.That(repo1.ResolveReference(repo1.Head, out headId));
+                Assert.That(repo1.ResolveReference(repo1.HeadReference, out headId));
                 Assert.That(headId, Is.EqualTo(lastCommit));
                 GitCommit commit;
 
@@ -413,6 +413,31 @@ namespace SharpGit.Tests
                 Assert.That(found.Count, Is.EqualTo(8));
                 Assert.That(found, Is.All.Not.Null);
                 Assert.That(found, Is.Unique);
+
+                found.Clear();
+
+                git.Status(repos + "/a/*", sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        found.Add(e.RelativePath);
+                    });
+
+                Assert.That(found.Count, Is.EqualTo(3));
+                Assert.That(found, Is.All.Not.Null);
+                Assert.That(found, Is.Unique);
+
+                using (GitRepository repo = new GitRepository(repos))
+                {
+                    Assert.That(repo.HeadBranch, Is.Not.Null);
+
+                    Assert.That(repo.HeadBranch.UpstreamReference, Is.Not.Null);
+                    Assert.That(repo.HeadBranch.UpstreamReference.Name, Is.EqualTo("refs/remotes/origin/master"));
+                    Assert.That(repo.HeadBranch.IsHead, "Head knows that it is head");
+
+                    Assert.That(repo.HeadBranch.Name, Is.EqualTo("refs/heads/master"));
+                    Assert.That(repo.HeadBranch.IsRemote, Is.False, "Local branch");
+                    Assert.That(repo.HeadBranch.RemoteName, Is.Null);
+                }
             }
         }
     }
