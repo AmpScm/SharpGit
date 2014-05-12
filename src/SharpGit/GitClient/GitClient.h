@@ -24,11 +24,51 @@ namespace SharpGit {
     using ::SharpGit::Plumbing::GitRepository;
     using System::Collections::Generic::ICollection;
 
+    public ref class GitProgressEventArgs : public GitEventArgs
+    {
+    internal:
+        GitProgressEventArgs(const char *str, int len)
+        {}
+    };
+
+    public ref class GitRemoteCompletedEventArgs : public GitEventArgs
+    {
+    internal:
+        GitRemoteCompletedEventArgs(git_remote_completion_type completion)
+        {}
+    };
+
+    public ref class GitCredentialsEventArgs : public GitEventArgs
+    {
+    internal:
+        GitCredentialsEventArgs(const char *url, const char *username_from_url, unsigned int allowed_types)
+        {}
+    };
+
+    public ref class GitTransferProgressEventArgs : public GitEventArgs
+    {
+    internal:
+        GitTransferProgressEventArgs(const git_transfer_progress &stats)
+        {}
+    };
+
+    public ref class GitUpdateTipsEventArgs : public GitEventArgs
+    {
+    internal:
+        GitUpdateTipsEventArgs(const char *refname, const git_oid *a, const git_oid *b)
+        {}
+    };
+
     public ref class GitClient : GitClientContext
     {
         static ICollection<GitLibrary^>^ _gitLibraries;
+        initonly Implementation::AprBaton<GitClient^> ^_clientBaton;
+        git_remote_callbacks *_callbacks;
     public:
-        GitClient() {}
+        GitClient();
+
+    internal:
+        git_remote_callbacks *get_callbacks();
 
     private:
         static void AssertNotBare(GitRepository ^repository);
@@ -100,6 +140,23 @@ namespace SharpGit {
             }
         }
 
+    protected:
+        virtual void OnProgress(GitProgressEventArgs ^e) {}
+        virtual void OnRemoteCompleted(GitRemoteCompletedEventArgs ^e) {}
+        virtual void OnCredentials(GitCredentialsEventArgs ^e) {}
+        virtual void OnTransferProgress(GitTransferProgressEventArgs ^e) {}
+        virtual void OnUpdateTips(GitUpdateTipsEventArgs ^e) {}
+
+    internal:
+        void InvokeProgress(GitProgressEventArgs ^e) { OnProgress(e); }
+        void InvokeRemoteCompleted(GitRemoteCompletedEventArgs ^e) { OnRemoteCompleted(e); }
+        void InvokeCredentials(git_cred*& creds, GitCredentialsEventArgs ^e)
+        {
+            OnCredentials(e);
+            // ### TODO: Fill creds
+        }
+        void InvokeTransferProgress(GitTransferProgressEventArgs ^e) { OnTransferProgress(e); }
+        void InvokeUpdateTips(GitUpdateTipsEventArgs ^e) { OnUpdateTips(e); }
     private:
         ~GitClient();
     };

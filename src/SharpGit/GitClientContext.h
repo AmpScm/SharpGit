@@ -63,6 +63,12 @@ namespace SharpGit {
             static System::String^ Utf8_PtrToString(const char *ptr, int length);
             static System::String ^StringFromDirentNoPool(const char *dirent);
             static System::String ^StringFromDirent(const char *dirent, GitPool ^pool);
+
+        internal:
+            static int WrapError(Exception ^e)
+            {
+                return -1;
+            }
         };
 
         private ref class GitPool
@@ -119,6 +125,56 @@ namespace SharpGit {
 
             git_strarray* AllocStringArray(String ^path);
             git_strarray* AllocStringArray(IEnumerable<String^> ^path);
+        };
+
+        using System::Runtime::InteropServices::GCHandle;
+
+        generic<typename T>
+        ref class AprBaton : public IDisposable
+        {
+            GCHandle _handle;
+
+        public:
+            AprBaton(T value)
+            {
+                if (value == nullptr)
+                    throw gcnew ArgumentNullException("value");
+
+                _handle = GCHandle::Alloc(value, System::Runtime::InteropServices::GCHandleType::WeakTrackResurrection);
+            }
+
+        private:
+            !AprBaton()
+            {
+                if (_handle.IsAllocated)
+                    _handle.Free();
+            }
+
+            ~AprBaton()
+            {
+                if (_handle.IsAllocated)
+                    _handle.Free();
+            }
+        public:
+            static T Get(IntPtr value)
+            {
+                return (T)GCHandle::FromIntPtr(value).Target;
+            }
+
+            static T Get(void* ptr)
+            {
+                return (T)GCHandle::FromIntPtr((IntPtr)ptr).Target;
+            }
+
+
+            property void* Handle
+            {
+                [System::Diagnostics::DebuggerStepThrough]
+                void *get()
+                {
+                    return (void *)GCHandle::ToIntPtr(_handle);
+                }
+            }
         };
     }
 
@@ -235,7 +291,7 @@ namespace SharpGit {
         }
     };
 
-        public ref class GitSignature : public GitBase
+    public ref class GitSignature : public GitBase
     {
         literal __int64 DELTA_EPOCH_AS_FILETIME = 116444736000000000i64;
         DateTime _when;
@@ -245,7 +301,7 @@ namespace SharpGit {
         int _offset;
 
     internal:
-        const git_signature * Alloc(GitRepository^ repository, GitPool ^pool);
+        git_signature * Alloc(GitRepository^ repository, GitPool ^pool);
 
     internal:
         GitSignature(const git_signature *from)

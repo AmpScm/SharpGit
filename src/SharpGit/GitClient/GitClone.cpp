@@ -8,22 +8,25 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-const git_clone_options * GitCloneArgs::MakeCloneOptions(GitPool ^pool)
+const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callbacks *cb, GitPool ^pool)
 {
     if (! pool)
         throw gcnew ArgumentNullException("pool");
 
     git_clone_options *opts = (git_clone_options *)pool->Alloc(sizeof(*opts));
 
-    opts->version = GIT_CLONE_OPTIONS_VERSION;
+    git_clone_init_options(opts, GIT_CLONE_OPTIONS_VERSION);
+
     opts->bare = CreateBareRepository;
 
     const git_checkout_options *coo = MakeCheckOutOptions(pool);
     opts->checkout_opts = *coo;
-
-    git_remote_callbacks * cb = (git_remote_callbacks *)pool->Alloc(sizeof(*cb));
-    cb->version = GIT_REMOTE_CALLBACKS_VERSION;
     opts->remote_callbacks = *cb;
+
+    opts->signature = Signature->Alloc(nullptr, pool);
+    opts->ignore_cert_errors = IgnoreCertificateErrors;
+    opts->remote_name = RemoteName ? pool->AllocString(RemoteName) : nullptr;
+    opts->checkout_branch = BranchName ? pool->AllocString(BranchName) : nullptr;
 
     return opts;
 }
@@ -76,7 +79,7 @@ bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneA
 
     if (args->Synchronous)
     {
-        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), args->MakeCloneOptions(pool));
+        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), args->MakeCloneOptions(get_callbacks(), pool));
     }
     else
         throw gcnew NotImplementedException();

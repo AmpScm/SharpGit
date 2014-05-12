@@ -12,7 +12,7 @@ using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 using System::Collections::Generic::List;
 
-const git_signature * GitSignature::Alloc(GitRepository^ repository, GitPool ^pool)
+git_signature * GitSignature::Alloc(GitRepository^ repository, GitPool ^pool)
 {
     git_signature *sig = (git_signature *)pool->Alloc(sizeof(*sig));
 
@@ -21,9 +21,9 @@ const git_signature * GitSignature::Alloc(GitRepository^ repository, GitPool ^po
 
     String ^name = Name;
     String ^emailAddress = EmailAddress;
-    if (!name)
+    if (!name && repository)
         repository->Configuration->TryGetString(GitConfigurationKeys::UserName, name);
-    if (!emailAddress)
+    if (!emailAddress && repository)
         repository->Configuration->TryGetString(GitConfigurationKeys::UserEmail, emailAddress);
 
     sig->name = const_cast<char*>(pool->AllocString(name));
