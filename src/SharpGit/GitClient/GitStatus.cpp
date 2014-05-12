@@ -19,7 +19,7 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
 {
     git_status_options *opts = (git_status_options *)pool->Alloc(sizeof(*opts));
 
-    opts->version = GIT_STATUS_OPTIONS_VERSION;
+    git_status_init_options(opts, GIT_STATUS_OPTIONS_VERSION);
 
     if (! this->WorkingDirectoryStatus)
         opts->show = GIT_STATUS_SHOW_INDEX_ONLY;
@@ -48,6 +48,14 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
     }
     else
         opts->flags |= GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
+
+    opts->flags |= GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX;
+    opts->flags |= GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR;
+
+    //opts->flags |= GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY;
+    opts->flags |= GIT_STATUS_OPT_RENAMES_FROM_REWRITES;
+    //opts->flags |= GIT_STATUS_OPT_NO_REFRESH;
+    //opts->flags |= GIT_STATUS_OPT_UPDATE_INDEX;
 
     return opts;
 }

@@ -387,5 +387,33 @@ namespace SharpGit.Tests
                 }
             }
         }
+
+        [TestMethod]
+        public void ClonePublic()
+        {
+            string repos = GetTempPath();
+            using (GitClient git = new GitClient())
+            {
+                GitCloneArgs ca = new GitCloneArgs();
+                ca.Synchronous = true;
+
+                git.Clone(new Uri("https://github.com/libgit2/TestGitRepository.git"), repos, ca);
+
+                List<string> found = new List<string>();
+
+                GitStatusArgs sa = new GitStatusArgs();
+                sa.IncludeUnmodified = true;
+
+                git.Status(repos, sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        found.Add(e.RelativePath);
+                    });
+
+                Assert.That(found.Count, Is.EqualTo(8));
+                Assert.That(found, Is.All.Not.Null);
+                Assert.That(found, Is.Unique);
+            }
+        }
     }
 }
