@@ -30,6 +30,7 @@ bool GitClient::Fetch(String ^localRepository, GitFetchArgs ^ args)
     {
         try
         {
+            rm->SetCallbacks(get_callbacks());
             rm->Connect(true, args);
             rm->Download(args);
             rm->UpdateTips(args);
