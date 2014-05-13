@@ -5,6 +5,13 @@
 namespace SharpGit {
     namespace Plumbing {
 
+        public enum class GitTagSynchronize
+        {
+            Auto = GIT_REMOTE_DOWNLOAD_TAGS_AUTO,
+            None = GIT_REMOTE_DOWNLOAD_TAGS_NONE,
+            All = GIT_REMOTE_DOWNLOAD_TAGS_ALL
+        };
+
         public ref class GitRemote : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
@@ -37,10 +44,24 @@ namespace SharpGit {
             bool Disconnect(GitArgs ^args);
             bool UpdateTips(GitCreateRefArgs ^args);
 
+            bool Save(GitArgs ^args);
+
         public:
             property String^ Name
             {
                 String ^ get();
+            }
+
+            property GitTagSynchronize TagSynchronize
+            {
+                GitTagSynchronize get()
+                {
+                    return (GitTagSynchronize)git_remote_autotag(Handle);
+                }
+                void set(GitTagSynchronize value)
+                {
+                    git_remote_set_autotag(Handle, (git_remote_autotag_option_t)value);
+                }
             }
         };
 

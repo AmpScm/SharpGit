@@ -50,7 +50,7 @@ GitRemote::~GitRemote()
 String ^ GitRemote::Name::get()
 {
     if (!_name && _remote)
-        _name = GitBase::Utf8_PtrToString(git_remote_name(_remote));
+        _name = GitBase::Utf8_PtrToString(git_remote_name(Handle));
 
     return _name;
 }
@@ -84,6 +84,13 @@ bool GitRemote::UpdateTips(GitCreateRefArgs ^args)
     GitPool pool(_repository->Pool);
 
     GIT_THROW(git_remote_update_tips(Handle, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
+    return true;
+}
+
+bool GitRemote::Save(GitArgs ^args)
+{
+    GIT_THROW(git_remote_save(Handle));
+
     return true;
 }
 
@@ -128,7 +135,15 @@ bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
 
     git_remote *rm;
 
-    if (!git_remote_load(&rm, _repository->Handle, pool.AllocString(name)))
+    const char *pName = pool.AllocString(name);
+
+    if (!git_remote_is_valid_name(pName))
+    {
+        value = nullptr;
+        return false;
+    }
+
+    if (!git_remote_load(&rm, _repository->Handle, pName))
     {
         giterr_clear();
         value = nullptr;
@@ -150,3 +165,4 @@ GitRemote ^ GitRemoteCollection::CreateAnonymous(Uri ^remoteRepository)
 
     return gcnew GitRemote(_repository, rm);
 }
+

@@ -476,6 +476,8 @@ namespace SharpGit.Tests
                     foreach(GitRemote r in repo.Remotes)
                     {
                         Assert.That(r.Name, Is.Not.Null);
+                        Assert.That(r.TagSynchronize, Is.EqualTo(GitTagSynchronize.Auto));
+                        Assert.That(r.Save(new GitFetchArgs()));
                     }
                 }
             }
