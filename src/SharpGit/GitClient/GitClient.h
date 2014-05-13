@@ -12,6 +12,7 @@ namespace SharpGit {
     ref class GitCommitArgs;
     ref class GitStageArgs;
     ref class GitUnstageArgs;
+    ref class GitFetchArgs;
 
     namespace Implementation {
         ref class GitLibrary;
@@ -111,6 +112,9 @@ namespace SharpGit {
 
         bool Unstage(IEnumerable<String^>^ paths);
         bool Unstage(IEnumerable<String^>^ paths, GitUnstageArgs^ args);
+
+        bool Fetch(String ^localRepository);
+        bool Fetch(String ^localRepository, GitFetchArgs ^ args);
 
     private:
         bool CloneInternal(const char *rawRepository, String ^path, GitCloneArgs ^args, GitPool ^pool);

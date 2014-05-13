@@ -42,3 +42,53 @@ using System::Collections::Generic::IEnumerator;
 using System::Collections::Generic::KeyValuePair;
 
 #include "GitId.h"
+
+#define GIT_THROW(expr)                                   \
+    do                                                    \
+    {                                                     \
+        int __git_throw_r = (expr);                       \
+                                                          \
+        if (__git_throw_r)                                \
+          {                                               \
+              Exception ^__git_throw_ex =                 \
+                  GitException::Create(__git_throw_r,     \
+                                       giterr_last());    \
+              giterr_clear();                             \
+              throw __git_throw_ex;                       \
+          }                                               \
+    } while(0)
+
+#define GIT_IF(expr)                                      \
+    if (expr)                                             \
+    { giterr_clear(); }                                   \
+    else
+
+struct Git_buf : public git_buf
+{
+    Git_buf()
+    {
+        ptr = "";
+        asize = size = 0;
+    }
+
+    ~Git_buf()
+    {
+        if (ptr)
+            git_buf_free(this);
+    }
+};
+
+struct Git_strarray : public git_strarray
+{
+    Git_strarray()
+    {
+        count = 0;
+        strings = nullptr;
+    }
+
+    ~Git_strarray()
+    {
+        if (strings)
+            git_strarray_free(this);
+    }
+};

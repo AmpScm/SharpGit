@@ -10,8 +10,10 @@ namespace SharpGit {
             initonly String ^_name;
             initonly int _type;
             bool _resolvedUpstream;
+            bool _resolvedUpstreamName;
             GitReference^ _reference;
             GitReference^ _upstreamReference;
+            String ^_upstreamName;
 
         internal:
             GitBranch(GitRepository^ repository, String ^name, git_branch_t type)
@@ -96,6 +98,16 @@ namespace SharpGit {
                 bool get();
             }
 
+            property bool IsTracking
+            {
+                bool get();
+            }
+
+            property GitBranch ^ TrackedBranch
+            {
+                GitBranch ^ get();
+            }
+
             property String ^ RemoteName
             {
                 String ^ get();
@@ -103,22 +115,12 @@ namespace SharpGit {
 
             property GitReference ^ UpstreamReference
             {
-                GitReference ^ get()
-                {
-                    if (!_upstreamReference && !_resolvedUpstream)
-                    {
-                        _resolvedUpstream = true;
+                GitReference ^ get();
+            }
 
-                        git_reference *ref;
-
-                        if (!git_branch_upstream(&ref, Reference->Handle))
-                        {
-                            _upstreamReference = gcnew GitReference(_repository, ref);
-                        }
-                    }
-
-                    return _upstreamReference;
-                }
+            property String ^ UpstreamName
+            {
+                String ^ get();
             }
         };
 
@@ -156,11 +158,14 @@ namespace SharpGit {
             bool Create(GitCommit^ commit, String^ name, [Out] GitBranch^% branch);
             bool Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args, [Out] GitBranch^% branch);
 
+
+
         private:
             IEnumerable<GitBranch^>^ GetEnumerable(git_branch_t flags);
 
         public:
             //bool Contains(GitReference ^reference);
+          bool TryGet(String^ name, [Out]GitBranch ^%branch);
 
         private:
             virtual System::Collections::IEnumerator^ GetObjectEnumerator() sealed = System::Collections::IEnumerable::GetEnumerator

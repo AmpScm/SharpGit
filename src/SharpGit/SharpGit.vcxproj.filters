@@ -92,6 +92,9 @@
     <ClCompile Include="Plumbing\GitBranch.cpp">
       <Filter>Plumbing</Filter>
     </ClCompile>
+    <ClCompile Include="GitClient\GitFetch.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />
@@ -181,6 +184,9 @@
     <ClInclude Include="UnmanagedStructs.h" />
     <ClInclude Include="Plumbing\GitRemote.h">
       <Filter>Plumbing</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\Args\GitFetchArgs.h">
+      <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

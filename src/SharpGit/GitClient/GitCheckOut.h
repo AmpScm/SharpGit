@@ -6,18 +6,18 @@ namespace SharpGit {
 
     public ref class GitClientRemoteArgs abstract : public GitClientArgs
     {
-        bool _synchronous;
+        bool _asynchronous;
 
     public:
         property bool Synchronous
         {
             bool get()
             {
-                return _synchronous;
+                return !_asynchronous;
             }
             void set(bool value)
             {
-                _synchronous = value;
+                _asynchronous = !value;
             }
         }
     };

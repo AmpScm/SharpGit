@@ -55,6 +55,38 @@ String ^ GitRemote::Name::get()
     return _name;
 }
 
+void GitRemote::SetCallbacks(const git_remote_callbacks *callbacks)
+{
+    GIT_THROW(git_remote_set_callbacks(Handle, callbacks));
+}
+
+bool GitRemote::Connect(bool forFetch, GitArgs ^args)
+{
+    GIT_THROW(git_remote_connect(Handle, forFetch ? GIT_DIRECTION_FETCH : GIT_DIRECTION_PUSH));
+
+    return true;
+}
+
+bool GitRemote::Download(GitArgs ^args)
+{
+    GIT_THROW(git_remote_download(Handle));
+
+    return true;
+}
+bool GitRemote::Disconnect(GitArgs ^args)
+{
+    git_remote_disconnect(Handle);
+    return true;
+}
+
+bool GitRemote::UpdateTips(GitCreateRefArgs ^args)
+{
+    GitPool pool(_repository->Pool);
+
+    GIT_THROW(git_remote_update_tips(Handle, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
+    return true;
+}
+
 GitRemoteCollection^ GitRepository::Remotes::get()
 {
     if (!_remotes)
@@ -70,5 +102,51 @@ GitRemoteCollection^ GitRepository::Remotes::get()
 
 System::Collections::Generic::IEnumerator<GitRemote^>^ GitRemoteCollection::GetEnumerator()
 {
-    throw gcnew NotImplementedException();
+    Git_strarray remotes;
+    GIT_THROW(git_remote_list(&remotes, _repository->Handle));
+
+    array<GitRemote^>^ gitRemotes = gcnew array<GitRemote^>(remotes.count);
+
+    for (int i = 0; i < remotes.count; i++)
+    {
+        git_remote *rm;
+
+        GIT_THROW(git_remote_load(&rm, _repository->Handle, remotes.strings[i]));
+
+        gitRemotes[i] = gcnew GitRemote(_repository, rm);
+    }
+
+    return ((System::Collections::Generic::IEnumerable<GitRemote^>^)gitRemotes)->GetEnumerator();
+}
+
+bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
+{
+    if (String::IsNullOrEmpty(name))
+        throw gcnew ArgumentNullException("name");
+
+    GitPool pool(_repository->Pool);
+
+    git_remote *rm;
+
+    if (!git_remote_load(&rm, _repository->Handle, pool.AllocString(name)))
+    {
+        giterr_clear();
+        value = nullptr;
+        return false;
+    }
+
+    value = gcnew GitRemote(_repository, rm);
+    return true;
+}
+
+GitRemote ^ GitRemoteCollection::CreateAnonymous(Uri ^remoteRepository)
+{
+    GitPool pool(_repository->Pool);
+    git_remote *rm;
+
+    GIT_THROW(git_remote_create_anonymous(&rm, _repository->Handle,
+                                          svn_uri_canonicalize(pool.AllocString(remoteRepository->AbsoluteUri), pool.Handle),
+                                          nullptr));
+
+    return gcnew GitRemote(_repository, rm);
 }

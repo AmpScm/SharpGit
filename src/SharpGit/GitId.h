@@ -305,5 +305,8 @@ namespace SharpGit {
 
             info->AddValue("_err", (int)_err);
         }
+
+    internal:
+        static Exception ^Create(int errorcode, const git_error *err);
     };
 }

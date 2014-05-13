@@ -426,17 +426,57 @@ namespace SharpGit.Tests
                 Assert.That(found, Is.All.Not.Null);
                 Assert.That(found, Is.Unique);
 
+                GitFetchArgs fa = new GitFetchArgs();
+                fa.All = true;
+                git.Fetch(repos, fa);
+
                 using (GitRepository repo = new GitRepository(repos))
                 {
                     Assert.That(repo.HeadBranch, Is.Not.Null);
 
+                    Assert.That(repo.HeadBranch.Name, Is.EqualTo("refs/heads/master"));
                     Assert.That(repo.HeadBranch.UpstreamReference, Is.Not.Null);
                     Assert.That(repo.HeadBranch.UpstreamReference.Name, Is.EqualTo("refs/remotes/origin/master"));
                     Assert.That(repo.HeadBranch.IsHead, "Head knows that it is head");
+                    //Assert.That(repo.HeadBranch.TrackedBranch, Is.Null);
 
                     Assert.That(repo.HeadBranch.Name, Is.EqualTo("refs/heads/master"));
                     Assert.That(repo.HeadBranch.IsRemote, Is.False, "Local branch");
                     Assert.That(repo.HeadBranch.RemoteName, Is.Null);
+
+                    foreach(GitBranch b in repo.Branches.Remote)
+                    {
+                        Assert.That(b.IsRemote, "Remote branch");
+                        Assert.That(b.IsLocal, Is.False, "Not local");
+                        Assert.That(b.Name, Is.StringStarting("origin/"));
+                        Assert.That(b.IsHead, Is.False);
+                        Assert.That(b.UpstreamReference, Is.Null);
+                        Assert.That(b.UpstreamName, Is.Null);
+                        Assert.That(b.RemoteName, Is.Null);
+                    }
+
+                    foreach (GitBranch b in repo.Branches.Local)
+                    {
+                        Assert.That(b.IsLocal, "Local branch");
+                        Assert.That(b.IsRemote, Is.False, "Not remote");
+                        Assert.That(b.Name, Is.StringStarting("refs/").Or.EqualTo("master"));
+                        Assert.That(b.IsHead, Is.EqualTo(b.Name == "master"));
+                        Assert.That(b.RemoteName, Is.Null);
+                        if (!b.IsHead)
+                        {
+                            Assert.That(b.UpstreamName, Is.Not.Null);
+
+                            GitBranch tracked = b.TrackedBranch;
+                            Assert.That(tracked, Is.Not.Null, "Have tracked");
+
+                            Assert.That(b.RemoteName, Is.Not.Null);
+                        }
+                    }
+
+                    foreach(GitRemote r in repo.Remotes)
+                    {
+                        Assert.That(r.Name, Is.Not.Null);
+                    }
                 }
             }
         }

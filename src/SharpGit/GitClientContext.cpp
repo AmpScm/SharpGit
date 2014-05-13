@@ -333,3 +333,8 @@ const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
 
     return msg;
 }
+
+Exception ^ GitException::Create(int errorcode, const git_error *err)
+{
+    return gcnew GitException((SharpGit::Plumbing::GitError)err->klass, GitBase::Utf8_PtrToString(err->message));
+}

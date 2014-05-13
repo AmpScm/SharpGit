@@ -11,11 +11,31 @@ namespace SharpGit {
             git_remote *_remote;
             String^ _name;
 
-        private:
+        internal:
             GitRemote(GitRepository ^repository, git_remote *remote);
 
+        private:
             ~GitRemote();
             !GitRemote();
+
+        internal:
+            void SetCallbacks(const git_remote_callbacks *callbacks);
+            property git_remote * Handle
+            {
+                git_remote * get()
+                {
+                    if (!_remote)
+                        throw gcnew ObjectDisposedException("GitRemote");
+
+                    return _remote;
+                }
+            }
+
+        public:
+            bool Connect(bool forFetch, GitArgs ^args);
+            bool Download(GitArgs ^args);
+            bool Disconnect(GitArgs ^args);
+            bool UpdateTips(GitCreateRefArgs ^args);
 
         public:
             property String^ Name
@@ -40,6 +60,10 @@ namespace SharpGit {
 
         public:
             virtual System::Collections::Generic::IEnumerator<GitRemote^>^ GetEnumerator();
+
+            bool TryGet(String ^name, [Out] GitRemote ^%value);
+
+            GitRemote ^ CreateAnonymous(Uri ^remoteRepository);
 
         private:
             virtual System::Collections::IEnumerator^ GetObjectEnumerator() sealed

@@ -250,6 +250,7 @@
     <ClCompile Include="GitClient\GitDelete.cpp" />
     <ClCompile Include="GitClient\GitAdd.cpp" />
     <ClCompile Include="GitClient\GitClient.cpp" />
+    <ClCompile Include="GitClient\GitFetch.cpp" />
     <ClCompile Include="GitClient\GitStage.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
@@ -277,6 +278,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GitClientContext.h" />
+    <ClInclude Include="GitClient\Args\GitFetchArgs.h" />
     <ClInclude Include="GitClient\GitAdd.h" />
     <ClInclude Include="GitClient\GitCheckOut.h" />
     <ClInclude Include="GitClient\GitClient.h" />
