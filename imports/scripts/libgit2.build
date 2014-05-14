@@ -74,6 +74,12 @@
         <include name="**/*.h" />
       </fileset>
     </copy>
+    
+    <copy todir="${intDir}/include/git2/private">
+      <fileset basedir="${libgit2Dir}/src">
+        <include name="*.h" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="copy-result" depends="libgit2-build,misc-copy,copy-licenses">
