@@ -258,6 +258,7 @@
     <ClCompile Include="Plumbing\deep_wrap.c">
       <CompileAsManaged>false</CompileAsManaged>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
     </ClCompile>
     <ClCompile Include="Plumbing\GitBranch.cpp" />
     <ClCompile Include="Plumbing\GitCommit.cpp" />
