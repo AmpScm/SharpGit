@@ -42,7 +42,7 @@ using System::Collections::Generic::IEnumerator;
 using System::Collections::Generic::KeyValuePair;
 
 #include "GitId.h"
-
+#pragma warning(disable: 4127) // Conditiona; expression is constant
 #define GIT_THROW(expr)                                   \
     do                                                    \
     {                                                     \

@@ -95,6 +95,15 @@
     <ClCompile Include="GitClient\GitFetch.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="GitClient\GitPush.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Plumbing\deep_wrap.c">
+      <Filter>Plumbing</Filter>
+    </ClCompile>
+    <ClCompile Include="Plumbing\GitRefSpec.cpp">
+      <Filter>Plumbing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />
@@ -187,6 +196,15 @@
     </ClInclude>
     <ClInclude Include="GitClient\Args\GitFetchArgs.h">
       <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\Args\GitPushArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Plumbing\deep_wrap.h">
+      <Filter>Plumbing</Filter>
+    </ClInclude>
+    <ClInclude Include="Plumbing\GitRefSpec.h">
+      <Filter>Plumbing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

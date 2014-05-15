@@ -2,6 +2,8 @@
 
 #include "GitRepository.h"
 #include "GitRemote.h"
+#include "GitClient/Args/GitPushArgs.h"
+#include "GitRefSpec.h"
 
 #include "UnmanagedStructs.h"
 
@@ -94,6 +96,11 @@ bool GitRemote::Save(GitArgs ^args)
     return true;
 }
 
+void GitRemote::Stop(GitArgs ^args)
+{
+    git_remote_stop(Handle);
+}
+
 GitRemoteCollection^ GitRepository::Remotes::get()
 {
     if (!_remotes)
@@ -166,3 +173,136 @@ GitRemote ^ GitRemoteCollection::CreateAnonymous(Uri ^remoteRepository)
     return gcnew GitRemote(_repository, rm);
 }
 
+System::Uri ^ GitRemote::Uri::get()
+{
+    return gcnew System::Uri(GitBase::Utf8_PtrToString(git_remote_url(Handle)), UriKind::Absolute);
+}
+
+void GitRemote::Uri::set(System::Uri ^value)
+{
+    if (!value || !value->IsAbsoluteUri)
+        throw gcnew InvalidOperationException();
+
+    GitPool pool;
+    GIT_THROW(git_remote_set_url(Handle, svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
+}
+
+System::Uri ^ GitRemote::PushUri::get()
+{
+    return gcnew System::Uri(GitBase::Utf8_PtrToString(git_remote_pushurl(Handle)), UriKind::Absolute);
+}
+
+void GitRemote::PushUri::set(System::Uri ^value)
+{
+    if (!value || !value->IsAbsoluteUri)
+        throw gcnew InvalidOperationException();
+
+    GitPool pool;
+    GIT_THROW(git_remote_set_pushurl(Handle, svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
+}
+
+IEnumerable<GitRefSpec^>^ GitRemote::FetchRefSpecs::get()
+{
+    Git_strarray arr;
+
+    GIT_THROW(git_remote_get_fetch_refspecs(&arr, Handle));
+
+    array<GitRefSpec^> ^specs = gcnew array<GitRefSpec^>(arr.count);
+
+    for (int i = 0; i < arr.count; i++)
+    {
+        specs[i] = GitRefSpec::Parse(GitBase::Utf8_PtrToString(arr.strings[i]));
+    }
+
+    return specs;
+}
+
+void GitRemote::FetchRefSpecs::set(IEnumerable<GitRefSpec^>^ value)
+{
+    throw gcnew NotImplementedException();
+}
+
+IEnumerable<GitRefSpec^>^ GitRemote::PushRefSpecs::get()
+{
+    Git_strarray arr;
+
+    GIT_THROW(git_remote_get_push_refspecs(&arr, Handle));
+
+    array<GitRefSpec^> ^specs = gcnew array<GitRefSpec^>(arr.count);
+
+    for (int i = 0; i < arr.count; i++)
+    {
+        specs[i] = GitRefSpec::Parse(GitBase::Utf8_PtrToString(arr.strings[i]));
+    }
+
+    return specs;
+}
+
+void GitRemote::PushRefSpecs::set(IEnumerable<GitRefSpec^>^ value)
+{
+    throw gcnew NotImplementedException();
+}
+
+
+void GitRemote::SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
+                                 git_push_transfer_progress transfer_progress_cb,
+                                 git_push_status push_status_cb,
+                                 void *push_payload)
+{
+    _pack_progress_cb = pack_progress_cb;
+    _transfer_progress_cb = transfer_progress_cb;
+    _push_status_cb =  push_status_cb;
+    _push_payload = push_payload;
+}
+
+bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
+{
+    if (!refspecs)
+        throw gcnew ArgumentNullException("refspecs");
+    else if (!args)
+        throw gcnew ArgumentNullException("args");
+
+    GitPool pool(_repository->Pool);
+    git_push *push;
+    GIT_THROW(git_push_new(&push, Handle));
+
+    try
+    {
+        if (_pack_progress_cb || _transfer_progress_cb)
+            GIT_THROW(git_push_set_callbacks(push, _pack_progress_cb, _push_payload, _transfer_progress_cb, _push_payload));
+
+        GIT_THROW(git_push_set_options(push, args->AllocOptions(%pool)));
+
+        for each(GitRefSpec ^rs in refspecs)
+          {
+              GIT_THROW(git_push_add_refspec(push, pool.AllocString(rs->ToString())));
+          }
+
+        if (!git_push_unpack_ok(push))
+            throw gcnew InvalidOperationException("Remote unpack failed");
+
+        if (_push_status_cb)
+            GIT_THROW(git_push_status_foreach(push, _push_status_cb, _push_payload));
+
+        GIT_THROW(git_push_update_tips(push, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
+
+        GIT_THROW(git_push_finish(push));
+
+        return true;
+    }
+    finally
+    {
+        git_push_free(push);
+    }
+}
+
+const git_push_options * GitPushArgs::AllocOptions(GitPool ^pool)
+{
+    git_push_options *options = (git_push_options *)pool->Alloc(sizeof(*options));
+
+    git_push_init_options(options, GIT_PUSH_OPTIONS_VERSION);
+
+    options->pb_parallelism = 0; // Auto
+
+    return options;
+}

@@ -5,6 +5,7 @@
 #include "GitTree.h"
 #include "GitReference.h"
 #include "GitBranch.h"
+#include "GitRefSpec.h"
 
 using namespace SharpGit::Plumbing;
 using namespace SharpGit;
@@ -110,6 +111,11 @@ GitBranch ^ GitBranch::TrackedBranch::get()
         return result;
 
     return gcnew GitBranch(_repository, name, GIT_BRANCH_REMOTE /* ### ? */);
+}
+
+GitRefSpec ^GitBranch::AsRefSpec()
+{
+    return gcnew GitRefSpec(Name, UpstreamName);
 }
 
 bool GitBranchCollection::TryGet(String^ name, [Out]GitBranch ^%branch)

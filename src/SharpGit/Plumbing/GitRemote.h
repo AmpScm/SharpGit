@@ -3,7 +3,12 @@
 #include "GitRepository.h"
 
 namespace SharpGit {
+    ref class GitPushArgs;
+    using System::Collections::Generic::IEnumerable;
+
     namespace Plumbing {
+
+        ref class GitRefSpec;
 
         public enum class GitTagSynchronize
         {
@@ -12,11 +17,18 @@ namespace SharpGit {
             All = GIT_REMOTE_DOWNLOAD_TAGS_ALL
         };
 
+        typedef int (*git_push_status)(const char *ref, const char *msg, void *data);
+
         public ref class GitRemote : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
             git_remote *_remote;
             String^ _name;
+
+            git_packbuilder_progress _pack_progress_cb;
+            git_push_transfer_progress _transfer_progress_cb;
+            git_push_status _push_status_cb;
+            void *_push_payload;
 
         internal:
             GitRemote(GitRepository ^repository, git_remote *remote);
@@ -27,6 +39,11 @@ namespace SharpGit {
 
         internal:
             void SetCallbacks(const git_remote_callbacks *callbacks);
+            void SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
+                                  git_push_transfer_progress transfer_progress_cb,
+                                  git_push_status _git_push_status_cb,
+                                  void *push_payload);
+
             property git_remote * Handle
             {
                 git_remote * get()
@@ -46,6 +63,11 @@ namespace SharpGit {
 
             bool Save(GitArgs ^args);
 
+            void Stop(GitArgs ^args);
+
+        public:
+            bool Push(IEnumerable<GitRefSpec^>^ references, GitPushArgs ^args);
+
         public:
             property String^ Name
             {
@@ -62,6 +84,42 @@ namespace SharpGit {
                 {
                     git_remote_set_autotag(Handle, (git_remote_autotag_option_t)value);
                 }
+            }
+
+            property bool FetchHead
+            {
+                bool get()
+                {
+                    return git_remote_update_fetchhead(Handle) != 0;
+                }
+                void set(bool value)
+                {
+                    git_remote_set_update_fetchhead(Handle, value);
+                }
+            }
+
+            property System::Uri ^ Uri
+            {
+                System::Uri ^ get();
+                void set(System::Uri ^value);
+            }
+
+            property System::Uri ^ PushUri
+            {
+                System::Uri ^ get();
+                void set(System::Uri ^value);
+            }
+
+            property IEnumerable<GitRefSpec^>^ FetchRefSpecs
+            {
+                IEnumerable<GitRefSpec^>^ get();
+                void set(IEnumerable<GitRefSpec^>^ value);
+            }
+
+            property IEnumerable<GitRefSpec^>^ PushRefSpecs
+            {
+                IEnumerable<GitRefSpec^>^ get();
+                void set(IEnumerable<GitRefSpec^>^ value);
             }
         };
 

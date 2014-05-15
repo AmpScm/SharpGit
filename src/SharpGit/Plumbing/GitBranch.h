@@ -4,6 +4,8 @@
 namespace SharpGit {
     namespace Plumbing {
         ref class GitReference;
+        ref class GitRefSpec;
+
         public ref class GitBranch : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
@@ -121,6 +123,15 @@ namespace SharpGit {
             property String ^ UpstreamName
             {
                 String ^ get();
+            }
+
+        public:
+            GitRefSpec ^AsRefSpec();
+
+        public:
+            static operator GitRefSpec^(GitBranch ^branch)
+            {
+                return (((Object^)branch) != nullptr) ? branch->AsRefSpec() : (GitRefSpec ^)nullptr;
             }
         };
 

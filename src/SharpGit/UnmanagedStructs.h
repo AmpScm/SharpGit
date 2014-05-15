@@ -20,3 +20,9 @@ struct git_branch_iterator
 
 struct git_remote
 {};
+
+struct git_refspec
+{};
+
+struct git_push
+{};

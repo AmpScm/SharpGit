@@ -251,9 +251,14 @@
     <ClCompile Include="GitClient\GitAdd.cpp" />
     <ClCompile Include="GitClient\GitClient.cpp" />
     <ClCompile Include="GitClient\GitFetch.cpp" />
+    <ClCompile Include="GitClient\GitPush.cpp" />
     <ClCompile Include="GitClient\GitStage.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
+    <ClCompile Include="Plumbing\deep_wrap.c">
+      <CompileAsManaged>false</CompileAsManaged>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Plumbing\GitBranch.cpp" />
     <ClCompile Include="Plumbing\GitCommit.cpp" />
     <ClCompile Include="Plumbing\GitConfiguration.cpp" />
@@ -261,6 +266,7 @@
     <ClCompile Include="Plumbing\GitObject.cpp" />
     <ClCompile Include="Plumbing\GitObjectDatabase.cpp" />
     <ClCompile Include="Plumbing\GitReference.cpp" />
+    <ClCompile Include="Plumbing\GitRefSpec.cpp" />
     <ClCompile Include="Plumbing\GitRemote.cpp" />
     <ClCompile Include="Plumbing\GitRepository.cpp" />
     <ClCompile Include="Plumbing\GitTag.cpp" />
@@ -279,6 +285,7 @@
   <ItemGroup>
     <ClInclude Include="GitClientContext.h" />
     <ClInclude Include="GitClient\Args\GitFetchArgs.h" />
+    <ClInclude Include="GitClient\Args\GitPushArgs.h" />
     <ClInclude Include="GitClient\GitAdd.h" />
     <ClInclude Include="GitClient\GitCheckOut.h" />
     <ClInclude Include="GitClient\GitClient.h" />
@@ -293,6 +300,7 @@
     <ClInclude Include="GitClient\GitUnstage.h" />
     <ClInclude Include="GitId.h" />
     <ClInclude Include="GitLibraryAttribute.h" />
+    <ClInclude Include="Plumbing\deep_wrap.h" />
     <ClInclude Include="Plumbing\GitBlob.h" />
     <ClInclude Include="Plumbing\GitBranch.h" />
     <ClInclude Include="Plumbing\GitCommit.h" />
@@ -302,6 +310,7 @@
     <ClInclude Include="Plumbing\GitObject.h" />
     <ClInclude Include="Plumbing\GitObjectDatabase.h" />
     <ClInclude Include="Plumbing\GitReference.h" />
+    <ClInclude Include="Plumbing\GitRefSpec.h" />
     <ClInclude Include="Plumbing\GitRemote.h" />
     <ClInclude Include="Plumbing\GitRepository.h" />
     <ClInclude Include="Plumbing\GitTag.h" />
