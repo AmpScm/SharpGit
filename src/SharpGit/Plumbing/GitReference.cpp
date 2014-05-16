@@ -70,6 +70,19 @@ bool GitReference::Delete(GitArgs ^args)
     }
 }
 
+bool GitReference::EnsureLog()
+{
+    GitPool pool(_repository->Pool);
+    GIT_THROW(git_reference_ensure_log(_repository->Handle, pool.AllocString(Name)));
+    return true;
+}
+
+bool GitReference::HasLog::get()
+{
+    GitPool pool(_repository->Pool);
+    return git_reference_has_log(_repository->Handle, pool.AllocString(Name)) != 0;
+}
+
 GitReferenceCollection^ GitRepository::References::get()
 {
     if (! _references)

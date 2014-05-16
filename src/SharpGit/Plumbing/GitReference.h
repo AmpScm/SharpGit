@@ -83,6 +83,53 @@ namespace SharpGit {
                 String^ get();
             }
 
+            property bool HasLog
+            {
+                bool get();
+            }
+
+            property bool IsBranch
+            {
+                bool get()
+                {
+                    return git_reference_is_branch(Handle) != 0;
+                }
+            }
+
+            property bool IsRemoteTrackingBranch
+            {
+                bool get()
+                {
+                    return git_reference_is_remote(Handle) != 0;
+                }
+            }
+
+            property bool IsNote
+            {
+                bool get()
+                {
+                    return git_reference_is_note(Handle) != 0;
+                }
+            }
+
+            property bool IsTag
+            {
+                bool get()
+                {
+                    return git_reference_is_tag(Handle) != 0;
+                }
+            }
+
+            property String ^ ShortName
+            {
+                String ^ get()
+                {
+                    return GitBase::Utf8_PtrToString(git_reference_shorthand(Handle));
+                }
+            }
+
+            bool EnsureLog();
+
             bool Delete();
             bool Delete(GitArgs ^args);
         };

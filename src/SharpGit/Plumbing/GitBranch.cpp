@@ -29,9 +29,9 @@ bool GitBranch::IsHead::get()
 
 String ^ GitBranch::RemoteName::get()
 {
-    git_buf buf = GIT_BUF_INIT_CONST("", 0);
+    Git_buf buf;
 
-    GitPool pool;
+    GitPool pool(_repository->Pool);
 
     if (!IsRemote)
         return nullptr;
@@ -43,8 +43,6 @@ String ^ GitBranch::RemoteName::get()
     }
 
     String ^result = GitBase::Utf8_PtrToString(buf.ptr, buf.size);
-
-    git_buf_free(&buf);
 
     return result;
 }
@@ -72,8 +70,8 @@ String ^ GitBranch::UpstreamName::get()
     {
         _resolvedUpstreamName = true;
 
-        GitPool pool;
-        git_buf result = GIT_BUF_INIT_CONST("", 0);
+        GitPool pool(_repository->Pool);
+        Git_buf result;
 
         if (!git_branch_upstream_name(&result, _repository->Handle, pool.AllocString(Name)))
         {
@@ -81,8 +79,6 @@ String ^ GitBranch::UpstreamName::get()
         }
         else
             giterr_clear();
-
-        git_buf_free(&result);
     }
 
     return _upstreamName;

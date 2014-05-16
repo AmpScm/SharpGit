@@ -313,7 +313,7 @@ const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
 
     if (normalize || strip)
     {
-        git_buf result = GIT_BUF_INIT_CONST("", 0);
+        Git_buf result;
         String^ msgString = LogMessage ? LogMessage : "";
         msgString = msgString->Replace("\r", "");
         msg = pool->AllocString(msgString);
@@ -326,7 +326,6 @@ const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
             HandleGitError(this, r);
 
         msg = apr_pstrdup(pool->Handle, result.ptr);
-        git_buf_free(&result);
     }
     else
         msg = LogMessage ? pool->AllocString(LogMessage) : "";
