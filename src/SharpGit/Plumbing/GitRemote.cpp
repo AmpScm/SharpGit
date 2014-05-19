@@ -278,6 +278,8 @@ bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
               GIT_THROW(git_push_add_refspec(push, pool.AllocString(rs->ToString())));
           }
 
+        GIT_THROW(git_push_finish(push));
+
         if (!git_push_unpack_ok(push))
             throw gcnew InvalidOperationException("Remote unpack failed");
 

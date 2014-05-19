@@ -40,6 +40,17 @@ namespace SharpGit {
         {}
     };
 
+    [Flags]
+    public enum class GitCredentialTypes
+    {
+        None,
+        Simple = GIT_CREDTYPE_USERPASS_PLAINTEXT,
+        SshKey = GIT_CREDTYPE_SSH_KEY,
+        SshCustom = GIT_CREDTYPE_SSH_CUSTOM,
+        DefaultCredentials = GIT_CREDTYPE_DEFAULT,
+        SshInteractive = GIT_CREDTYPE_SSH_INTERACTIVE,
+    };
+
     public ref class GitCredentialsEventArgs : public GitEventArgs
     {
     internal:

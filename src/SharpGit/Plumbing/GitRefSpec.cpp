@@ -26,7 +26,16 @@ GitRefSpec::GitRefSpec(String ^source, String ^destination, bool updateAlways)
 
 GitRefSpec::GitRefSpec(String ^source, String ^destination)
 {
-    GitRefSpec::GitRefSpec(source, destination, false);
+if (! source)
+        throw gcnew ArgumentNullException("source");
+    else if (! destination)
+        throw gcnew ArgumentNullException("destination");
+
+    GitPool pool;
+
+    _src = GitBase::Utf8_PtrToString(svn_relpath_canonicalize(pool.AllocString(source), pool.Handle));
+    _dst = GitBase::Utf8_PtrToString(svn_relpath_canonicalize(pool.AllocString(destination), pool.Handle));
+    _updateAlways = false;
 }
 
 GitRefSpec::GitRefSpec(const git_refspec &refspec)

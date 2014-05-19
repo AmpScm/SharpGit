@@ -124,8 +124,8 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -152,8 +152,8 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -179,8 +179,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -210,8 +210,8 @@
     </Midl>
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;SharpGit_PLATFORM_SUFFIX=$(Platform);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>

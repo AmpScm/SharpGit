@@ -448,11 +448,11 @@ namespace SharpGit.Tests
                     {
                         Assert.That(b.IsRemote, "Remote branch");
                         Assert.That(b.IsLocal, Is.False, "Not local");
-                        Assert.That(b.Name, Is.StringStarting("origin/"));
+                        Assert.That(b.Name, Is.StringStarting("refs/remotes/origin/"));
                         Assert.That(b.IsHead, Is.False);
                         Assert.That(b.UpstreamReference, Is.Null);
                         Assert.That(b.UpstreamName, Is.Null);
-                        Assert.That(b.RemoteName, Is.Null);
+                        Assert.That(b.RemoteName, Is.EqualTo("origin"));
                     }
 
                     foreach (GitBranch b in repo.Branches.Local)
@@ -460,7 +460,7 @@ namespace SharpGit.Tests
                         Assert.That(b.IsLocal, "Local branch");
                         Assert.That(b.IsRemote, Is.False, "Not remote");
                         Assert.That(b.Name, Is.StringStarting("refs/").Or.EqualTo("master"));
-                        Assert.That(b.IsHead, Is.EqualTo(b.Name == "master"));
+                        Assert.That(b.IsHead, Is.EqualTo(b.ShortName == "master"));
                         Assert.That(b.RemoteName, Is.Null);
                         if (!b.IsHead)
                         {
@@ -490,6 +490,22 @@ namespace SharpGit.Tests
                         }
                     }
                 }
+
+                // libgit2's local push code only supports bare repositories at
+                // this time, so we use a few more clones to test the real push
+
+                string cloneDir = GetTempPath();
+                GitCloneArgs cca = new GitCloneArgs();
+                cca.CreateBareRepository = true;
+                git.Clone(repos, cloneDir, cca);
+
+                string clone2Dir = GetTempPath();
+
+                git.Clone(cloneDir, clone2Dir);
+
+                GitPushArgs pa = new GitPushArgs();
+                pa.Mode = GitPushMode.All;
+                git.Push(clone2Dir, pa);
             }
         }
     }
