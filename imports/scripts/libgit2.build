@@ -75,6 +75,12 @@
       </fileset>
     </copy>
     
+    <copy todir="${release}/include">
+      <fileset basedir="${libgit2Dir}/deps/regex">
+        <include name="regex.h" />
+      </fileset>
+    </copy>
+    
     <copy todir="${intDir}/include/git2/private">
       <fileset basedir="${libgit2Dir}/src">
         <include name="*.h" />
