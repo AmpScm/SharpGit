@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "GitRepository.h"
+#include "GitBranch.h"
 #include "GitReference.h"
 
 using namespace SharpGit;
@@ -81,6 +82,18 @@ bool GitReference::HasLog::get()
 {
     GitPool pool(_repository->Pool);
     return git_reference_has_log(_repository->Handle, pool.AllocString(Name)) != 0;
+}
+
+GitBranch ^ GitReference::AsBranch()
+{
+    if (!IsBranch)
+        throw gcnew InvalidOperationException();
+
+    GitBranch ^branch;
+    if (_repository->Branches->TryGet(Name, branch))
+        return branch;
+
+    return nullptr;
 }
 
 GitReferenceCollection^ GitRepository::References::get()

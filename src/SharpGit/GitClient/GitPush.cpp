@@ -5,9 +5,12 @@
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitRefSpec.h"
+#include "Plumbing/GitBranch.h"
+#include "Plumbing/GitReference.h"
 #include "Plumbing/GitRemote.h"
 
 using namespace System;
+using namespace System::Collections::Generic;
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
@@ -43,20 +46,50 @@ bool GitClient::Push(String ^localRepository, GitPushArgs ^args)
 
 bool GitClient::PushAll(GitRepository ^repo, GitPushArgs ^args)
 {
-    for each (GitRemote ^rm in repo->Remotes)
+    Dictionary<String^, GitRemote^> ^remotes = gcnew Dictionary<String^, GitRemote^>();
+    Dictionary<String^, List<GitRefSpec^>^> ^refSpecs = gcnew Dictionary<String^, List<GitRefSpec^>^>();
+
+    //if (!args->HasTarget)
     {
-        try
+        for each (GitBranch ^branch in repo->Branches)
         {
-            //rm->SetCallbacks(get_callbacks());
-            //rm->Connect(true, args);
-            //rm->Download(args);
-            //rm->UpdateTips(args);
-            //rm->Disconnect(args);
+            GitRemote ^rm;
+            List<GitRefSpec^> ^rs;
+
+            GitBranch ^tracked = branch->TrackedBranch;
+            if (!tracked)
+                continue;
+
+            if (!remotes->ContainsKey(tracked->RemoteName))
+            {
+                if (repo->Remotes->TryGet(tracked->RemoteName, rm))
+                {
+                    remotes->Add(tracked->RemoteName, rm);
+                    refSpecs->Add(tracked->RemoteName, rs = gcnew List<GitRefSpec^>());
+                }
+                else
+                    throw gcnew InvalidOperationException();
+            }
+            else
+                rs = refSpecs[tracked->RemoteName];
+
+            rs->Add(branch->AsRefSpec());
         }
-        finally
-        {
-            delete rm;
-        }
+    }
+    /* else: set from target */
+
+    for each (KeyValuePair<String^, GitRemote^>^ kv in remotes)
+    {
+        GitRemote ^rm = kv->Value;
+
+        rm->SetCallbacks(get_callbacks());
+        rm->Connect(false, args);
+        // rm->SetPushCallbacks(/* ###*/)
+        rm->Push(refSpecs[rm->Name], args);
+
+        rm->Disconnect(args);
+
+        delete rm;
     }
     return true;
 }

@@ -150,7 +150,7 @@ bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
         return false;
     }
 
-    if (!git_remote_load(&rm, _repository->Handle, pName))
+    if (git_remote_load(&rm, _repository->Handle, pName))
     {
         giterr_clear();
         value = nullptr;

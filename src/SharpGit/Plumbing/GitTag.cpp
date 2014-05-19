@@ -139,18 +139,9 @@ IEnumerable<GitBranch^>^ GitBranchCollection::GetEnumerable(git_branch_t flags)
     git_branch_t branch_type;
     while (! git_branch_next(&ref, &branch_type, iter))
     {
-        const char *name;
-        String^ nm;
-
-        if (0 == git_branch_name(&name, ref))
-            nm = GitBase::Utf8_PtrToString(name);
-        else
-            nm = "";
-
         GitReference ^gr = gcnew GitReference(_repository, ref);
 
-
-        branches->Add(gcnew GitBranch(_repository, nm, gr, branch_type));
+        branches->Add(gcnew GitBranch(_repository, gr, branch_type));
     }
     git_branch_iterator_free(iter);
 

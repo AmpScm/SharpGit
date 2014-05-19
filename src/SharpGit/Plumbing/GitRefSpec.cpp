@@ -12,9 +12,9 @@ using System::Collections::Generic::List;
 
 GitRefSpec::GitRefSpec(String ^source, String ^destination, bool updateAlways)
 {
-    if (String::IsNullOrEmpty(source))
+    if (! source)
         throw gcnew ArgumentNullException("source");
-    else if (String::IsNullOrEmpty(destination))
+    else if (! destination)
         throw gcnew ArgumentNullException("destination");
 
     GitPool pool;

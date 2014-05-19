@@ -9,7 +9,7 @@ namespace SharpGit {
         public ref class GitBranch : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
-            initonly String ^_name;
+            String ^_name, ^_shortName;
             initonly int _type;
             bool _resolvedUpstream;
             bool _resolvedUpstreamName;
@@ -45,28 +45,27 @@ namespace SharpGit {
                 _type = GIT_BRANCH_LOCAL;
             }
 
-            GitBranch(GitRepository^ repository, String ^name, GitReference^ reference, git_branch_t type)
+            GitBranch(GitRepository^ repository, GitReference^ reference, git_branch_t type)
             {
                 if (! repository)
                     throw gcnew ArgumentNullException("repository");
-                else if (String::IsNullOrEmpty(name))
-                    throw gcnew ArgumentNullException("name");
                 else if (! reference)
                     throw gcnew ArgumentNullException("reference");
 
                 _repository = repository;
-                _name = name;
                 _reference = reference;
                 _type = type;
             }
 
         public:
-            property String^ Name
+            property String ^ Name
             {
-                String^ get()
-                {
-                    return _name;
-                }
+                String ^ get();
+            }
+
+            property String^ ShortName
+            {
+                String ^ get();
             }
 
             property GitReference^ Reference
@@ -127,12 +126,6 @@ namespace SharpGit {
 
         public:
             GitRefSpec ^AsRefSpec();
-
-        public:
-            static operator GitRefSpec^(GitBranch ^branch)
-            {
-                return (((Object^)branch) != nullptr) ? branch->AsRefSpec() : (GitRefSpec ^)nullptr;
-            }
         };
 
 

@@ -47,6 +47,30 @@ String ^ GitBranch::RemoteName::get()
     return result;
 }
 
+String ^ GitBranch::Name::get()
+{
+    if (!_name)
+        _name = _reference->Name;
+
+    return _name;
+}
+
+String ^ GitBranch::ShortName::get()
+{
+    if (!_shortName)
+    {
+        const char *name;
+        if (!git_branch_name(&name, _reference->Handle))
+        {
+            _shortName = GitBase::Utf8_PtrToString(name);
+        }
+        else
+            giterr_clear();
+    }
+    return _shortName;
+}
+
+
 GitReference ^ GitBranch::UpstreamReference::get()
 {
     if (!_upstreamReference && !_resolvedUpstream)
@@ -95,15 +119,12 @@ bool GitBranch::IsTracking::get()
 
 GitBranch ^ GitBranch::TrackedBranch::get()
 {
-    if (!IsRemote)
-        return nullptr;
-
     String ^name = UpstreamName;
     if (!name)
         return nullptr;
 
     GitBranch ^result;
-    if (_repository->Branches->TryGet(Name, result))
+    if (_repository->Branches->TryGet(name, result))
         return result;
 
     return gcnew GitBranch(_repository, name, GIT_BRANCH_REMOTE /* ### ? */);
@@ -118,7 +139,7 @@ bool GitBranchCollection::TryGet(String^ name, [Out]GitBranch ^%branch)
 {
     for each(GitBranch ^b in this)
     {
-        if (branch->Name == name)
+        if (b->Name == name)
         {
             branch = b;
             return true;

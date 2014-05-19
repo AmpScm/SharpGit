@@ -60,7 +60,11 @@ static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const 
 
         client->InvokeCredentials(*cred, e);
 
-        return 0;
+        if (*cred != nullptr)
+            return 0;
+
+        giterr_set_str(GITERR_CALLBACK, "Callback didn't provide credentials");
+        return -1;
     }
     catch (Exception ^e)
     {

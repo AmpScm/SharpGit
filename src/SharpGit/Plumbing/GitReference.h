@@ -88,7 +88,7 @@ namespace SharpGit {
                 bool get();
             }
 
-            property bool IsBranch
+            property bool IsLocalBranch
             {
                 bool get()
                 {
@@ -101,6 +101,14 @@ namespace SharpGit {
                 bool get()
                 {
                     return git_reference_is_remote(Handle) != 0;
+                }
+            }
+
+            property bool IsBranch
+            {
+                bool get()
+                {
+                    return IsLocalBranch || IsRemoteTrackingBranch;
                 }
             }
 
@@ -132,6 +140,9 @@ namespace SharpGit {
 
             bool Delete();
             bool Delete(GitArgs ^args);
+
+        public:
+            GitBranch ^AsBranch();
         };
 
         public ref class GitReferenceCollection sealed : public Implementation::GitBase,
