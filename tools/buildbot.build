@@ -153,28 +153,40 @@
     <delete file="release/SharpGit.xml" />
     
     <copy todir="release/net20/x86">
-      <fileset basedir="src/SharpGit/bin/Win32/release">
+      <fileset basedir="src/SharpGit.UI/bin/x86/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
+        <include name="SharpGit.UI.dll" />
+        <include name="SharpGit.UI.pdb" />
+        <include name="SharpGit.UI.xml" />
       </fileset>
     </copy>
     <copy todir="release/net20/x64">
-      <fileset basedir="src/SharpGit/bin/x64/release">
+      <fileset basedir="src/SharpGit.UI/bin/x64/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
+        <include name="SharpGit.UI.dll" />
+        <include name="SharpGit.UI.pdb" />
+        <include name="SharpGit.UI.xml" />
       </fileset>
     </copy>
     
     <copy todir="release/net40/x86">
-      <fileset basedir="v40/src/SharpGit/bin/Win32/release">
+      <fileset basedir="v40/src/SharpGit.UI/bin/x86/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
+        <include name="SharpGit.UI.dll" />
+        <include name="SharpGit.UI.pdb" />
+        <include name="SharpGit.UI.xml" />
       </fileset>
     </copy>
     <copy todir="release/net40/x64">
-      <fileset basedir="v40/src/SharpGit/bin/x64/release">
+      <fileset basedir="v40/src/SharpGit.UI/bin/x64/release">
         <include name="SharpGit.dll" />
         <include name="SharpGit.pdb" />
+        <include name="SharpGit.UI.dll" />
+        <include name="SharpGit.UI.pdb" />
+        <include name="SharpGit.UI.xml" />
       </fileset>
     </copy>
 

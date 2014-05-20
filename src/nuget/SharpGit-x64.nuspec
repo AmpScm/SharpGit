@@ -19,9 +19,15 @@
     <file src="net20/x64/SharpGit.dll" target="lib/net20" />
     <file src="net20/x64/SharpGit.xml" target="lib/net20" />
     <file src="net20/x64/SharpGit.pdb" target="lib/net20" />
+    <file src="net20/x64/SharpGit.UI.dll" target="lib/net20" />
+    <file src="net20/x64/SharpGit.UI.xml" target="lib/net20" />
+    <file src="net20/x64/SharpGit.UI.pdb" target="lib/net20" />
     <!-- DotNet 4.0+ version -->
     <file src="net40/x64/SharpGit.dll" target="lib/net40" />
     <file src="net40/x64/SharpGit.xml" target="lib/net40" />
     <file src="net40/x64/SharpGit.pdb" target="lib/net40" />
+    <file src="net40/x64/SharpGit.UI.dll" target="lib/net40" />
+    <file src="net40/x64/SharpGit.UI.xml" target="lib/net40" />
+    <file src="net40/x64/SharpGit.UI.pdb" target="lib/net40" />
   </files>
 </package>
