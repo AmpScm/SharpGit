@@ -178,11 +178,31 @@ namespace SharpGit {
         };
     }
 
+    ref class GitClientContext;
+
+    public ref class GitAuthentication : public Implementation::GitBase
+    {
+        initonly GitClientContext ^_ctx;
+
+    internal:
+        GitAuthentication(GitClientContext ^ctx)
+        {
+            if (!ctx)
+                throw gcnew ArgumentNullException("ctx");
+
+            _ctx = ctx;
+        }
+    };
+
     public ref class GitClientContext : public Implementation::GitBase
     {
+        initonly GitAuthentication ^_authentication;
     internal:
         SharpGit::Implementation::GitPool _pool;
-        GitClientContext() {}
+        GitClientContext()
+        {
+            _authentication = gcnew GitAuthentication(this);
+        }
 
     };
 

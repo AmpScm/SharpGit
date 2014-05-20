@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharpGit", "SharpGit\SharpGit.vcxproj", "{0D01253E-6359-43FC-A3C8-1A3754C4468D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGit.Tests", "SharpGit.Tests\SharpGit.Tests.csproj", "{7783B901-C688-41BE-A271-C517FB8DEDFF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharpGit-Additions", "SharpGit-Additions\SharpGit-Additions.vcxproj", "{234035DF-232D-483E-A602-6327C234DF27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGit.UI", "SharpGit.UI\SharpGit.UI.csproj", "{305929BD-124E-4AEA-82F8-95333D6153F1}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -45,6 +47,14 @@ Global
 		{234035DF-232D-483E-A602-6327C234DF27}.Release|x64.Build.0 = Release|x64
 		{234035DF-232D-483E-A602-6327C234DF27}.Release|x86.ActiveCfg = Release|Win32
 		{234035DF-232D-483E-A602-6327C234DF27}.Release|x86.Build.0 = Release|Win32
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Debug|x64.ActiveCfg = Debug|x64
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Debug|x64.Build.0 = Debug|x64
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Debug|x86.ActiveCfg = Debug|x86
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Debug|x86.Build.0 = Debug|x86
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Release|x64.ActiveCfg = Release|x64
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Release|x64.Build.0 = Release|x64
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Release|x86.ActiveCfg = Release|x86
+		{305929BD-124E-4AEA-82F8-95333D6153F1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

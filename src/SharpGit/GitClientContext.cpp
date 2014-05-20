@@ -320,7 +320,7 @@ const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
         size_t sz = strlen(msg);
         sz += sz/4 + 4;
 
-        int r = git_message_prettify(&result, msg, strip);
+        int r = git_message_prettify(&result, msg, strip, '#');
 
         if (r < 0)
             HandleGitError(this, r);
