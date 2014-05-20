@@ -204,6 +204,14 @@ namespace SharpGit {
             _authentication = gcnew GitAuthentication(this);
         }
 
+    public:
+        property GitAuthentication ^ Authentication
+        {
+            GitAuthentication ^ get()
+            {
+                return _authentication;
+            }
+        }
     };
 
     public ref class GitArgs abstract
