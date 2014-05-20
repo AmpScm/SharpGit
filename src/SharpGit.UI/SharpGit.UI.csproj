@@ -69,6 +69,9 @@
     <Compile Include="GitUIBindArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SharpGit.UI.snk" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(MSBuildToolsVersion)' == '3.5'">
       <!-- Visual Studio 2008 -->
