@@ -72,6 +72,8 @@ namespace SharpGit {
         {}
     };
 
+    /// <summary>Git client instance; main entrance to the SharpGit Client api</summary>
+    /// <threadsafety static="true" instance="false"/>
     public ref class GitClient : GitClientContext
     {
         static ICollection<GitLibrary^>^ _gitLibraries;
