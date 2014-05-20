@@ -161,6 +161,15 @@ bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
     return true;
 }
 
+bool GitRemote::Delete()
+{
+    GIT_THROW(git_remote_delete(Handle));
+
+    _remote = nullptr; // Handle is now invalid
+
+    return true;
+}
+
 GitRemote ^ GitRemoteCollection::CreateAnonymous(Uri ^remoteRepository)
 {
     GitPool pool(_repository->Pool);

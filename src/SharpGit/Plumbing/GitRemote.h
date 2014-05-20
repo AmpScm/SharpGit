@@ -65,6 +65,8 @@ namespace SharpGit {
 
             void Stop(GitArgs ^args);
 
+            bool Delete();
+
         public:
             bool Push(IEnumerable<GitRefSpec^>^ references, GitPushArgs ^args);
 
