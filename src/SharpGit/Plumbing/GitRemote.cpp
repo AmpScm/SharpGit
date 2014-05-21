@@ -297,8 +297,6 @@ bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
 
         GIT_THROW(git_push_update_tips(push, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
 
-        GIT_THROW(git_push_finish(push));
-
         return true;
     }
     finally

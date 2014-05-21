@@ -17,7 +17,7 @@ namespace SharpGit {
             All = GIT_REMOTE_DOWNLOAD_TAGS_ALL
         };
 
-        typedef int (*git_push_status)(const char *ref, const char *msg, void *data);
+        typedef int (__cdecl *git_push_status)(const char *ref, const char *msg, void *payload);
 
         public ref class GitRemote : public Implementation::GitBase
         {

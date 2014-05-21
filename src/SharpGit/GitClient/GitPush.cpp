@@ -13,6 +13,7 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
+using namespace SharpGit::Implementation;
 
 bool GitClient::Push(String ^localRepository)
 {
@@ -42,6 +43,55 @@ bool GitClient::Push(String ^localRepository, GitPushArgs ^args)
         case GitPushMode::Default:
             return PushDefault(%repo, args);
     }
+}
+
+
+static int __cdecl gitclient_packbuilder_progress(int stage, unsigned int current, unsigned int total, void *payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
+}
+
+static int __cdecl gitclient_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
+}
+
+static int __cdecl gitclient_push_status(const char *ref, const char *msg, void *payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
 }
 
 bool GitClient::PushAll(GitRepository ^repo, GitPushArgs ^args)
@@ -84,7 +134,7 @@ bool GitClient::PushAll(GitRepository ^repo, GitPushArgs ^args)
 
         rm->SetCallbacks(get_callbacks());
         rm->Connect(false, args);
-        // rm->SetPushCallbacks(/* ###*/)
+        rm->SetPushCallbacks(gitclient_packbuilder_progress, gitclient_push_transfer_progress, gitclient_push_status, _clientBaton->Handle);
         rm->Push(refSpecs[rm->Name], args);
 
         rm->Disconnect(args);

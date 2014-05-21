@@ -14,7 +14,7 @@ namespace SharpGit.Tests
     {
         string GetTempPath()
         {
-            return Path.Combine(Path.GetTempPath(), "gittest\\"+Guid.NewGuid().ToString("N"));
+            return Path.Combine(Path.GetTempPath(), "gittest\\" + Guid.NewGuid().ToString("N"));
         }
 
         [TestMethod]
@@ -194,7 +194,7 @@ namespace SharpGit.Tests
 
                 Assert.That(head.Name, Is.EqualTo("refs/heads/master"));
                 //Assert.That(repo2.Head, Is.Not.Null);
-                
+
                 GitId headId;
                 Assert.That(repo1.ResolveReference(repo1.HeadReference, out headId));
                 Assert.That(headId, Is.EqualTo(lastCommit));
@@ -235,7 +235,7 @@ namespace SharpGit.Tests
                 Assert.That(repo1.LookupViaPrefix(commit.Id.ToString(), out id));
                 Assert.That(id, Is.EqualTo(commit.Id));
 
-                Assert.That(repo1.LookupViaPrefix(commit.Id.ToString().Substring(0,10), out id));
+                Assert.That(repo1.LookupViaPrefix(commit.Id.ToString().Substring(0, 10), out id));
                 Assert.That(id, Is.EqualTo(commit.Id));
 
                 Assert.That(commit.Peel<GitObject>().Id, Is.EqualTo(commit.Tree.Id));
@@ -348,7 +348,7 @@ namespace SharpGit.Tests
             all.AddRange(B);
             all.AddRange(C);
 
-            using(GitRepository repo = GitRepository.Create(GetTempPath()))
+            using (GitRepository repo = GitRepository.Create(GetTempPath()))
             {
                 foreach (string d in all)
                 {
@@ -360,7 +360,7 @@ namespace SharpGit.Tests
                 }
                 repo.Index.Write();
 
-                using(GitClient git = new GitClient())
+                using (GitClient git = new GitClient())
                 {
                     List<string> found = new List<string>();
 
@@ -444,7 +444,7 @@ namespace SharpGit.Tests
                     Assert.That(repo.HeadBranch.IsRemote, Is.False, "Local branch");
                     Assert.That(repo.HeadBranch.RemoteName, Is.EqualTo("origin"));
 
-                    foreach(GitBranch b in repo.Branches.Remote)
+                    foreach (GitBranch b in repo.Branches.Remote)
                     {
                         Assert.That(b.IsRemote, "Remote branch");
                         Assert.That(b.IsLocal, Is.False, "Not local");
@@ -473,13 +473,13 @@ namespace SharpGit.Tests
                         }
                     }
 
-                    foreach(GitRemote r in repo.Remotes)
+                    foreach (GitRemote r in repo.Remotes)
                     {
                         Assert.That(r.Name, Is.Not.Null);
                         Assert.That(r.TagSynchronize, Is.EqualTo(GitTagSynchronize.Auto));
                         Assert.That(r.Save(new GitFetchArgs()));
 
-                        foreach(GitRefSpec rs in r.FetchRefSpecs)
+                        foreach (GitRefSpec rs in r.FetchRefSpecs)
                         {
 
                         }
@@ -508,6 +508,91 @@ namespace SharpGit.Tests
                 GitPushArgs pa = new GitPushArgs();
                 pa.Mode = GitPushMode.All;
                 git.Push(clone2Dir, pa);
+            }
+        }
+
+        // [TestMethod]
+        public void PullChanges()
+        {
+            string master = GetTempPath();
+            GitRepositoryCreateArgs ca = new GitRepositoryCreateArgs();
+            ca.CreateBareRepository = true;
+            using (GitRepository.Create(master, ca)) { }
+
+            string harry = GetTempPath();
+            string sally = GetTempPath();
+
+
+            using (GitClient git = new GitClient()) // Harry
+            {
+                git.Clone(master, harry);
+
+                using (GitRepository harryRepo = new GitRepository(harry))
+                {
+                    harryRepo.Configuration.Set(GitConfigurationLevel.Repository, "user.name", "Harry");
+                    harryRepo.Configuration.Set(GitConfigurationLevel.Repository, "user.email", "harry@example.com");
+                }
+
+                string src = Path.Combine(harry, "src");
+                Directory.CreateDirectory(src);
+
+                string index = Path.Combine(src, "index.txt");
+
+                File.WriteAllText(index, "This is index.txt\n");
+
+                git.Add(index);
+                GitId result;
+                GitCommitArgs cma = new GitCommitArgs();
+                cma.Signature.When = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                cma.Author.When = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                git.Commit(harry, cma, out result);
+
+                using (GitRepository harryRepo = new GitRepository(harry))
+                {
+                    GitCommit commit;
+                    Assert.That(harryRepo.Lookup(result, out commit));
+
+                    Assert.That(commit.Author.Name, Is.EqualTo("Harry"));
+                }
+
+                {
+                    GitPushArgs pa = new GitPushArgs();
+                    pa.Mode = GitPushMode.All;
+                    git.Push(harry, pa);
+                }
+            }
+
+            using (GitClient git = new GitClient()) // Sally
+            {
+                git.Clone(master, sally);
+
+                using (GitRepository sallyRepo = new GitRepository(sally))
+                {
+                    sallyRepo.Configuration.Set(GitConfigurationLevel.Repository, "user.name", "Sally");
+                    sallyRepo.Configuration.Set(GitConfigurationLevel.Repository, "user.email", "Sally@my.domain");
+                }
+
+                string src = Path.Combine(sally, "src");
+                string index = Path.Combine(src, "index.txt");
+
+                Assert.That(File.Exists(index), Is.False);
+            }
+
+            using (GitClient git = new GitClient()) // Harry
+            {
+                GitPushArgs pa = new GitPushArgs();
+                pa.Mode = GitPushMode.All;
+                git.Push(harry, pa);
+            }
+
+            using (GitClient git = new GitClient()) // Sally
+            {
+                git.Pull(sally);
+
+                string src = Path.Combine(sally, "src");
+                string index = Path.Combine(src, "index.txt");
+
+                Assert.That(File.Exists(index), Is.True);
             }
         }
     }
