@@ -71,6 +71,14 @@ namespace SharpGit {
 
         private:
 
+        protected public:
+            property GitRepository ^ Repository
+            {
+                GitRepository ^ get()
+                {
+                    return _repository;
+                }
+            }
 
         public:
             property bool IsDisposed
@@ -134,6 +142,11 @@ namespace SharpGit {
                 {
                     return GitBase::Utf8_PtrToString(git_reference_shorthand(Handle));
                 }
+            }
+
+            property GitId ^ TargetId
+            {
+                GitId ^ get();
             }
 
             bool EnsureLog();

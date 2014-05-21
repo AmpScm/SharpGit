@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "GitCommit.h"
+#include "GitConfiguration.h"
 #include "GitRepository.h"
 #include "GitTree.h"
 #include "GitReference.h"
@@ -34,7 +35,13 @@ String ^ GitBranch::RemoteName::get()
     GitPool pool(_repository->Pool);
 
     if (!IsRemote)
+    {
+        String ^rn;
+        if(_repository->Configuration->TryGetString(String::Join(".", "branch", ShortName, "remote"), rn))
+            return rn;
+
         return nullptr;
+    }
 
     if (git_branch_remote_name(&buf, _repository->Handle, pool.AllocString(Name)))
     {
@@ -60,7 +67,7 @@ String ^ GitBranch::ShortName::get()
     if (!_shortName)
     {
         const char *name;
-        if (!git_branch_name(&name, _reference->Handle))
+        if (!git_branch_name(&name, Reference->Handle))
         {
             _shortName = GitBase::Utf8_PtrToString(name);
         }

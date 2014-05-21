@@ -104,6 +104,12 @@
     <ClCompile Include="Plumbing\GitRefSpec.cpp">
       <Filter>Plumbing</Filter>
     </ClCompile>
+    <ClCompile Include="GitClient\GitPull.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GitClient\GitMerge.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />
@@ -205,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="Plumbing\GitRefSpec.h">
       <Filter>Plumbing</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\Args\GitPullArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\Args\GitMergeArgs.h">
+      <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

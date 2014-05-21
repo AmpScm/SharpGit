@@ -17,6 +17,15 @@ namespace SharpGit {
             GitReference^ _upstreamReference;
             String ^_upstreamName;
 
+        protected public:
+            property GitRepository ^ Repository
+            {
+                GitRepository ^ get()
+                {
+                    return _repository;
+                }
+            }
+
         internal:
             GitBranch(GitRepository^ repository, String ^name, git_branch_t type)
             {

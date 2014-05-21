@@ -29,6 +29,16 @@ String^ GitReference::Name::get()
     return _name;
 }
 
+GitId ^ GitReference::TargetId::get()
+{
+    const git_oid *target = git_reference_target(Handle);
+
+    if (target)
+        return gcnew GitId(target);
+    else
+        return nullptr;
+}
+
 const git_reference* GitReference::Handle::get()
 {
     if (IsDisposed)

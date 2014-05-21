@@ -14,6 +14,8 @@ namespace SharpGit {
     ref class GitUnstageArgs;
     ref class GitFetchArgs;
     ref class GitPushArgs;
+    ref class GitMergeArgs;
+    ref class GitPullArgs;
 
     namespace Implementation {
         ref class GitLibrary;
@@ -132,6 +134,9 @@ namespace SharpGit {
 
         bool Push(String ^localRepository);
         bool Push(String ^localRepository, GitPushArgs ^args);
+
+        bool Pull(String ^localRepository);
+        bool Pull(String ^localRepository, GitPullArgs ^args);
 
     private:
         bool PushAll(GitRepository ^repo, GitPushArgs ^args);

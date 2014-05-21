@@ -26,3 +26,6 @@ struct git_refspec
 
 struct git_push
 {};
+
+struct git_merge_head
+{};

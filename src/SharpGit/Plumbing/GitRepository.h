@@ -6,6 +6,8 @@ namespace SharpGit {
     ref class GitStatusArgs;
     ref class GitCommitArgs;
     ref class GitCheckOutArgs;
+    ref class GitMergeArgs;
+    ref class GitMergeResult;
 
     namespace Plumbing {
         ref class GitBranch;
@@ -67,6 +69,56 @@ namespace SharpGit {
             RebaseMerge = GIT_REPOSITORY_STATE_REBASE_MERGE,
             MailBox = GIT_REPOSITORY_STATE_APPLY_MAILBOX,
             MailBoxOrRebase = GIT_REPOSITORY_STATE_APPLY_MAILBOX_OR_REBASE
+        };
+
+        public ref class GitMergeDescription : public Implementation::GitBase
+        {
+        internal:
+            git_merge_head *Alloc(GitPool ^pool);
+
+            initonly GitRepository ^_repository;
+            initonly GitBranch ^_branch;
+            initonly GitReference ^_reference;
+            initonly GitId ^_id;
+            initonly System::Uri ^_uri;
+
+        public:
+            GitMergeDescription(GitReference ^reference);
+            GitMergeDescription(GitBranch ^branch, System::Uri ^url);
+            GitMergeDescription(GitRepository ^repository, GitId ^id);
+
+        public:
+            property GitId ^ Id
+            {
+                GitId^ get()
+                {
+                    return _id;
+                }
+            }
+
+            property GitBranch ^ Branch
+            {
+                GitBranch ^ get()
+                {
+                    return _branch;
+                }
+            }
+
+            property GitReference ^Reference
+            {
+                GitReference ^ get()
+                {
+                    return _reference;
+                }
+            }
+
+            property System::Uri ^ Uri
+            {
+                System::Uri ^ get()
+                {
+                    return _uri;
+                }
+            }
         };
 
         public ref class GitRepository : public Implementation::GitBase
@@ -206,6 +258,9 @@ namespace SharpGit {
             /// <summary>Remove all the metadata associated with an ongoing command like merge, revert, cherry-pick, etc.</summary>
             bool CleanupState(GitArgs ^args);
 
+
+            bool Merge(ICollection<GitMergeDescription^> ^description, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult);
+
         public:
             property bool IsEmpty
             {
@@ -287,6 +342,12 @@ namespace SharpGit {
 
         internal:
             const char *MakeRelpath(String ^path, GitPool ^pool);
+
+            property ICollection<GitMergeDescription^> ^ LastFetchResult
+            {
+                ICollection<GitMergeDescription^> ^ get();
+            }
+
 
         public:
             String ^MakeRelativePath(String ^path);

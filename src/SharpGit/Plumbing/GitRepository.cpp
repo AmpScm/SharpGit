@@ -4,12 +4,14 @@
 #include "../GitClient/GitStatus.h"
 #include "../GitClient/GitCommitCmd.h"
 #include "../GitClient/GitCheckOut.h"
+#include "../GitClient/Args/GitMergeArgs.h"
 
 #include "GitConfiguration.h"
 #include "GitIndex.h"
 #include "GitObjectDatabase.h"
 #include "GitObject.h"
 #include "GitTree.h"
+#include "GitBranch.h"
 #include "GitCommit.h"
 #include "GitReference.h"
 
@@ -567,3 +569,130 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 }
 
 #pragma endregion STATUS
+
+#pragma region MERGE
+
+GitMergeDescription::GitMergeDescription(GitBranch ^branch, System::Uri ^url)
+{
+    if (!branch)
+        throw gcnew ArgumentNullException("branch");
+    else if (!url)
+        throw gcnew ArgumentNullException("url");
+
+    _branch = branch;
+    _reference = branch->Reference;
+    _repository = branch->Repository;
+    _id = branch->Reference->TargetId;
+    _uri = url;
+}
+
+GitMergeDescription::GitMergeDescription(GitReference ^reference)
+{
+    if (!reference)
+        throw gcnew ArgumentNullException("reference");
+
+    _reference = reference;
+    _repository = reference->Repository;
+    _id = reference->TargetId;
+}
+
+GitMergeDescription::GitMergeDescription(GitRepository ^repository, GitId ^id)
+{
+    if (!repository)
+        throw gcnew ArgumentNullException("repository");
+    else if (!id)
+        throw gcnew ArgumentNullException("id");
+
+    _repository = repository;
+    _id = id;
+}
+
+git_merge_head *GitMergeDescription::Alloc(GitPool ^pool)
+{
+  git_merge_head *mh;
+
+  if (Branch)
+    GIT_THROW(git_merge_head_from_fetchhead(&mh, _repository->Handle,
+                                            pool->AllocString(Branch->Name),
+                                            pool->AllocString(Uri->AbsoluteUri),
+                                            &Id->AsOid()));
+  else if (Reference)
+    GIT_THROW(git_merge_head_from_ref(&mh, _repository->Handle, _reference->Handle));
+  else
+    GIT_THROW(git_merge_head_from_id(&mh, _repository->Handle, &Id->AsOid()));
+
+  return mh;
+}
+
+ref class GitFetchHeadInfo
+{
+public:
+    GitRepository ^Repository;
+    List<GitMergeDescription^>^ List;
+};
+
+static int __cdecl foreach_fetchhead(const char *ref_name, const char *remote_url, const git_oid *oid, unsigned int is_merge, void *payload)
+{
+    if (!is_merge)
+        return 0;
+
+    GitRoot<GitFetchHeadInfo^> root(payload);
+    GitBranch ^branch;
+
+    if (root->Repository->Branches->TryGet(GitBase::Utf8_PtrToString(ref_name), branch))
+    {
+        root->List->Add(gcnew GitMergeDescription(branch, gcnew System::Uri(GitBase::Utf8_PtrToString(remote_url), UriKind::Absolute)));
+    }
+
+    return 0;
+}
+
+ICollection<GitMergeDescription^> ^ GitRepository::LastFetchResult::get()
+{
+    GitFetchHeadInfo ^fhi = gcnew GitFetchHeadInfo();
+    fhi->List = gcnew List<GitMergeDescription^>();
+    fhi->Repository = this;
+
+
+    GitRoot<GitFetchHeadInfo^> root(fhi);
+
+    GIT_THROW(git_repository_fetchhead_foreach(Handle, foreach_fetchhead, root.GetBatonValue()));
+
+    return fhi->List->AsReadOnly();
+}
+
+bool GitRepository::Merge(ICollection<GitMergeDescription^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult)
+{
+    GitPool pool(Pool);
+
+    mergeResult = nullptr;
+
+    const git_merge_head ** heads = (const git_merge_head **)pool.Alloc(sizeof(const git_merge_head*) * descriptions->Count);
+    int headsAlloced = 0;
+    try
+    {
+        for each(GitMergeDescription ^d in descriptions)
+        {
+            git_merge_head *mh = d->Alloc(%pool);
+
+            if (!mh)
+                throw gcnew InvalidOperationException();
+
+            heads[headsAlloced++] = mh;
+        }
+
+        GIT_THROW(git_merge(Handle, heads, descriptions->Count, args->AllocMergeOptions(%pool), args->MakeCheckOutOptions(%pool)));
+    }
+    finally
+    {
+        while(headsAlloced)
+        {
+            git_merge_head_free(const_cast<git_merge_head*>(heads[--headsAlloced]));
+        }
+    }
+
+    return true;
+}
+#pragma endregion MERGE
+
+#include "UnmanagedStructs.h"
