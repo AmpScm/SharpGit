@@ -515,17 +515,23 @@ namespace SharpGit.Tests
         public void PullChanges()
         {
             string master = GetTempPath();
-            GitRepositoryCreateArgs ca = new GitRepositoryCreateArgs();
-            ca.CreateBareRepository = true;
-            using (GitRepository.Create(master, ca)) { }
+            using (GitClient git = new GitClient())
+            {
+                GitInitArgs ia = new GitInitArgs();
+                ia.CreateBareRepository = true;
+                ia.Description = "Harry & Sally root";
+
+                git.Init(master, ia);
+            }
+
+            Uri masterUri = new Uri(master);
 
             string harry = GetTempPath();
             string sally = GetTempPath();
 
-
             using (GitClient git = new GitClient()) // Harry
             {
-                git.Clone(master, harry);
+                git.Clone(masterUri, harry);
 
                 using (GitRepository harryRepo = new GitRepository(harry))
                 {
@@ -564,7 +570,7 @@ namespace SharpGit.Tests
 
             using (GitClient git = new GitClient()) // Sally
             {
-                git.Clone(master, sally);
+                git.Clone(masterUri, sally);
 
                 using (GitRepository sallyRepo = new GitRepository(sally))
                 {

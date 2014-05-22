@@ -16,6 +16,7 @@ namespace SharpGit {
     ref class GitPushArgs;
     ref class GitMergeArgs;
     ref class GitPullArgs;
+    ref class GitInitArgs;
 
     namespace Implementation {
         ref class GitLibrary;
@@ -92,6 +93,9 @@ namespace SharpGit {
         static void AssertNotBare(GitRepository %repository);
 
     public:
+        bool Init(String ^localRepository);
+        bool Init(String ^localRepository, GitInitArgs ^args);
+
         bool Status(String ^path, EventHandler<GitStatusEventArgs^>^ status);
         bool Status(String ^path, GitStatusArgs ^args, EventHandler<GitStatusEventArgs^>^ status);
 

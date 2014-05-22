@@ -4,6 +4,7 @@
 #include "../GitClient/GitStatus.h"
 #include "../GitClient/GitCommitCmd.h"
 #include "../GitClient/GitCheckOut.h"
+#include "../GitClient/Args/GitInitArgs.h"
 #include "../GitClient/Args/GitMergeArgs.h"
 
 #include "GitConfiguration.h"
@@ -22,20 +23,6 @@ using namespace SharpGit::Implementation;
 using System::Collections::Generic::List;
 
 struct git_repository {};
-
-git_repository_init_options * GitRepositoryCreateArgs::MakeInitOptions(GitPool ^pool)
-{
-    git_repository_init_options *opts = (git_repository_init_options *)pool->Alloc(sizeof(*opts));
-
-    git_repository_init_init_options(opts, GIT_REPOSITORY_INIT_OPTIONS_VERSION);
-
-    if (CreateBareRepository)
-        opts->flags |= GIT_REPOSITORY_INIT_BARE;
-    if (CreateDirectory)
-        opts->flags |= GIT_REPOSITORY_INIT_MKDIR;
-
-    return opts;
-}
 
 void GitRepository::ClearReferences()
 {
@@ -132,10 +119,10 @@ bool GitRepository::Locate(String ^path, GitArgs ^args)
 
 GitRepository^ GitRepository::Create(String ^repositoryPath)
 {
-    return Create(repositoryPath, gcnew GitRepositoryCreateArgs());
+    return Create(repositoryPath, gcnew GitInitArgs());
 }
 
-GitRepository^ GitRepository::Create(String ^repositoryPath, GitRepositoryCreateArgs ^args)
+GitRepository^ GitRepository::Create(String ^repositoryPath, GitInitArgs ^args)
 {
     GitRepository^ repo = gcnew GitRepository();
     bool ok = false;
@@ -160,10 +147,10 @@ GitRepository^ GitRepository::Create(String ^repositoryPath, GitRepositoryCreate
 bool GitRepository::CreateAndOpen(String ^repositoryPath)
 {
     AssertNotOpen();
-    return CreateAndOpen(repositoryPath, gcnew GitRepositoryCreateArgs());
+    return CreateAndOpen(repositoryPath, gcnew GitInitArgs());
 }
 
-bool GitRepository::CreateAndOpen(String ^repositoryPath, GitRepositoryCreateArgs ^args)
+bool GitRepository::CreateAndOpen(String ^repositoryPath, GitInitArgs ^args)
 {
     AssertNotOpen();
 

@@ -251,6 +251,7 @@
     <ClCompile Include="GitClient\GitAdd.cpp" />
     <ClCompile Include="GitClient\GitClient.cpp" />
     <ClCompile Include="GitClient\GitFetch.cpp" />
+    <ClCompile Include="GitClient\GitInit.cpp" />
     <ClCompile Include="GitClient\GitMerge.cpp" />
     <ClCompile Include="GitClient\GitPull.cpp" />
     <ClCompile Include="GitClient\GitPush.cpp" />
@@ -288,10 +289,11 @@
   <ItemGroup>
     <ClInclude Include="GitClientContext.h" />
     <ClInclude Include="GitClient\Args\GitFetchArgs.h" />
+    <ClInclude Include="GitClient\Args\GitInitArgs.h" />
     <ClInclude Include="GitClient\Args\GitMergeArgs.h" />
     <ClInclude Include="GitClient\Args\GitPullArgs.h" />
     <ClInclude Include="GitClient\Args\GitPushArgs.h" />
-    <ClInclude Include="GitClient\GitAdd.h" />
+    <ClInclude Include="GitClient\GitAddArgs.h" />
     <ClInclude Include="GitClient\GitCheckOut.h" />
     <ClInclude Include="GitClient\GitClient.h" />
     <ClInclude Include="GitClient\GitClientEventArgs.h" />

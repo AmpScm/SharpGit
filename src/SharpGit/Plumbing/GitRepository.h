@@ -3,6 +3,7 @@
 #include "../GitClient/GitClientEventArgs.h"
 
 namespace SharpGit {
+    ref class GitInitArgs;
     ref class GitStatusArgs;
     ref class GitCommitArgs;
     ref class GitCheckOutArgs;
@@ -11,40 +12,6 @@ namespace SharpGit {
 
     namespace Plumbing {
         ref class GitBranch;
-
-        public ref class GitRepositoryCreateArgs : GitArgs
-        {
-        internal:
-            git_repository_init_options * MakeInitOptions(GitPool ^pool);
-
-        private:
-            bool _bare;
-            bool _noCreateDir;
-        public:
-            property bool CreateBareRepository
-            {
-                bool get()
-                {
-                    return _bare;
-                }
-                void set(bool value)
-                {
-                    _bare = value;
-                }
-            }
-
-            property bool CreateDirectory
-            {
-                bool get()
-                {
-                    return !_noCreateDir;
-                }
-                void set(bool value)
-                {
-                    _noCreateDir = !value;
-                }
-            }
-        };
 
         ref class GitConfiguration;
         ref class GitIndex;
@@ -230,10 +197,10 @@ namespace SharpGit {
             bool Open(String ^repositoryPath);
 
             bool CreateAndOpen(String ^repositoryPath);
-            bool CreateAndOpen(String ^repositoryPath, GitRepositoryCreateArgs ^args);
+            bool CreateAndOpen(String ^repositoryPath, GitInitArgs ^args);
 
             static GitRepository^ Create(String ^repositoryPath);
-            static GitRepository^ Create(String ^repositoryPath, GitRepositoryCreateArgs ^args);
+            static GitRepository^ Create(String ^repositoryPath, GitInitArgs ^args);
 
         public:
             generic<typename T> where T : GitObject

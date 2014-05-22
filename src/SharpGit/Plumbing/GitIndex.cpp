@@ -2,7 +2,7 @@
 
 #include "GitIndex.h"
 #include "GitTree.h"
-#include "GitClient/GitAdd.h"
+#include "GitClient/GitAddArgs.h"
 
 using namespace System;
 using namespace SharpGit;

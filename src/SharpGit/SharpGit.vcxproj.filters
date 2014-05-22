@@ -110,6 +110,9 @@
     <ClCompile Include="GitClient\GitMerge.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="GitClient\GitInit.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />
@@ -169,9 +172,6 @@
     <ClInclude Include="Plumbing\GitBranch.h">
       <Filter>Plumbing</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\GitAdd.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="GitClient\GitTagCmd.h">
       <Filter>GitClient\Sources</Filter>
     </ClInclude>
@@ -216,6 +216,12 @@
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
     <ClInclude Include="GitClient\Args\GitMergeArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\Args\GitInitArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitAddArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>
