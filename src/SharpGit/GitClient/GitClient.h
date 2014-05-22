@@ -99,8 +99,10 @@ namespace SharpGit {
         bool Status(String ^path, EventHandler<GitStatusEventArgs^>^ status);
         bool Status(String ^path, GitStatusArgs ^args, EventHandler<GitStatusEventArgs^>^ status);
 
+        /// <summary>Alias for .Stage()</summary>
         bool Add(String ^path);
-        bool Add(String ^path, GitAddArgs ^args);
+        /// <summary>Alias for .Stage()</summary>
+        bool Add(String ^path, GitStageArgs ^args);
 
         bool Delete(String ^path);
         bool Delete(String ^path, GitDeleteArgs ^args);

@@ -2,7 +2,7 @@
 #include "GitClientContext.h"
 
 namespace SharpGit {
-    ref class GitAddArgs;
+    ref class GitStageArgs;
 
     namespace Implementation {
         ref class GitPool;
@@ -97,9 +97,9 @@ namespace SharpGit {
 
         public:
             bool Add(String ^relPath);
-            bool Add(String ^relPath, GitAddArgs ^args);
+            bool Add(String ^relPath, GitStageArgs ^args);
         internal:
-            bool Add(const char *relPath, GitAddArgs ^args, GitPool ^pool);
+            bool Add(const char *relPath, GitStageArgs ^args, GitPool ^pool);
 
         public:
             property int Count

@@ -62,9 +62,6 @@
     <ClCompile Include="Plumbing\GitTag.cpp">
       <Filter>Plumbing</Filter>
     </ClCompile>
-    <ClCompile Include="GitClient\GitAdd.cpp">
-      <Filter>GitClient\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="GitClient\GitCheckOut.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
@@ -187,9 +184,6 @@
     <ClInclude Include="GitClient\GitDelete.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\GitStage.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="GitClient\GitStatus.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
@@ -221,7 +215,7 @@
     <ClInclude Include="GitClient\Args\GitInitArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\GitAddArgs.h">
+    <ClInclude Include="GitClient\GitStageArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>

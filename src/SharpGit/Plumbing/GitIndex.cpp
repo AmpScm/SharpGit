@@ -2,7 +2,7 @@
 
 #include "GitIndex.h"
 #include "GitTree.h"
-#include "GitClient/GitAddArgs.h"
+#include "GitClient/GitStageArgs.h"
 
 using namespace System;
 using namespace SharpGit;
@@ -21,10 +21,10 @@ bool GitIndex::Add(String ^relPath)
 {
     AssertOpen();
 
-    return Add(relPath, gcnew GitAddArgs());
+    return Add(relPath, gcnew GitStageArgs());
 }
 
-bool GitIndex::Add(String ^relPath, GitAddArgs ^args)
+bool GitIndex::Add(String ^relPath, GitStageArgs ^args)
 {
     AssertOpen();
 
@@ -33,7 +33,7 @@ bool GitIndex::Add(String ^relPath, GitAddArgs ^args)
     return Add(pool.AllocRelpath(relPath), args, %pool);
 }
 
-bool GitIndex::Add(const char *relPath, GitAddArgs ^args, GitPool ^pool)
+bool GitIndex::Add(const char *relPath, GitStageArgs ^args, GitPool ^pool)
 {
     UNUSED(pool);
     if (! relPath || !*relPath)

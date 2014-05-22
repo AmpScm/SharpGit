@@ -248,7 +248,6 @@
     <ClCompile Include="GitClient\GitClone.cpp" />
     <ClCompile Include="GitClient\GitCommitCmd.cpp" />
     <ClCompile Include="GitClient\GitDelete.cpp" />
-    <ClCompile Include="GitClient\GitAdd.cpp" />
     <ClCompile Include="GitClient\GitClient.cpp" />
     <ClCompile Include="GitClient\GitFetch.cpp" />
     <ClCompile Include="GitClient\GitInit.cpp" />
@@ -293,14 +292,13 @@
     <ClInclude Include="GitClient\Args\GitMergeArgs.h" />
     <ClInclude Include="GitClient\Args\GitPullArgs.h" />
     <ClInclude Include="GitClient\Args\GitPushArgs.h" />
-    <ClInclude Include="GitClient\GitAddArgs.h" />
+    <ClInclude Include="GitClient\GitStageArgs.h" />
     <ClInclude Include="GitClient\GitCheckOut.h" />
     <ClInclude Include="GitClient\GitClient.h" />
     <ClInclude Include="GitClient\GitClientEventArgs.h" />
     <ClInclude Include="GitClient\GitClone.h" />
     <ClInclude Include="GitClient\GitCommitCmd.h" />
     <ClInclude Include="GitClient\GitDelete.h" />
-    <ClInclude Include="GitClient\GitStage.h" />
     <ClInclude Include="GitClient\GitStatus.h" />
     <ClInclude Include="GitClient\GitStatusEventArgs.h" />
     <ClInclude Include="GitClient\GitTagCmd.h" />
