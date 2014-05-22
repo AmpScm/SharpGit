@@ -9,6 +9,7 @@ namespace SharpGit {
     ref class GitCheckOutArgs;
     ref class GitMergeArgs;
     ref class GitMergeResult;
+    ref class GitMergeAnalysis;
 
     namespace Plumbing {
         ref class GitBranch;
@@ -44,14 +45,14 @@ namespace SharpGit {
             git_merge_head *Alloc(GitPool ^pool);
 
             initonly GitRepository ^_repository;
-            initonly GitBranch ^_branch;
+            initonly String ^_branchName;
             initonly GitReference ^_reference;
             initonly GitId ^_id;
             initonly System::Uri ^_uri;
 
-        public:
+        internal:
             GitMergeDescription(GitReference ^reference);
-            GitMergeDescription(GitBranch ^branch, System::Uri ^url);
+            GitMergeDescription(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id);
             GitMergeDescription(GitRepository ^repository, GitId ^id);
 
         public:
@@ -63,11 +64,11 @@ namespace SharpGit {
                 }
             }
 
-            property GitBranch ^ Branch
+            property String ^ BranchName
             {
-                GitBranch ^ get()
+                String ^ get()
                 {
-                    return _branch;
+                    return _branchName;
                 }
             }
 
@@ -227,6 +228,8 @@ namespace SharpGit {
 
 
             bool Merge(ICollection<GitMergeDescription^> ^description, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult);
+
+            bool MergeAnalysis(ICollection<GitMergeDescription^> ^description, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis);
 
         public:
             property bool IsEmpty

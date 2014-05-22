@@ -150,3 +150,15 @@ System::Collections::Generic::IEnumerable<GitReference^>^ GitReferenceCollection
 
     return references->AsReadOnly();
 }
+
+/*bool GitReferenceCollection::Create(String ^name, GitId ^id, GitCreateRefArgs ^args)
+{
+    if (String::IsNullOrEmpty(name))
+        throw gcnew ArgumentNullException("name");
+    else if (!id)
+        throw gcnew ArgumentNullException("id");
+
+    //git_reference_symbolic_create()
+    return false;
+}
+*/

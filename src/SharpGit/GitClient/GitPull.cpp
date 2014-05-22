@@ -5,9 +5,11 @@
 #include "Args/GitPullArgs.h"
 
 #include "Plumbing/GitRepository.h"
+#include "Plumbing/GitCommit.h"
 #include "Plumbing/GitConfiguration.h"
 #include "Plumbing/GitRemote.h"
 #include "Plumbing/GitBranch.h"
+#include "Plumbing/GitReference.h"
 
 using namespace System;
 using namespace SharpGit;
@@ -22,6 +24,7 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
 {
     GitRepository repo;
     bool initialCheckout = false;
+    String ^defaultBranch;
 
     if (!repo.Locate(localRepository, args))
         return false;
@@ -41,18 +44,17 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
     }
     else
     {
-        // ### From which remote should we fatch
-        for each(GitRemote ^r in repo.Remotes)
-          {
-            rm = r;
-            break;
-          }
+        // ### From which remote should we fetch ### config?
 
-        if (!rm)
+        if (!repo.Remotes->TryGet("origin", rm))
+        {
             throw gcnew InvalidOperationException("No origin found.");
+        }
 
         initialCheckout = true;
     }
+
+    IList<GitRemoteHead^> ^heads = nullptr;
 
     try
     {
@@ -60,6 +62,13 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
         rm->Connect(true, args->FetchArgs);
         rm->Download(args->FetchArgs);
         rm->UpdateTips(args->FetchArgs);
+
+        if (initialCheckout)
+        {
+            heads = rm->GetHeads();
+            defaultBranch = rm->DefaultBranch;
+        }
+
         rm->Disconnect(args->FetchArgs);
     }
     finally
@@ -67,15 +76,46 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
         delete rm;
     }
 
-    if (initialCheckout)
+    /*if (initialCheckout)
     {
-        git_checkout_options op = GIT_CHECKOUT_OPTIONS_INIT;
+        
+    }*/
 
-        GIT_THROW(git_checkout_head(repo.Handle, &op));
-        return true;
+    GitMergeAnalysis ^an;
+    if (repo.MergeAnalysis(repo.LastFetchResult, args->MergeArgs, an))
+    {
+        if (an->IsUpToDate)
+            return true;
+        else if (an->IsUnborn)
+        {
+            if (!initialCheckout)
+                throw gcnew NotImplementedException();
+
+            GitCommit ^commit;
+            GitBranch ^branch;
+
+            // The first reported head is HEAD
+            if (!repo.Lookup(heads[0]->Id, commit))
+                throw gcnew InvalidOperationException("Not synced?");
+
+            if (!repo.Branches->Create(commit, defaultBranch ? defaultBranch : "refs/heads/master", args->FetchArgs, branch))
+                throw gcnew InvalidOperationException("Failed to create local branch");
+
+            branch->RecordAsHeadBranch(args->FetchArgs);
+
+            GitPool pool(repo.Pool);
+            GIT_THROW(git_checkout_head(repo.Handle, args->MergeArgs->MakeCheckOutOptions(%pool)));
+            //repo.CheckOut(commit->Tree, args->MergeArgs);
+            return true;
+        }
+        else
+        {
+            GitMergeResult ^mr;
+
+            if (repo.Merge(repo.LastFetchResult, args->MergeArgs, mr))
+                return true;
+        }
     }
 
-    GitMergeResult ^mr;
-    if (!repo.Merge(repo.LastFetchResult, args->MergeArgs, mr))
-        return false;
+    return false;
 }

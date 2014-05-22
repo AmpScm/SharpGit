@@ -559,17 +559,21 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 
 #pragma region MERGE
 
-GitMergeDescription::GitMergeDescription(GitBranch ^branch, System::Uri ^url)
+GitMergeDescription::GitMergeDescription(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id)
 {
-    if (!branch)
-        throw gcnew ArgumentNullException("branch");
+    if (!repository)
+        throw gcnew ArgumentNullException("repository");
+    else if (String::IsNullOrEmpty(branchName))
+        throw gcnew ArgumentNullException("BranchName");
     else if (!url)
         throw gcnew ArgumentNullException("url");
+    else if (!id)
+        throw gcnew ArgumentNullException("id");
 
-    _branch = branch;
-    _reference = branch->Reference;
-    _repository = branch->Repository;
-    _id = branch->Reference->TargetId;
+    _repository = repository;
+    _branchName = branchName;
+    _reference = nullptr;
+    _id = id;
     _uri = url;
 }
 
@@ -598,9 +602,9 @@ git_merge_head *GitMergeDescription::Alloc(GitPool ^pool)
 {
   git_merge_head *mh;
 
-  if (Branch)
+  if (BranchName)
     GIT_THROW(git_merge_head_from_fetchhead(&mh, _repository->Handle,
-                                            pool->AllocString(Branch->Name),
+                                            pool->AllocString(BranchName),
                                             pool->AllocString(Uri->AbsoluteUri),
                                             &Id->AsOid()));
   else if (Reference)
@@ -626,10 +630,7 @@ static int __cdecl foreach_fetchhead(const char *ref_name, const char *remote_ur
     GitRoot<GitFetchHeadInfo^> root(payload);
     GitBranch ^branch;
 
-    if (root->Repository->Branches->TryGet(GitBase::Utf8_PtrToString(ref_name), branch))
-    {
-        root->List->Add(gcnew GitMergeDescription(branch, gcnew System::Uri(GitBase::Utf8_PtrToString(remote_url), UriKind::Absolute)));
-    }
+    root->List->Add(gcnew GitMergeDescription(root->Repository, GitBase::Utf8_PtrToString(ref_name), gcnew System::Uri(GitBase::Utf8_PtrToString(remote_url), UriKind::Absolute), gcnew GitId(oid)));
 
     return 0;
 }
@@ -669,6 +670,42 @@ bool GitRepository::Merge(ICollection<GitMergeDescription^> ^descriptions, GitMe
         }
 
         GIT_THROW(git_merge(Handle, heads, descriptions->Count, args->AllocMergeOptions(%pool), args->MakeCheckOutOptions(%pool)));
+    }
+    finally
+    {
+        while(headsAlloced)
+        {
+            git_merge_head_free(const_cast<git_merge_head*>(heads[--headsAlloced]));
+        }
+    }
+
+    return true;
+}
+
+bool GitRepository::MergeAnalysis(ICollection<GitMergeDescription^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis)
+{
+    GitPool pool(Pool);
+
+    mergeAnalysis = nullptr;
+
+    const git_merge_head ** heads = (const git_merge_head **)pool.Alloc(sizeof(const git_merge_head*) * descriptions->Count);
+    int headsAlloced = 0;
+    try
+    {
+        for each(GitMergeDescription ^d in descriptions)
+        {
+            git_merge_head *mh = d->Alloc(%pool);
+
+            if (!mh)
+                throw gcnew InvalidOperationException();
+
+            heads[headsAlloced++] = mh;
+        }
+
+        git_merge_analysis_t analysis;
+        GIT_THROW(git_merge_analysis(&analysis, Handle, heads, descriptions->Count));
+
+        mergeAnalysis = gcnew GitMergeAnalysis(analysis);
     }
     finally
     {

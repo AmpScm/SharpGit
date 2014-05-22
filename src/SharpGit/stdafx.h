@@ -36,6 +36,7 @@ using SharpGit::Implementation::GitPool;
 using SharpGit::Plumbing::GitRepository;
 using System::Runtime::InteropServices::OutAttribute;
 using System::Collections::Generic::ICollection;
+using System::Collections::Generic::IList;
 using System::Collections::Generic::IDictionary;
 using System::Collections::Generic::IEnumerable;
 using System::Collections::Generic::IEnumerator;

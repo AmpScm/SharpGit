@@ -19,6 +19,66 @@ namespace SharpGit {
 
         typedef int (__cdecl *git_push_status)(const char *ref, const char *msg, void *payload);
 
+        public ref class GitRemoteHead : public Implementation::GitBase
+        {
+            initonly bool _local;
+            initonly GitId ^_oid;
+            initonly GitId ^_loid;
+            initonly String ^_name;
+            initonly String ^_symrefTarget;
+
+        internal:
+            GitRemoteHead(const git_remote_head *init)
+            {
+                _local = (init->local != 0);
+                _oid = gcnew GitId(init->oid);
+                _loid = gcnew GitId(init->loid);
+                _name = init->name ? GitBase::Utf8_PtrToString(init->name) : nullptr;
+                _symrefTarget = init->symref_target ? GitBase::Utf8_PtrToString(init->symref_target) : nullptr;
+            }
+
+        public:
+            property bool Local
+            {
+                bool get()
+                {
+                    return _local;
+                }
+            }
+
+            property GitId ^ Id
+            {
+                GitId ^ get()
+                {
+                    return _oid;
+                }
+            }
+
+            property GitId ^ LocalId
+            {
+                GitId ^ get()
+                {
+                    return _loid;
+                }
+            }
+
+            property String ^ Name
+            {
+                String ^ get()
+                {
+                    return _name;
+                }
+            }
+
+            property String ^ SymbolicReferenceTarget
+            {
+                String ^ get()
+                {
+                    return _symrefTarget;
+                }
+            }
+        };
+
         public ref class GitRemote : public Implementation::GitBase
         {
             initonly GitRepository ^_repository;
@@ -29,6 +89,7 @@ namespace SharpGit {
             git_push_transfer_progress _transfer_progress_cb;
             git_push_status _push_status_cb;
             void *_push_payload;
+            bool _connected;
 
         internal:
             GitRemote(GitRepository ^repository, git_remote *remote);
@@ -69,6 +130,9 @@ namespace SharpGit {
 
         public:
             bool Push(IEnumerable<GitRefSpec^>^ references, GitPushArgs ^args);
+
+        internal:
+            String ^FetchSpecTransformToSource(String ^spec);
 
         public:
             property String^ Name
@@ -112,6 +176,12 @@ namespace SharpGit {
                 void set(System::Uri ^value);
             }
 
+            /// <summary>When connected: Provides the default branch</summary>
+            property String ^ DefaultBranch
+            {
+                String ^ get();
+            }
+
             property IEnumerable<GitRefSpec^>^ FetchRefSpecs
             {
                 IEnumerable<GitRefSpec^>^ get();
@@ -123,6 +193,8 @@ namespace SharpGit {
                 IEnumerable<GitRefSpec^>^ get();
                 void set(IEnumerable<GitRefSpec^>^ value);
             }
+
+            IList<GitRemoteHead^>^ GetHeads();
         };
 
         public ref class GitRemoteCollection sealed : public Implementation::GitBase,

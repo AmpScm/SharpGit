@@ -28,6 +28,7 @@ GitRemote::!GitRemote()
     if (_remote)
         try
         {
+            _connected = false;
             git_remote_free(_remote);
         }
         finally
@@ -41,6 +42,7 @@ GitRemote::~GitRemote()
     if (_remote)
         try
         {
+            _connected = false;
             git_remote_free(_remote);
         }
         finally
@@ -65,7 +67,7 @@ void GitRemote::SetCallbacks(const git_remote_callbacks *callbacks)
 bool GitRemote::Connect(bool forFetch, GitArgs ^args)
 {
     GIT_THROW(git_remote_connect(Handle, forFetch ? GIT_DIRECTION_FETCH : GIT_DIRECTION_PUSH));
-
+    _connected = true;
     return true;
 }
 
@@ -77,6 +79,7 @@ bool GitRemote::Download(GitArgs ^args)
 }
 bool GitRemote::Disconnect(GitArgs ^args)
 {
+    _connected = false;
     git_remote_disconnect(Handle);
     return true;
 }
@@ -99,6 +102,35 @@ bool GitRemote::Save(GitArgs ^args)
 void GitRemote::Stop(GitArgs ^args)
 {
     git_remote_stop(Handle);
+}
+
+String ^ GitRemote::DefaultBranch::get()
+{
+    if (!_connected)
+        return nullptr;
+
+    Git_buf buf;
+
+    GIT_THROW(git_remote_default_branch(&buf, Handle));
+
+    return Utf8_PtrToString(buf.ptr, buf.size);
+}
+
+String ^ GitRemote::FetchSpecTransformToSource(String ^spec)
+{
+    if (String::IsNullOrEmpty(spec))
+        throw gcnew ArgumentNullException("spec");
+
+    const git_refspec *spc = git_remote_get_refspec(Handle, 0);
+
+    if (!spc)
+        return nullptr;
+
+    GitPool pool(_repository->Pool);
+    Git_buf buf;
+    GIT_THROW(git_refspec_rtransform(&buf, spc, pool.AllocString(spec)));
+
+    return Utf8_PtrToString(buf.ptr, buf.size);
 }
 
 GitRemoteCollection^ GitRepository::Remotes::get()
@@ -252,6 +284,24 @@ void GitRemote::PushRefSpecs::set(IEnumerable<GitRefSpec^>^ value)
     throw gcnew NotImplementedException();
 }
 
+IList<GitRemoteHead^> ^ GitRemote::GetHeads()
+{
+    if (!_connected)
+        return nullptr;
+
+    const git_remote_head **p_heads;
+    size_t heads_cnt;
+    GIT_THROW(git_remote_ls(&p_heads, &heads_cnt, Handle));
+
+    array<GitRemoteHead^>^ heads = gcnew array<GitRemoteHead^>(heads_cnt);
+
+    for(size_t i = 0; i < heads_cnt; i++)
+      {
+        heads[i] = gcnew GitRemoteHead(p_heads[i]);
+      }
+
+    return dynamic_cast<IList<GitRemoteHead^>^>(heads);
+}
 
 void GitRemote::SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
                                  git_push_transfer_progress transfer_progress_cb,

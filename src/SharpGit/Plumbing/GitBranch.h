@@ -12,10 +12,12 @@ namespace SharpGit {
             String ^_name, ^_shortName;
             initonly int _type;
             bool _resolvedUpstream;
-            bool _resolvedUpstreamName;
+            bool _resolvedLocalUpstreamName;
+            bool _resolvedRemoteUpstreamName;
             GitReference^ _reference;
             GitReference^ _upstreamReference;
-            String ^_upstreamName;
+            String ^_localUpstreamName;
+            String ^_remoteUpstreamName;
 
         protected public:
             property GitRepository ^ Repository
@@ -128,13 +130,21 @@ namespace SharpGit {
                 GitReference ^ get();
             }
 
-            property String ^ UpstreamName
+            property String ^ LocalUpstreamName
+            {
+                String ^ get();
+            }
+
+            property String ^ RemoteUpstreamName
             {
                 String ^ get();
             }
 
         public:
             GitRefSpec ^AsRefSpec();
+
+            /// <summary>Marks this branch as the currently checked out HEAD branch</summary>
+            bool RecordAsHeadBranch(GitCreateRefArgs ^args);
         };
 
 
