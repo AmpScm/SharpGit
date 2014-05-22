@@ -104,6 +104,12 @@ namespace SharpGit {
 
             bool Delete(GitConfigurationLevel level, String ^key);
             bool Delete(GitConfigurationLevel level, String ^key, GitArgs ^args);
+
+        public:
+            static String ^ Join(...array<String^>^ args)
+            {
+                return String::Join(".", args);
+            }
         };
 
 

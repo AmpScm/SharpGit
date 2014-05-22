@@ -38,7 +38,7 @@ String ^ GitBranch::RemoteName::get()
     if (!IsRemote)
     {
         String ^rn;
-        if(_repository->Configuration->TryGetString(String::Join(".", "branch", ShortName, "remote"), rn))
+        if(_repository->Configuration->TryGetString(GitConfiguration::Join("branch", ShortName, "remote"), rn))
             return rn;
 
         return nullptr;
@@ -135,7 +135,7 @@ String ^ GitBranch::RemoteUpstreamName::get()
                 delete rm;
             }
         }
-        else if (IsLocal && Repository->Configuration->TryGetString(String::Join(".", "branch", ShortName, "merge"), name))
+        else if (IsLocal && Repository->Configuration->TryGetString(GitConfiguration::Join("branch", ShortName, "merge"), name))
         {
             _remoteUpstreamName = name;
         }
