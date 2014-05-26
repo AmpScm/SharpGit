@@ -9,7 +9,7 @@ using Assert = NUnit.Framework.Assert;
 namespace SharpGit.Tests
 {
     [TestClass]
-    public class DiffTests
+    public class DiffTests : TestBase
     {
 
         [TestMethod]

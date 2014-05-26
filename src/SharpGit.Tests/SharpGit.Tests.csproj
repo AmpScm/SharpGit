@@ -63,6 +63,7 @@
     <Compile Include="DiffTests.cs" />
     <Compile Include="GitClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(MSBuildToolsVersion)' == '3.5'">
