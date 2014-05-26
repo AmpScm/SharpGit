@@ -18,7 +18,7 @@ const git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
     {
         opts->checkout_strategy |= GIT_CHECKOUT_SAFE;
 
-        if (Create)
+        if (! SkipMissingFiles)
             opts->checkout_strategy |= GIT_CHECKOUT_SAFE_CREATE;
 
         if (OverwriteExisting)

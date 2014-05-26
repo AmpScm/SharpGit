@@ -17,7 +17,6 @@ namespace SharpGit {
     public:
         GitCloneArgs()
         {
-            Create = true;
             _signature = gcnew GitSignature();
         }
 

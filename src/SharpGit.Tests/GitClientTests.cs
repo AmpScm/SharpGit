@@ -14,6 +14,17 @@ namespace SharpGit.Tests
     {
         string GetTempPath()
         {
+            string rest = Guid.NewGuid().ToString("N");
+            string start = Path.Combine(Path.GetTempPath(), "gittest");
+
+            for (int n = 4; n < rest.Length; n++)
+            {
+                string name = Path.Combine(start, rest.Substring(0, n));
+
+                if (!Directory.Exists(name))
+                    return name;
+            }
+
             return Path.Combine(Path.GetTempPath(), "gittest\\" + Guid.NewGuid().ToString("N"));
         }
 
@@ -511,7 +522,7 @@ namespace SharpGit.Tests
             }
         }
 
-        // [TestMethod]
+        [TestMethod]
         public void PushChanges()
         {
             string master = GetTempPath();

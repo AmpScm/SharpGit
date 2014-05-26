@@ -29,7 +29,7 @@ namespace SharpGit {
 
     private:
         bool _dryRun;
-        bool _create;
+        bool _noCreateMissing;
         bool _overwrite;
         bool _failOnConflicts;
         bool _removeUnversioned;
@@ -51,15 +51,16 @@ namespace SharpGit {
             }
         }
 
-        property bool Create
+        /// <summary>If true, don't create missing files during checkout</summary>
+        property bool SkipMissingFiles
         {
             bool get()
             {
-                return _create;
+                return _noCreateMissing;
             }
             void set(bool value)
             {
-                _create = value;
+                _noCreateMissing = value;
             }
         }
 
