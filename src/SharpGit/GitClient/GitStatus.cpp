@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GitClient.h"
-#include "GitStatus.h"
+#include "GitStatusArgs.h"
 #include "Plumbing/GitRepository.h"
 
 using namespace SharpGit;

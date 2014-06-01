@@ -1,6 +1,6 @@
 #pragma once
 #include "GitClientContext.h"
-#include "GitCommitCmd.h"
+#include "GitCommitArgs.h"
 
 namespace SharpGit {
 

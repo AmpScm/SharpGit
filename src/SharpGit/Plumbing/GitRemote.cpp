@@ -2,7 +2,7 @@
 
 #include "GitRepository.h"
 #include "GitRemote.h"
-#include "GitClient/Args/GitPushArgs.h"
+#include "GitClient/GitPushArgs.h"
 #include "GitRefSpec.h"
 
 #include "UnmanagedStructs.h"

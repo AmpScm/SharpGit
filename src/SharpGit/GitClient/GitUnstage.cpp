@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GitClient.h"
-#include "GitUnstage.h"
+#include "GitUnstageArgs.h"
 
 using namespace SharpGit;
 

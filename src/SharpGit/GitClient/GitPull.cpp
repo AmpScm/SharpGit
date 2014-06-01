@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "GitClient.h"
-#include "GitDelete.h"
 
-#include "Args/GitPullArgs.h"
+#include "GitPullArgs.h"
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitCommit.h"
 #include "Plumbing/GitConfiguration.h"
+#include "Plumbing/GitIndex.h"
 #include "Plumbing/GitRemote.h"
 #include "Plumbing/GitBranch.h"
 #include "Plumbing/GitReference.h"
@@ -113,7 +113,21 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
             GitMergeResult ^mr;
 
             if (repo.Merge(repo.LastFetchResult, args->MergeArgs, mr))
+            {
+                if (repo.Index->HasConflicts)
+                {
+                }
+                else
+                {
+                    if (args->CommitOnSuccess)
+                    {
+                        GitId ^result;
+                        Commit(repo.WorkingCopyDirectory, args->CommitArgs, result);
+                    }
+                }
+
                 return true;
+            }
         }
     }
 

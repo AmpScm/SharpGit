@@ -4,7 +4,7 @@
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitIndex.h"
-#include "GitClient/Args/GitInitArgs.h"
+#include "GitInitArgs.h"
 
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;

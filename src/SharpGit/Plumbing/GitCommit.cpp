@@ -3,7 +3,7 @@
 #include "GitCommit.h"
 #include "GitRepository.h"
 #include "GitTree.h"
-#include "../GitClient/GitCommitCmd.h"
+#include "../GitClient/GitCommitArgs.h"
 
 using namespace SharpGit::Plumbing;
 using namespace SharpGit;

@@ -10,10 +10,15 @@ namespace SharpGit.Tests
         protected string GetTempPath()
         {
             string rest = Guid.NewGuid().ToString("N");
+            int restBaseLen = 0;
 
             string start;
             if (TestContext != null)
+            {
                 start = Path.Combine(TestContext.TestDir, "gittest");
+                rest = TestContext.TestName + "-" + rest;
+                restBaseLen = rest.Length - 32;
+            }
             else
                 start = Path.Combine(Path.GetTempPath(), "gittest");
 
@@ -21,7 +26,7 @@ namespace SharpGit.Tests
 
             for (int n = 4; n < rest.Length; n++)
             {
-                string name = Path.Combine(start, rest.Substring(0, n));
+                string name = Path.Combine(start, rest.Substring(0, n + restBaseLen));
 
                 if (!Directory.Exists(name))
                     return name;

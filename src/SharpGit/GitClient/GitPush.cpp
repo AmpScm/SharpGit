@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GitClient.h"
 
-#include "Args/GitPushArgs.h"
+#include "GitPushArgs.h"
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitRefSpec.h"

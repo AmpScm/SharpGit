@@ -169,36 +169,9 @@
     <ClInclude Include="Plumbing\GitBranch.h">
       <Filter>Plumbing</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\GitTagCmd.h">
-      <Filter>GitClient\Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitCheckOut.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitClone.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitCommitCmd.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitDelete.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitStatus.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\GitUnstage.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="UnmanagedStructs.h" />
     <ClInclude Include="Plumbing\GitRemote.h">
       <Filter>Plumbing</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\Args\GitFetchArgs.h">
-      <Filter>GitClient\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="GitClient\Args\GitPushArgs.h">
-      <Filter>GitClient\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Plumbing\deep_wrap.h">
       <Filter>Plumbing</Filter>
@@ -206,16 +179,40 @@
     <ClInclude Include="Plumbing\GitRefSpec.h">
       <Filter>Plumbing</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\Args\GitPullArgs.h">
+    <ClInclude Include="GitClient\GitCommitArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\Args\GitMergeArgs.h">
+    <ClInclude Include="GitClient\GitCheckOutArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\Args\GitInitArgs.h">
+    <ClInclude Include="GitClient\GitCloneArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GitClient\GitStageArgs.h">
+    <ClInclude Include="GitClient\GitDeleteArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitStatusArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitUnstageArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitFetchArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitInitArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitMergeArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitPullArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitPushArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitTagArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>

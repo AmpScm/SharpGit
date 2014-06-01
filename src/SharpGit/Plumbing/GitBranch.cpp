@@ -304,3 +304,5 @@ bool GitBranchCollection::TryGet(String^ name, [Out]GitBranch ^%branch)
     }
     return false;
 }
+
+#include "UnmanagedStructs.h"

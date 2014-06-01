@@ -1,5 +1,5 @@
 #pragma once
-#include "GitCheckOut.h"
+#include "GitCheckOutArgs.h"
 
 namespace SharpGit {
 

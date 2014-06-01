@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
 #include "GitRepository.h"
-#include "../GitClient/GitStatus.h"
-#include "../GitClient/GitCommitCmd.h"
-#include "../GitClient/GitCheckOut.h"
-#include "../GitClient/Args/GitInitArgs.h"
-#include "../GitClient/Args/GitMergeArgs.h"
+#include "GitClient/GitStatusArgs.h"
+#include "GitClient/GitCommitArgs.h"
+#include "GitClient/GitCheckOutArgs.h"
+#include "GitClient/GitInitArgs.h"
+#include "GitClient/GitMergeArgs.h"
 
 #include "GitConfiguration.h"
 #include "GitIndex.h"
@@ -703,9 +703,10 @@ bool GitRepository::MergeAnalysis(ICollection<GitMergeDescription^> ^description
         }
 
         git_merge_analysis_t analysis;
-        GIT_THROW(git_merge_analysis(&analysis, Handle, heads, descriptions->Count));
+        git_merge_preference_t preference;
+        GIT_THROW(git_merge_analysis(&analysis, &preference, Handle, heads, descriptions->Count));
 
-        mergeAnalysis = gcnew GitMergeAnalysis(analysis);
+        mergeAnalysis = gcnew GitMergeAnalysis(analysis, preference);
     }
     finally
     {

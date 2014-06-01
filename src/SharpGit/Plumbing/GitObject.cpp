@@ -7,7 +7,7 @@
 #include "GitTag.h"
 #include "GitTree.h"
 
-#include "../GitClient/GitCommitCmd.h"
+#include "../GitClient/GitCommitArgs.h"
 
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;

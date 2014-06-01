@@ -287,22 +287,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GitClientContext.h" />
-    <ClInclude Include="GitClient\Args\GitFetchArgs.h" />
-    <ClInclude Include="GitClient\Args\GitInitArgs.h" />
-    <ClInclude Include="GitClient\Args\GitMergeArgs.h" />
-    <ClInclude Include="GitClient\Args\GitPullArgs.h" />
-    <ClInclude Include="GitClient\Args\GitPushArgs.h" />
-    <ClInclude Include="GitClient\GitStageArgs.h" />
-    <ClInclude Include="GitClient\GitCheckOut.h" />
+    <ClInclude Include="GitClient\GitFetchArgs.h" />
+    <ClInclude Include="GitClient\GitInitArgs.h" />
+    <ClInclude Include="GitClient\GitMergeArgs.h" />
+    <ClInclude Include="GitClient\GitPullArgs.h" />
+    <ClInclude Include="GitClient\GitPushArgs.h" />
+    <ClInclude Include="GitClient\GitCheckOutArgs.h" />
     <ClInclude Include="GitClient\GitClient.h" />
     <ClInclude Include="GitClient\GitClientEventArgs.h" />
-    <ClInclude Include="GitClient\GitClone.h" />
-    <ClInclude Include="GitClient\GitCommitCmd.h" />
-    <ClInclude Include="GitClient\GitDelete.h" />
-    <ClInclude Include="GitClient\GitStatus.h" />
+    <ClInclude Include="GitClient\GitCloneArgs.h" />
+    <ClInclude Include="GitClient\GitCommitArgs.h" />
+    <ClInclude Include="GitClient\GitDeleteArgs.h" />
+    <ClInclude Include="GitClient\GitStatusArgs.h" />
     <ClInclude Include="GitClient\GitStatusEventArgs.h" />
-    <ClInclude Include="GitClient\GitTagCmd.h" />
-    <ClInclude Include="GitClient\GitUnstage.h" />
+    <ClInclude Include="GitClient\GitTagArgs.h" />
+    <ClInclude Include="GitClient\GitUnstageArgs.h" />
     <ClInclude Include="GitId.h" />
     <ClInclude Include="GitLibraryAttribute.h" />
     <ClInclude Include="Plumbing\deep_wrap.h" />

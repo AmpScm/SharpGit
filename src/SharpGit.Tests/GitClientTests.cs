@@ -542,7 +542,19 @@ namespace SharpGit.Tests
 
                 File.WriteAllText(index, "This is index.txt\n");
 
+                string appCode = Path.Combine(harry, "app.c");
+                File.WriteAllText(appCode, @"
+#include <stdio.h>
+
+int main(int argc, const char **argv)
+{
+    printf(""hello world\n"");
+    return 0;
+}
+");
+
                 git.Add(index);
+                git.Add(appCode);
                 GitId result;
                 GitCommitArgs cma = new GitCommitArgs();
                 cma.Signature.When = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -592,6 +604,110 @@ namespace SharpGit.Tests
                 string index = Path.Combine(src, "index.txt");
 
                 Assert.That(File.Exists(index), Is.True);
+
+                string appCode = Path.Combine(sally, "app.c");
+                File.WriteAllText(appCode, @"
+#include <stdio.h>
+
+int main(int argc, const char **argv)
+{
+    int i;
+
+    if (argc != 1)
+    {
+        fprintf(stderr, ""Usage %s <int>\n"", argv[0]);
+        return 1;
+    }
+    for (i = 0; i < atoi(argv[1]); i++
+        printf(""hello world %d\n"", i);
+
+    return 0;
+}
+");
+                GitId result;
+                GitCommitArgs cma = new GitCommitArgs();
+                cma.Signature.When = new DateTime(2000, 1, 2, 0, 0, 0, DateTimeKind.Utc);
+                cma.Author.When = new DateTime(2000, 1, 2, 0, 0, 0, DateTimeKind.Utc);
+                git.Commit(sally, cma, out result);
+
+                GitPushArgs ph = new GitPushArgs();
+                ph.Mode = GitPushMode.All;
+                git.Push(sally, ph);
+            }
+
+            using (GitClient git = new GitClient()) // Harry
+            {
+                string appCode = Path.Combine(harry, "app.c");
+                File.WriteAllText(appCode, @"
+#include <stdio.h>
+
+int main(int argc, const char **argv)
+{
+    if (argc > 0 && strcmp(argv[1], ""-V"")
+    {
+        printf(""%s version 1.0 (c) QQn\n"");
+        return 0;
+    }
+    printf(""hello world\n"");
+    return 0;
+}
+");
+
+                git.Add(appCode);
+
+                GitId result;
+                GitCommitArgs cma = new GitCommitArgs();
+                cma.Signature.When = new DateTime(2000, 1, 3, 0, 0, 0, DateTimeKind.Utc);
+                cma.Author.When = new DateTime(2000, 1, 3, 0, 0, 0, DateTimeKind.Utc);
+                git.Commit(harry, cma, out result); // Local commit will succeed
+
+                GitPushArgs ph = new GitPushArgs();
+                ph.Mode = GitPushMode.All;
+                try
+                {
+                    git.Push(harry, ph); // But push fails, as it conflicts
+                    Assert.Fail("Should have failed");
+                }
+                catch(GitException ge)
+                {
+                    Assert.That(ge.Message, Is.StringContaining("Cannot push"));
+                }
+
+                GitPullArgs pa = new GitPullArgs();
+                pa.FetchArgs.All = true;
+                pa.CommitOnSuccess = false;
+                //pa.MergeArgs
+
+                git.Pull(harry, pa);
+
+                git.Status(harry,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        switch (e.RelativePath)
+                        {
+                            case "app.c":
+                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal));
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
+                                break;
+                            case "src/index.txt":
+                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal));
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
+                                break;
+                            default:
+                                Assert.Fail("Unexpected path: {0}", e.RelativePath);
+                                break;
+                        }
+                    });
+
+                try
+                {
+                    git.Push(harry, ph); // But push fails, as it conflicts
+                    Assert.Fail("Should still fail");
+                }
+                catch (GitException ge)
+                {
+                    Assert.That(ge.Message, Is.StringContaining("Cannot push"));
+                }
             }
         }
 

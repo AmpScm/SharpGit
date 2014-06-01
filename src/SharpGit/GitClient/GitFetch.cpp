@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "GitClient.h"
-#include "GitDelete.h"
-
-#include "Args/GitFetchArgs.h"
+#include "GitDeleteArgs.h"
+#include "GitFetchArgs.h"
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitRemote.h"

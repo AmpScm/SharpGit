@@ -9,8 +9,8 @@
 #include "GitTree.h"
 #include "GitBranch.h"
 
-#include "../GitClient/GitCommitCmd.h"
-#include "../GitClient/GitTagCmd.h"
+#include "GitClient/GitCommitArgs.h"
+#include "GitClient/GitTagArgs.h"
 
 #include "UnmanagedStructs.h"
 

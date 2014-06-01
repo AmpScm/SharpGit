@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GitClient.h"
-#include "GitCheckOut.h"
+#include "GitCheckOutArgs.h"
 
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitIndex.h"
