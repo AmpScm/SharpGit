@@ -4,20 +4,31 @@ namespace SharpGit {
 
     ref class GitStatusArgs;
 
+    [FlagsAttribute]
     public enum class GitStatus
     {
         Normal = 0,
 
-        New                             =         0x0001,
-        Added                   =         0x0002,
+        New                     =     0x0001,
+        Added                   =     0x0002,
 
-        Modified                =         0x0010,
-        Renamed                 =         0x0020,
-        TypeChange              =         0x0040,
+        Modified                =     0x0010,
+        Renamed                 =     0x0020,
+        TypeChange              =     0x0040,
 
         Deleted                 = 0x01000000,
 
         Ignored                 = 0x10000000,
+    };
+
+
+    [FlagsAttribute]
+    enum class GitConflicted
+    {
+        None,
+        HasAncestor = 1,
+        HasMine     = 2,
+        HasTheirs   = 3,
     };
 
     public ref class GitStatusEventArgs : public GitClientEventArgs
@@ -28,9 +39,10 @@ namespace SharpGit {
         GitPool^ _pool;
         const char *_path;
         const char *_wcPath;
+        GitConflicted _conflicted;
 
     internal:
-        GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, GitStatusArgs ^args, Implementation::GitPool ^pool);
+        GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
 
     public:
         property String^ RelativePath
@@ -80,7 +92,7 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_MODIFIED | GIT_STATUS_INDEX_DELETED))
+                switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_MODIFIED | GIT_STATUS_INDEX_DELETED | GIT_STATUS_INDEX_RENAMED | GIT_STATUS_INDEX_TYPECHANGE))
                 {
                 case 0:
                     return GitStatus::Normal;
@@ -101,7 +113,7 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_MODIFIED | GIT_STATUS_WT_DELETED))
+                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_MODIFIED | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_TYPECHANGE))
                 {
                 case 0:
                     return GitStatus::Normal;
@@ -123,6 +135,14 @@ namespace SharpGit {
             bool get()
             {
                 return (_status & GIT_STATUS_IGNORED) != 0;
+            }
+        }
+
+        property bool Conflicted
+        {
+            bool get()
+            {
+                return (_conflicted != GitConflicted::None);
             }
         }
 

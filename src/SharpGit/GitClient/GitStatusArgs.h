@@ -15,6 +15,10 @@ namespace SharpGit {
         bool _noSubmodules;
         bool _recurseUnversioned;
         bool _recurseIgnored;
+        bool _caseInsensitive;
+        bool _noIncludeConflicts;
+        bool _noRefresh;
+        bool _updateCache;
 
     public:
         event EventHandler<GitStatusEventArgs^>^ Status;
@@ -130,6 +134,54 @@ namespace SharpGit {
                 }
                 else
                     _recurseIgnored = false;
+            }
+        }
+
+        property bool SortCaseInsensitive
+        {
+            bool get()
+            {
+                return _caseInsensitive;
+            }
+            void set(bool value)
+            {
+                _caseInsensitive = value;
+            }
+        }
+
+        property bool NoRefresh
+        {
+            bool get()
+            {
+                return _noRefresh;
+            }
+            void set(bool value)
+            {
+                _noRefresh = value;
+            }
+        }
+
+        property bool NoCacheUpdate
+        {
+            bool get()
+            {
+                return !_updateCache;
+            }
+            void set(bool value)
+            {
+                _updateCache = value;
+            }
+        }
+
+        property bool IncludeConflicts
+        {
+            bool get()
+            {
+                return !_noIncludeConflicts;
+            }
+            void set(bool value)
+            {
+                _noIncludeConflicts = !value;
             }
         }
 

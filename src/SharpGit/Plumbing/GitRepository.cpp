@@ -506,13 +506,40 @@ bool GitRepository::OpenTree(GitId^ id, GitArgs^ args, [Out] GitTree ^%tree)
 
 #pragma region STATUS
 
+struct Git_status_data
+{
+    GitRoot<GitStatusArgs^> Args;
+    const char *wcPath;
+    apr_hash_t *walk_conflicts;
+    git_index *index;
+
+public:
+    Git_status_data(GitStatusArgs^ args, GitPool ^ pool)
+      : Args(args, pool), walk_conflicts(nullptr), index(nullptr)
+    {}
+};
+
 static int __cdecl on_status(const char *path, unsigned int status, void *baton)
 {
-    GitRoot<GitStatusArgs^> args(baton);
-    GitPool pool(args.GetPool());
+    Git_status_data &data = *static_cast<Git_status_data*>(baton);
+    GitStatusArgs ^args = data.Args;
+    GitPool pool(data.Args.GetPool());
+
     try
     {
-        GitStatusEventArgs^ ee = gcnew GitStatusEventArgs(path, args.GetWcPath(), status, args, %pool);
+        GitStatusEventArgs^ ee;
+
+        if (!data.walk_conflicts)
+            ee = gcnew GitStatusEventArgs(path, data.wcPath, status, nullptr, args, %pool);
+        else
+        {
+            const git_index_entry *stages[3];
+
+            GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));
+
+            ee = gcnew GitStatusEventArgs(path, data.wcPath, status, stages, args, %pool);
+            svn_hash_sets(data.walk_conflicts, path, nullptr);
+        }
 
         args->OnStatus(ee);
     }
@@ -536,15 +563,51 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 
     try
     {
-        GitPool pool;
-        const char *wcPath = svn_dirent_canonicalize(git_repository_workdir(_repository), pool.Handle);
+        GitPool pool(Pool);
+        Git_status_data data(args, %pool);
+        data.wcPath = svn_dirent_canonicalize(git_repository_workdir(_repository), data.Args.GetPool());
 
-        GitRoot<GitStatusArgs^> root(args, wcPath, %pool);
+        GitIndex ^idx = Index;
+
+        if (idx->HasConflicts)
+        {
+            git_index_conflict_iterator *it;
+            const git_index_entry *ancestor, *our, *their;
+            int r;
+
+            data.index = idx->Handle;
+            GIT_THROW(git_index_conflict_iterator_new(&it, data.index));
+            data.walk_conflicts = apr_hash_make(pool.Handle);
+
+            while (0 == (r = git_index_conflict_next(&ancestor, &our, &their, it)))
+            {
+                const git_index_entry *ii = ancestor ? ancestor : (our ? our : their);
+
+                const char *name = apr_pstrdup(pool.Handle, ii->path);
+
+                svn_hash_sets(data.walk_conflicts, name, name);
+            }
+
+            git_index_conflict_iterator_free(it);
+        }
 
         int r = git_status_foreach_ext(_repository,
-                                                                   args->MakeOptions(path, %pool),
-                                                                   on_status,
-                                                                   root.GetBatonValue());
+                                       args->MakeOptions(path, %pool),
+                                       on_status,
+                                       &data);
+
+        if (!r && args->IncludeConflicts && data.walk_conflicts && apr_hash_count(data.walk_conflicts))
+        {
+            for (apr_hash_index_t *hi = apr_hash_first(pool.Handle, data.walk_conflicts); hi; hi = apr_hash_next(hi))
+            {
+                const char *path = static_cast<const char*>(svn__apr_hash_index_key(hi));
+                const git_index_entry *stages[3];
+
+                GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));
+
+                args->OnStatus(gcnew GitStatusEventArgs(path, data.wcPath, 0, stages, args, %pool));
+            }
+        }
 
         return args->HandleGitError(this, r);
     }

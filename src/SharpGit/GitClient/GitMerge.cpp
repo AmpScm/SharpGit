@@ -24,6 +24,8 @@ git_merge_options *GitMergeArgs::AllocMergeOptions(GitPool ^pool)
     mo->rename_threshold = RenameTreshold;
     mo->target_limit = RenameTargetLimit;
 
+    mo->file_favor = GIT_MERGE_FILE_FAVOR_NORMAL;
+
     return mo;
 }
 

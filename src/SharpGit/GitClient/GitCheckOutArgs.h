@@ -22,10 +22,46 @@ namespace SharpGit {
         }
     };
 
-    public ref class GitCheckOutArgs : public GitClientRemoteArgs
+    /// <summary>
+    /// Enum specifying what content checkout should write to disk
+    /// for conflicts.
+    /// </summary>
+    public enum class GitCheckoutConflictStrategy
+    {
+        /// <summary>
+        /// Use the default behavior for handling file conflicts. This is
+        /// controlled by the merge.conflictstyle config option, and is "Merge"
+        /// if no option is explicitly set.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// For conflicting files, checkout the "ours" (stage 2)  version of
+        /// the file from the index.
+        /// </summary>
+        UseOurs,
+
+        /// <summary>
+        /// For conflicting files, checkout the "theirs" (stage 3) version of
+        /// the file from the index.
+        /// </summary>
+        UseTheirs,
+
+        /// <summary>
+        /// Write normal merge files for conflicts.
+        /// </summary>
+        Merge,
+
+        /// <summary>
+        /// Write diff3 formated files for conflicts.
+        /// </summary>
+        Diff3
+    };
+
+    public ref class GitCheckOutArgs : public GitClientArgs
     {
     internal:
-        const git_checkout_options * MakeCheckOutOptions(GitPool ^pool);
+        git_checkout_options * MakeCheckOutOptions(GitPool ^pool);
 
     private:
         bool _dryRun;
@@ -35,8 +71,9 @@ namespace SharpGit {
         bool _removeUnversioned;
         bool _removeIgnored;
         bool _updateOnly;
-        bool _skipIndexUpdate;
-        bool _skipInitialRefresh;
+        bool _noUpdateCache;
+        bool _noRefresh;
+        GitCheckoutConflictStrategy _conflictStrategy;
 
     public:
         property bool DryRun
@@ -124,27 +161,39 @@ namespace SharpGit {
             }
         }
 
-        property bool SkipIndexUpdate
+        property bool NoRefresh
         {
             bool get()
             {
-                return _skipIndexUpdate;
+                return _noRefresh;
             }
             void set(bool value)
             {
-                _skipIndexUpdate = value;
+                _noRefresh = value;
             }
         }
 
-        property bool SkipInitialRefresh
+        property bool NoCacheUpdate
         {
             bool get()
             {
-                return _skipInitialRefresh;
+                return _noUpdateCache;
             }
             void set(bool value)
             {
-                _skipInitialRefresh = value;
+                _noUpdateCache = value;
+            }
+        }
+
+        property GitCheckoutConflictStrategy ConflictStrategy
+        {
+            GitCheckoutConflictStrategy get()
+            {
+                return _conflictStrategy;
+            }
+            void set(GitCheckoutConflictStrategy value)
+            {
+                _conflictStrategy = value;
             }
         }
     };

@@ -624,6 +624,8 @@ int main(int argc, const char **argv)
     return 0;
 }
 ");
+                git.Add(appCode);
+
                 GitId result;
                 GitCommitArgs cma = new GitCommitArgs();
                 cma.Signature.When = new DateTime(2000, 1, 2, 0, 0, 0, DateTimeKind.Utc);
@@ -675,29 +677,28 @@ int main(int argc, const char **argv)
 
                 GitPullArgs pa = new GitPullArgs();
                 pa.FetchArgs.All = true;
-                pa.CommitOnSuccess = false;
-                //pa.MergeArgs
 
                 git.Pull(harry, pa);
 
+                bool gotConflict = false;
                 git.Status(harry,
                     delegate(object sender, GitStatusEventArgs e)
                     {
                         switch (e.RelativePath)
                         {
                             case "app.c":
-                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal));
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
-                                break;
-                            case "src/index.txt":
-                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal));
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
+                                gotConflict = true;
+                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.New));
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Deleted));
+                                Assert.That(e.Conflicted, Is.True, "Conflicted");
                                 break;
                             default:
                                 Assert.Fail("Unexpected path: {0}", e.RelativePath);
                                 break;
                         }
                     });
+
+                Assert.That(gotConflict, "Found conflict status");
 
                 try
                 {

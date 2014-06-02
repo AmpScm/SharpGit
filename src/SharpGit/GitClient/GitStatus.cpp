@@ -6,13 +6,23 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, GitStatusArgs ^args, Implementation::GitPool ^pool)
+GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool)
 {
     UNUSED(args);
     _path = path;
     _wcPath = wcPath;
     _status = status;
     _pool = pool;
+    _conflicted = GitConflicted::None;
+    if (conflict_stages)
+    {
+        if (conflict_stages[0])
+            _conflicted = (_conflicted | GitConflicted::HasAncestor);
+        if (conflict_stages[1])
+            _conflicted = (_conflicted | GitConflicted::HasMine);
+        if (conflict_stages[2])
+            _conflicted = (_conflicted | GitConflicted::HasTheirs);
+    }
 }
 
 const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementation::GitPool ^pool)
@@ -49,13 +59,22 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
     else
         opts->flags |= GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
 
+    if (this->SortCaseInsensitive)
+        opts->flags |= GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY;
+    else
+        opts->flags |= GIT_STATUS_OPT_SORT_CASE_SENSITIVELY;
+
     opts->flags |= GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX;
     opts->flags |= GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR;
 
     //opts->flags |= GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY;
     opts->flags |= GIT_STATUS_OPT_RENAMES_FROM_REWRITES;
-    //opts->flags |= GIT_STATUS_OPT_NO_REFRESH;
-    //opts->flags |= GIT_STATUS_OPT_UPDATE_INDEX;
+
+    if (! NoCacheUpdate)
+        opts->flags |= GIT_STATUS_OPT_UPDATE_INDEX;
+
+    if (NoRefresh)
+        opts->flags |= GIT_STATUS_OPT_NO_REFRESH;
 
     return opts;
 }

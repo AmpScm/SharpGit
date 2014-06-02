@@ -10,6 +10,7 @@ namespace SharpGit {
         bool _ignoreCertErrors;
         String ^_remoteName;
         String ^_branchName;
+        bool _asynchronous;
 
     internal:
         const git_clone_options * MakeCloneOptions(const git_remote_callbacks *cb, GitPool ^pool);
@@ -75,6 +76,19 @@ namespace SharpGit {
             void set(String ^value)
             {
                 _branchName = value;
+            }
+        }
+
+    public:
+        property bool Synchronous
+        {
+            bool get()
+            {
+                return !_asynchronous;
+            }
+            void set(bool value)
+            {
+                _asynchronous = !value;
             }
         }
     };

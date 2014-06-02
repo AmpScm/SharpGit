@@ -8,7 +8,7 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-const git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
+git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
 {
     git_checkout_options *opts = (git_checkout_options *)pool->Alloc(sizeof(*opts));
 
@@ -36,21 +36,40 @@ const git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
         if (UpdateOnly)
             opts->checkout_strategy |= GIT_CHECKOUT_UPDATE_ONLY;
 
-        if (SkipIndexUpdate)
-            opts->checkout_strategy |= GIT_CHECKOUT_DONT_UPDATE_INDEX;
-
-        if (SkipInitialRefresh)
-            opts->checkout_strategy |= GIT_CHECKOUT_NO_REFRESH;
-
         // GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH
 
         // Defined but unimplemented:
         // GIT_CHECKOUT_SKIP_UNMERGED
-        // GIT_CHECKOUT_USE_OURS
-        // GIT_CHECKOUT_USE_THEIRS
         // GIT_CHECKOUT_UPDATE_SUBMODULES
         // GIT_CHECKOUT_UPDATE_SUBMODULES_IF_CHANGED
+
+        switch (ConflictStrategy)
+        {
+            case GitCheckoutConflictStrategy::UseOurs:
+                opts->checkout_strategy |= GIT_CHECKOUT_USE_OURS;
+                break;
+            case GitCheckoutConflictStrategy::UseTheirs:
+                opts->checkout_strategy |= GIT_CHECKOUT_USE_THEIRS;
+                break;
+
+            case GitCheckoutConflictStrategy::Diff3:
+                opts->checkout_strategy |= GIT_CHECKOUT_CONFLICT_STYLE_DIFF3;
+                break;
+
+            case GitCheckoutConflictStrategy::Merge:
+                opts->checkout_strategy |= GIT_CHECKOUT_CONFLICT_STYLE_MERGE;
+                break;
+
+            default:
+                break; // Will be retrieved from config.
+        }
     }
+
+    if (this->NoCacheUpdate)
+        opts->checkout_strategy |= GIT_CHECKOUT_DONT_UPDATE_INDEX;
+
+    if (this->NoRefresh)
+        opts->checkout_strategy |= GIT_CHECKOUT_NO_REFRESH;
 
     return opts;
 }
