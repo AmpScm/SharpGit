@@ -129,3 +129,14 @@ struct Git_strarray : public git_strarray
 
 #define DECLARE_EVENT(type, name) DECLARE_EVENT_X(type, name, public)
 
+
+inline const git_object *Git_ToObject(const git_reference *ref)
+{
+    return reinterpret_cast<const git_object*>(ref);
+}
+
+inline const git_object *Git_ToObject(const git_commit *commit)
+{
+    return reinterpret_cast<const git_object*>(commit);
+}
+

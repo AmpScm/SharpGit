@@ -113,6 +113,9 @@
     <ClCompile Include="GitClient\GitStash.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="GitClient\GitReset.cpp">
+      <Filter>GitClient\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SharpGit.snk" />
@@ -219,6 +222,9 @@
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
     <ClInclude Include="GitClient\GitStashArgs.h">
+      <Filter>GitClient\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GitClient\GitResetArgs.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
   </ItemGroup>

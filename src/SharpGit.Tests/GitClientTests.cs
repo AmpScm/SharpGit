@@ -709,6 +709,10 @@ int main(int argc, const char **argv)
                 {
                     Assert.That(ge.Message, Is.StringContaining("Cannot push"));
                 }
+
+                GitResetArgs ra = new GitResetArgs();
+                ra.Mode = GitResetMode.Hard;
+                git.Reset(harry, ra);
             }
         }
 

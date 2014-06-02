@@ -6,6 +6,7 @@
 #include "GitClient/GitCheckOutArgs.h"
 #include "GitClient/GitInitArgs.h"
 #include "GitClient/GitMergeArgs.h"
+#include "GitClient/GitResetArgs.h"
 #include "GitClient/GitStashArgs.h"
 
 #include "GitConfiguration.h"
@@ -536,6 +537,41 @@ bool GitRepository::Stash(GitStashArgs ^args, [Out] GitId ^%stashId)
       stashId = gcnew GitId(rslt);
 
     return args->HandleGitError(this, r);
+}
+
+bool GitRepository::Reset(GitResetArgs ^args)
+{
+    if (!args)
+        throw gcnew ArgumentNullException("args");
+
+    git_reset_t mode;
+    switch(args->Mode)
+    {
+        case GitResetMode::Default:
+            mode = GIT_RESET_SOFT;
+            break;
+        case GitResetMode::Mixed:
+            mode = GIT_RESET_MIXED;
+            break;
+        case GitResetMode::Hard:
+            mode = GIT_RESET_HARD;
+            break;
+        default:
+            throw gcnew InvalidOperationException();
+    }
+
+    GitPool pool(Pool);
+
+    GitCommit ^commit;
+
+    if (Lookup(HeadReference->TargetId, commit))
+    {
+        const git_object *target = Git_ToObject(commit->Handle);
+
+        return args->HandleGitError(this, git_reset(Handle, const_cast<git_object*>(target), mode, args->Signature->Alloc(this, %pool), args->AllocLogMessage(%pool)));
+    }
+    else
+        throw gcnew InvalidOperationException();
 }
 
 #pragma region STATUS
