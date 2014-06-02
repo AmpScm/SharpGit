@@ -10,6 +10,7 @@ namespace SharpGit {
     ref class GitMergeArgs;
     ref class GitMergeResult;
     ref class GitMergeAnalysis;
+    ref class GitStashArgs;
 
     namespace Plumbing {
         ref class GitBranch;
@@ -217,6 +218,9 @@ namespace SharpGit {
 
             bool Commit(GitTree ^tree, ICollection<GitCommit^> ^parents, GitCommitArgs ^args);
             bool Commit(GitTree ^tree, ICollection<GitCommit^> ^parents, GitCommitArgs ^args, [Out] GitId^% id);
+
+            bool Stash(GitStashArgs ^args);
+            bool Stash(GitStashArgs ^args, [Out] GitId ^%stashId);
 
             bool CheckOut(GitTree^ tree);
             bool CheckOut(GitTree^ tree, GitCheckOutArgs^ args);

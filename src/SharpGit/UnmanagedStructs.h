@@ -29,3 +29,6 @@ struct git_push
 
 struct git_merge_head
 {};
+
+struct git_index_conflict_iterator
+{};

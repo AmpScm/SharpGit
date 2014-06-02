@@ -6,6 +6,7 @@
 #include "GitClient/GitCheckOutArgs.h"
 #include "GitClient/GitInitArgs.h"
 #include "GitClient/GitMergeArgs.h"
+#include "GitClient/GitStashArgs.h"
 
 #include "GitConfiguration.h"
 #include "GitIndex.h"
@@ -500,6 +501,39 @@ bool GitRepository::OpenTree(GitId^ id, GitArgs^ args, [Out] GitTree ^%tree)
         tree = gcnew GitTree(this, gtree);
     else
         tree = nullptr;
+
+    return args->HandleGitError(this, r);
+}
+
+bool GitRepository::Stash(GitStashArgs ^args)
+{
+    GitId ^id;
+    return Stash(gcnew GitStashArgs(), id);
+}
+
+bool GitRepository::Stash(GitStashArgs ^args, [Out] GitId ^%stashId)
+{
+    if (!args)
+        throw gcnew ArgumentNullException("args");
+
+    GitPool pool(Pool);
+
+    git_oid rslt;
+    stashId = nullptr;
+
+    unsigned flags = 0;
+
+    if (args->KeepChanges)
+        flags |= GIT_STASH_KEEP_INDEX;
+    if (args->IncludeUntracked)
+        flags |= GIT_STASH_INCLUDE_UNTRACKED;
+    if (args->IncludeIgnored)
+        flags |= GIT_STASH_INCLUDE_IGNORED;
+
+    int r = git_stash_save(&rslt, Handle, args->Signature->Alloc(this, %pool), args->AllocLogMessage(%pool), flags);
+
+    if (!r)
+      stashId = gcnew GitId(rslt);
 
     return args->HandleGitError(this, r);
 }

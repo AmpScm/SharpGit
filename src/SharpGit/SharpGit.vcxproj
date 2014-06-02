@@ -255,6 +255,7 @@
     <ClCompile Include="GitClient\GitPull.cpp" />
     <ClCompile Include="GitClient\GitPush.cpp" />
     <ClCompile Include="GitClient\GitStage.cpp" />
+    <ClCompile Include="GitClient\GitStash.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
     <ClCompile Include="Plumbing\deep_wrap.c">
@@ -298,6 +299,7 @@
     <ClInclude Include="GitClient\GitCloneArgs.h" />
     <ClInclude Include="GitClient\GitCommitArgs.h" />
     <ClInclude Include="GitClient\GitDeleteArgs.h" />
+    <ClInclude Include="GitClient\GitStashArgs.h" />
     <ClInclude Include="GitClient\GitStatusArgs.h" />
     <ClInclude Include="GitClient\GitStatusEventArgs.h" />
     <ClInclude Include="GitClient\GitTagArgs.h" />

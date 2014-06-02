@@ -17,6 +17,7 @@ namespace SharpGit {
     ref class GitMergeArgs;
     ref class GitPullArgs;
     ref class GitInitArgs;
+    ref class GitStashArgs;
 
     namespace Implementation {
         ref class GitLibrary;
@@ -144,6 +145,10 @@ namespace SharpGit {
         bool Pull(String ^localRepository);
         bool Pull(String ^localRepository, GitPullArgs ^args);
 
+        bool Stash(String ^localRepository);
+        bool Stash(String ^localRepository, GitStashArgs ^args);
+        bool Stash(String ^localRepository, [Out] GitId ^%stashId);
+        bool Stash(String ^localRepository, GitStashArgs ^args, [Out] GitId ^%stashId);
     private:
         bool PushAll(GitRepository ^repo, GitPushArgs ^args);
         bool PushMirror(GitRepository ^repo, GitPushArgs ^args);
