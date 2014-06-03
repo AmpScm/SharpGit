@@ -22,20 +22,28 @@ namespace SharpGit {
         }
     };
 
+    [Flags]
     public enum class GitCheckoutNotify
     {
-
+        None = GIT_CHECKOUT_NOTIFY_NONE,
+        Conflict = GIT_CHECKOUT_NOTIFY_CONFLICT,
+        Dirty = GIT_CHECKOUT_NOTIFY_DIRTY,
+        Updated = GIT_CHECKOUT_NOTIFY_UPDATED,
+        Untracked = GIT_CHECKOUT_NOTIFY_UNTRACKED,
+        Ignored =GIT_CHECKOUT_NOTIFY_IGNORED,
     };
 
     public ref class GitCheckOutNotifyEventArgs : public GitEventArgs
     {
         const char *_pPath;
         String ^_relPath;
+        GitCheckoutNotify _notify;
 
     internal:
         GitCheckOutNotifyEventArgs(git_checkout_notify_t why, const char *path, const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir, GitPool ^pool)
         {
             _pPath = path;
+            _notify = (GitCheckoutNotify)(int)why;
         }
 
     public:
@@ -47,6 +55,14 @@ namespace SharpGit {
                     _relPath = GitBase::Utf8_PtrToString(_pPath);
 
                 return _relPath;
+            }
+        }
+
+        property GitCheckoutNotify Notify
+        {
+            GitCheckoutNotify get()
+            {
+                return _notify;
             }
         }
 

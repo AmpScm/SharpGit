@@ -509,7 +509,7 @@ bool GitRepository::OpenTree(GitId^ id, GitArgs^ args, [Out] GitTree ^%tree)
 bool GitRepository::Stash(GitStashArgs ^args)
 {
     GitId ^id;
-    return Stash(gcnew GitStashArgs(), id);
+    return Stash(args, id);
 }
 
 bool GitRepository::Stash(GitStashArgs ^args, [Out] GitId ^%stashId)
