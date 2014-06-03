@@ -146,7 +146,7 @@ namespace SharpGit {
             }
         }
 
-    protected:
+    protected public:
         virtual void Detach(bool keepValues) override
         {
             try

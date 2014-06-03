@@ -5,7 +5,7 @@ namespace SharpGit {
     public ref class GitEventArgs abstract : public EventArgs
     {
 
-    protected:
+    protected public:
         virtual void Detach(bool keepValues)
         {
             UNUSED(keepValues);

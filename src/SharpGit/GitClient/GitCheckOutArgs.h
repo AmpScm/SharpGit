@@ -22,11 +22,120 @@ namespace SharpGit {
         }
     };
 
+    public enum class GitCheckoutNotify
+    {
+
+    };
+
+    public ref class GitCheckOutNotifyEventArgs : public GitEventArgs
+    {
+        const char *_pPath;
+        String ^_relPath;
+
+    internal:
+        GitCheckOutNotifyEventArgs(git_checkout_notify_t why, const char *path, const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir, GitPool ^pool)
+        {
+            _pPath = path;
+        }
+
+    public:
+        property String ^ RelativePath
+        {
+            String ^ get()
+            {
+                if (!_relPath && _pPath)
+                    _relPath = GitBase::Utf8_PtrToString(_pPath);
+
+                return _relPath;
+            }
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+                if (keepValues)
+                {
+                    GC::KeepAlive(RelativePath);
+                }
+            }
+            finally
+            {
+                _pPath = nullptr;
+
+                __super::Detach(keepValues);
+            }
+        }
+    };
+
+    public ref class GitCheckOutProgressEventArgs : public GitEventArgs
+    {
+        const char *_pPath;
+        String ^_relPath;
+        initonly __int64 _completedSteps;
+        initonly __int64 _totalSteps;
+
+    internal:
+        GitCheckOutProgressEventArgs(const char *path, __int64 completed_steps, __int64 total_steps)
+        {
+            _pPath = path;
+            _completedSteps = completed_steps;
+            _totalSteps = total_steps;
+        }
+
+    public:
+        property String ^ RelativePath
+        {
+            String ^ get()
+            {
+                if (!_relPath && _pPath)
+                    _relPath = GitBase::Utf8_PtrToString(_pPath);
+
+                return _relPath;
+            }
+        }
+
+        property __int64 CompletedSteps
+        {
+            __int64 get()
+            {
+                return _completedSteps;
+            }
+        }
+
+        property __int64 TotalSteps
+        {
+            __int64 get()
+            {
+                return _totalSteps;
+            }
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+                if (keepValues)
+                {
+                    GC::KeepAlive(RelativePath);
+                }
+            }
+            finally
+            {
+                _pPath = nullptr;
+
+                __super::Detach(keepValues);
+            }
+        }
+    };
+
     /// <summary>
     /// Enum specifying what content checkout should write to disk
     /// for conflicts.
     /// </summary>
-    public enum class GitCheckoutConflictStrategy
+    public enum class GitCheckOutConflictStrategy
     {
         /// <summary>
         /// Use the default behavior for handling file conflicts. This is
@@ -73,7 +182,7 @@ namespace SharpGit {
         bool _updateOnly;
         bool _noUpdateCache;
         bool _noRefresh;
-        GitCheckoutConflictStrategy _conflictStrategy;
+        GitCheckOutConflictStrategy _conflictStrategy;
 
     public:
         property bool DryRun
@@ -185,16 +294,42 @@ namespace SharpGit {
             }
         }
 
-        property GitCheckoutConflictStrategy ConflictStrategy
+        property GitCheckOutConflictStrategy ConflictStrategy
         {
-            GitCheckoutConflictStrategy get()
+            GitCheckOutConflictStrategy get()
             {
                 return _conflictStrategy;
             }
-            void set(GitCheckoutConflictStrategy value)
+            void set(GitCheckOutConflictStrategy value)
             {
                 _conflictStrategy = value;
             }
+        }
+
+    public:
+        DECLARE_EVENT(GitCheckOutNotifyEventArgs ^, CheckOutNotify)
+        DECLARE_EVENT(GitCheckOutProgressEventArgs ^, CheckOutProgress)
+
+    protected:
+        virtual void OnCheckOutNotify(GitCheckOutNotifyEventArgs ^e)
+        {
+            CheckOutNotify(this, e);
+        }
+
+        virtual void OnCheckOutProgress(GitCheckOutProgressEventArgs ^e)
+        {
+            CheckOutProgress(this, e);
+        }
+
+    internal:
+        void InvokeCheckOutNotify(GitCheckOutNotifyEventArgs ^e)
+        {
+            OnCheckOutNotify(e);
+        }
+
+        void InvokeCheckOutProgress(GitCheckOutProgressEventArgs ^e)
+        {
+            OnCheckOutProgress(e);
         }
     };
 };
