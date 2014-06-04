@@ -11,8 +11,8 @@ namespace SharpGit {
       bool _skipFindingRenames;
 
   public:
-      const int DefaultRenameTreshold = 50;
-      const int DefaultRenameTargetLimit = 200;
+      static const int DefaultRenameTreshold = 50;
+      static const int DefaultRenameTargetLimit = 200;
 
       GitMergeArgs()
       {
