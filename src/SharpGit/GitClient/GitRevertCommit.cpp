@@ -27,7 +27,7 @@ bool GitClient::RevertCommit(String ^localRepository, GitId ^commitId)
     return RevertCommit(localRepository, commitId, gcnew GitRevertCommitArgs());
 }
 
-bool RevertCommit(String ^localRepository, GitId ^commitId, GitRevertCommitArgs ^args)
+bool GitClient::RevertCommit(String ^localRepository, GitId ^commitId, GitRevertCommitArgs ^args)
 {
     if (String::IsNullOrEmpty(localRepository))
         throw gcnew ArgumentNullException("localRepository");
@@ -42,7 +42,7 @@ bool RevertCommit(String ^localRepository, GitId ^commitId, GitRevertCommitArgs 
     GitCommit ^commit;
     if (repo.Lookup(commitId, commit))
     {
-        repo.RevertCommit(commit, args);
+        return repo.RevertCommit(commit, args);
     }
     else
         throw gcnew ArgumentOutOfRangeException("commitId");
