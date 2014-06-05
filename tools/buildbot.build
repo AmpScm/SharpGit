@@ -189,6 +189,18 @@
         <include name="SharpGit.UI.xml" />
       </fileset>
     </copy>
+    
+    <foreach item="File" property="file">
+      <in>
+        <items basedir="release">
+          <include name="**/*.dll" />
+        </items>
+      </in>
+      <do>
+        <fail if="${version::get-major(fileversioninfo::get-file-version(fileversioninfo::get-version-info(file))) == 0}"
+              message="Build failed: No version resource in ${file}" />
+      </do>
+    </foreach>
 
     <exec program="${sevenZipExe}">
       <arg line="a -y" />
