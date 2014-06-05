@@ -66,7 +66,34 @@ void GitRemote::SetCallbacks(const git_remote_callbacks *callbacks)
 
 bool GitRemote::Connect(bool forFetch, GitArgs ^args)
 {
-    GIT_THROW(git_remote_connect(Handle, forFetch ? GIT_DIRECTION_FETCH : GIT_DIRECTION_PUSH));
+    GitAuthContext authContext;
+
+    int maxAttempts = 15;
+    int r = 0;
+
+    do
+    {
+        if (r)
+            giterr_clear();
+
+        authContext.Clear();
+
+        r = git_remote_connect(Handle, forFetch ? GIT_DIRECTION_FETCH : GIT_DIRECTION_PUSH);
+
+        if (r)
+            switch((GitError)giterr_last()->klass)
+            {
+              case GitError::Network:
+              case GitError::Ssh:
+              case GitError::SecureSockets:
+                  continue;
+            }
+
+        break;
+    }
+    while (--maxAttempts && authContext.Continue());
+
+    args->HandleGitError(this, r);
     _connected = true;
     return true;
 }

@@ -79,7 +79,7 @@ bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneA
 
     if (args->Synchronous)
     {
-        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), args->MakeCloneOptions(get_callbacks(), pool));
+        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), args->MakeCloneOptions(get_callbacks(pool), pool));
     }
     else
         throw gcnew NotImplementedException();

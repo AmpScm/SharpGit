@@ -168,6 +168,90 @@ namespace SharpGit {
 
     ref class GitClientContext;
 
+    public ref class GitEventArgs abstract : public EventArgs
+    {
+
+    protected public:
+        virtual void Detach(bool keepValues)
+        {
+            UNUSED(keepValues);
+        }
+    public:
+        void Detach()
+        {
+            Detach(true);
+        }
+    };
+
+
+
+    public ref class GitCredentialEventArgs : public GitEventArgs
+    {
+        git_cred **_cred;
+        initonly int _nr;
+        initonly unsigned _allowed;
+    internal:
+        GitCredentialEventArgs(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, int nr)
+        {
+            _allowed = allowed_types;
+            _nr = nr;
+            _cred = cred;
+        }
+
+    public:
+        property int Invocation
+        {
+            int get()
+            {
+                return _nr;
+            }
+        }
+
+    public:
+        property bool AllowUsernamePassword
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_USERPASS_PLAINTEXT);
+            }
+        }
+
+        property bool AllowSshKey
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_SSH_KEY);
+            }
+        }
+
+        property bool AllowSshCustom
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_SSH_CUSTOM);
+            }
+        }
+
+        property bool AllowDefault
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_DEFAULT);
+            }
+        }
+
+        property bool AllowSshInteractive
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_SSH_INTERACTIVE);
+            }
+        }
+
+        void SetUsernamePassword(String ^username, String ^password);
+        void SetDefault();
+    };
+
     public ref class GitAuthentication : public Implementation::GitBase
     {
         initonly GitClientContext ^_ctx;
@@ -180,9 +264,26 @@ namespace SharpGit {
 
             _ctx = ctx;
         }
+
+    public:
+        event System::EventHandler<GitCredentialEventArgs^>^ Credentials
+        {
+        public:
+            [System::Runtime::CompilerServices::MethodImpl(System::Runtime::CompilerServices::MethodImplOptions::Synchronized)]
+            void add(System::EventHandler<GitCredentialEventArgs^>^ value);
+
+            [System::Runtime::CompilerServices::MethodImpl(System::Runtime::CompilerServices::MethodImplOptions::Synchronized)]
+            void remove(System::EventHandler<GitCredentialEventArgs^>^ value);
+
+        private:
+            void raise(Object^ sender, GitCredentialEventArgs ^e)
+            {
+                throw gcnew NotImplementedException();
+            }
+        }
     };
 
-    public ref class GitClientContext : public Implementation::GitBase
+    public ref class GitClientContext abstract : public Implementation::GitBase
     {
         initonly GitAuthentication ^_authentication;
     internal:
@@ -200,6 +301,9 @@ namespace SharpGit {
                 return _authentication;
             }
         }
+
+    internal:
+        virtual void HookCredentials(bool add, System::EventHandler<GitCredentialEventArgs^> ^handler) = 0;
     };
 
     public ref class GitArgs abstract
@@ -267,13 +371,14 @@ namespace SharpGit {
 
                     try
                     {
-                        SharpGit::Plumbing::GitError ge = (SharpGit::Plumbing::GitError)info->klass;
-
                         if (info)
-                            throw gcnew GitException(ge, String::Format("{0}Git Error: {1}/{2}: {3}", prefix,
-                                                                                     r, ge, GitBase::Utf8_PtrToString(info->message)));
+                        {
+                            SharpGit::Plumbing::GitError ge = (SharpGit::Plumbing::GitError)info->klass;
+                            throw gcnew GitException(ge, String::Format("{0}Git {1} Error: {2}", prefix,
+                                                     ge, GitBase::Utf8_PtrToString(info->message)));
+                        }
                         else
-                            throw gcnew GitException(ge, String::Format("{0}Git Error: {1}", prefix, r));
+                            throw gcnew GitException();
                     }
                     finally
                     {

@@ -6,6 +6,54 @@ namespace SharpGit {
     ref class GitPushArgs;
     using System::Collections::Generic::IEnumerable;
 
+    namespace Implementation {
+      ref class GitAuthContext sealed : IDisposable
+      {
+            [ThreadStatic]
+            static GitAuthContext ^_current;
+            GitAuthContext ^_prev;
+
+            bool _continue;
+
+        public:
+            GitAuthContext() :
+              _prev(_current)
+            {
+                _current = this;
+            }
+
+            ~GitAuthContext()
+            {
+                _current = _prev;
+            }
+
+        public:
+            bool Continue()
+            {
+                return _continue;
+            }
+
+            void Clear()
+            {
+                _continue = false;
+            }
+
+            void Attempt()
+            {
+                _continue = true;
+            }
+
+        public:
+            static property GitAuthContext ^ Current
+            {
+                GitAuthContext ^ get()
+                {
+                    return _current;
+                }
+            }
+        };
+    }
+
     namespace Plumbing {
 
         ref class GitRefSpec;

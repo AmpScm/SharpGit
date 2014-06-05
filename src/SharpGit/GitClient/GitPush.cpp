@@ -128,11 +128,15 @@ bool GitClient::PushAll(GitRepository ^repo, GitPushArgs ^args)
     }
     /* else: set from target */
 
+    GitPool pool;
+
     for each (KeyValuePair<String^, GitRemote^>^ kv in remotes)
     {
         GitRemote ^rm = kv->Value;
 
-        rm->SetCallbacks(get_callbacks());
+        GitPool iterPool(%pool);
+
+        rm->SetCallbacks(get_callbacks(%iterPool));
         rm->Connect(false, args);
         rm->SetPushCallbacks(gitclient_packbuilder_progress, gitclient_push_transfer_progress, gitclient_push_status, _clientBaton->Handle);
         rm->Push(refSpecs[rm->Name], args);

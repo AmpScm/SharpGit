@@ -57,13 +57,6 @@ namespace SharpGit {
         SshInteractive = GIT_CREDTYPE_SSH_INTERACTIVE,
     };
 
-    public ref class GitCredentialsEventArgs : public GitEventArgs
-    {
-    internal:
-        GitCredentialsEventArgs(const char *url, const char *username_from_url, unsigned int allowed_types)
-        {}
-    };
-
     public ref class GitTransferProgressEventArgs : public GitEventArgs
     {
     internal:
@@ -84,12 +77,12 @@ namespace SharpGit {
     {
         static ICollection<GitLibrary^>^ _gitLibraries;
         initonly Implementation::AprBaton<GitClient^> ^_clientBaton;
-        git_remote_callbacks *_callbacks;
+        initonly System::Collections::Generic::List<System::EventHandler<GitCredentialEventArgs^>^> ^_credentialHandlers;
     public:
         GitClient();
 
     internal:
-        git_remote_callbacks *get_callbacks();
+        git_remote_callbacks *get_callbacks(GitPool ^pool);
 
     private:
         static void AssertNotBare(GitRepository ^repository);
@@ -195,20 +188,21 @@ namespace SharpGit {
     protected:
         virtual void OnProgress(GitProgressEventArgs ^e) {}
         virtual void OnRemoteCompleted(GitRemoteCompletedEventArgs ^e) {}
-        virtual void OnCredentials(GitCredentialsEventArgs ^e) {}
+        virtual void OnCredential(GitCredentialEventArgs ^e);
         virtual void OnTransferProgress(GitTransferProgressEventArgs ^e) {}
         virtual void OnUpdateTips(GitUpdateTipsEventArgs ^e) {}
 
     internal:
         void InvokeProgress(GitProgressEventArgs ^e) { OnProgress(e); }
         void InvokeRemoteCompleted(GitRemoteCompletedEventArgs ^e) { OnRemoteCompleted(e); }
-        void InvokeCredentials(git_cred*& creds, GitCredentialsEventArgs ^e)
+        void InvokeCredential(GitCredentialEventArgs ^e)
         {
-            OnCredentials(e);
-            // ### TODO: Fill creds
+            OnCredential(e);
         }
         void InvokeTransferProgress(GitTransferProgressEventArgs ^e) { OnTransferProgress(e); }
         void InvokeUpdateTips(GitUpdateTipsEventArgs ^e) { OnUpdateTips(e); }
+
+        virtual void HookCredentials(bool add, System::EventHandler<GitCredentialEventArgs^> ^handler) override;
     private:
         ~GitClient();
     };

@@ -58,7 +58,8 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
 
     try
     {
-        rm->SetCallbacks(get_callbacks());
+        GitPool pool(repo.Pool);
+        rm->SetCallbacks(get_callbacks(%pool));
         rm->Connect(true, args->FetchArgs);
         rm->Download(args->FetchArgs);
         rm->UpdateTips(args->FetchArgs);

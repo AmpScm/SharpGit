@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "GitClient.h"
+#include "Plumbing/GitRemote.h"
 #include "GitLibraryAttribute.h"
 
 using namespace System;
@@ -11,6 +12,7 @@ using namespace SharpGit::Implementation;
 GitClient::GitClient()
 {
     _clientBaton = gcnew AprBaton<GitClient^>(this);
+    _credentialHandlers = gcnew List<System::EventHandler<GitCredentialEventArgs^>^>();
 }
 
 GitClient::~GitClient()
@@ -18,9 +20,16 @@ GitClient::~GitClient()
     delete _clientBaton;
 }
 
+static struct remotecb_payload_t
+{
+    void *client;
+    int _authNr;
+};
+
 static int __cdecl remotecb_sideband_progress(const char *str, int len, void *data)
 {
-    GitClient ^client = AprBaton<GitClient^>::Get(data);
+    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
     {
@@ -36,7 +45,8 @@ static int __cdecl remotecb_sideband_progress(const char *str, int len, void *da
 
 static int __cdecl remotecb_completion(git_remote_completion_type type, void *data)
 {
-    GitClient ^client = AprBaton<GitClient^>::Get(data);
+    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
     {
@@ -50,15 +60,31 @@ static int __cdecl remotecb_completion(git_remote_completion_type type, void *da
     }
 }
 
-static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *payload)
+static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data)
 {
-    GitClient ^client = AprBaton<GitClient^>::Get(payload);
+    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
     {
-        GitCredentialsEventArgs ^e = gcnew GitCredentialsEventArgs(url, username_from_url, allowed_types);
+        GitCredentialEventArgs ^e = gcnew GitCredentialEventArgs(cred, url, username_from_url, allowed_types, payload->_authNr++);
+        bool ok = false;
 
-        client->InvokeCredentials(*cred, e);
+        try
+        {
+            client->InvokeCredential(e);
+            ok = true;
+            if (*cred && GitAuthContext::Current)
+                GitAuthContext::Current->Attempt();
+        }
+        finally
+        {
+            if (!ok && *cred)
+            {
+                (*cred)->free(*cred);
+                *cred = nullptr;
+            }
+        }
 
         if (*cred != nullptr)
             return 0;
@@ -72,9 +98,10 @@ static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const 
     }
 }
 
-static int __cdecl remotecb_transfer_progress(const git_transfer_progress *stats, void *payload)
+static int __cdecl remotecb_transfer_progress(const git_transfer_progress *stats, void *data)
 {
-    GitClient ^client = AprBaton<GitClient^>::Get(payload);
+    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
     {
@@ -90,7 +117,8 @@ static int __cdecl remotecb_transfer_progress(const git_transfer_progress *stats
 
 static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, const git_oid *b, void *data)
 {
-    GitClient ^client = AprBaton<GitClient^>::Get(data);
+    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
     {
@@ -104,22 +132,24 @@ static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, c
     }
 }
 
-git_remote_callbacks *GitClient::get_callbacks()
+git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
 {
-    if (_callbacks)
-        return _callbacks;
-
-    git_remote_callbacks* cb = (git_remote_callbacks*)_pool.Alloc(sizeof(*cb));
+    git_remote_callbacks* cb = (git_remote_callbacks*)pool->Alloc(sizeof(*cb));
     git_remote_init_callbacks(cb, GIT_REMOTE_CALLBACKS_VERSION);
 
-    cb->payload = _clientBaton->Handle;
+    remotecb_payload_t *payload = (remotecb_payload_t *)pool->Alloc(sizeof(*payload));
+
+    payload->client = _clientBaton->Handle;
+    payload->_authNr = 0;
+
+    cb->payload = payload;
     cb->sideband_progress = remotecb_sideband_progress;
     cb->completion = remotecb_completion;
     cb->credentials = remotecb_credentials;
     cb->transfer_progress = remotecb_transfer_progress;
     cb->update_tips = remotecb_update_tips;
 
-    return _callbacks = cb;
+    return cb;
 }
 
 System::Version^ GitClient::Version::get()
@@ -157,4 +187,23 @@ ICollection<GitLibrary^>^ GitClient::GitLibraries::get()
     libs->Sort(gcnew Comparison<GitLibrary^>(CompareLibrary));
 
     return _gitLibraries = libs->AsReadOnly();
+}
+
+void GitClient::HookCredentials(bool add, EventHandler<GitCredentialEventArgs^>^ handler)
+{
+    if (add)
+    {
+        if (!_credentialHandlers->Contains(handler))
+            _credentialHandlers->Add(handler);
+    }
+    else
+    {
+        _credentialHandlers->Remove(handler);
+    }
+}
+
+void GitClient::OnCredential(GitCredentialEventArgs ^e)
+{
+    if (_credentialHandlers->Count)
+      _credentialHandlers[0](this, e);
 }

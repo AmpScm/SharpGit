@@ -337,3 +337,38 @@ Exception ^ GitException::Create(int errorcode, const git_error *err)
 {
     return gcnew GitException((SharpGit::Plumbing::GitError)err->klass, GitBase::Utf8_PtrToString(err->message));
 }
+
+void GitAuthentication::Credentials::add(System::EventHandler<GitCredentialEventArgs^>^ value)
+{
+    _ctx->HookCredentials(true, value);
+}
+
+void GitAuthentication::Credentials::remove(System::EventHandler<GitCredentialEventArgs^>^ value)
+{
+  _ctx->HookCredentials(false, value);
+}
+
+void GitCredentialEventArgs::SetUsernamePassword(String ^username, String ^password)
+{
+    if (String::IsNullOrEmpty(username))
+        throw gcnew ArgumentNullException("username");
+    else if (!password)
+        throw gcnew ArgumentNullException("password");
+
+    if (!_cred || *_cred)
+        throw gcnew InvalidOperationException();
+
+    GitPool pool;
+
+    GIT_THROW(git_cred_userpass_plaintext_new(_cred, pool.AllocString(username), pool.AllocString(password)));
+}
+
+void GitCredentialEventArgs::SetDefault()
+{
+    if (!_cred || *_cred)
+        throw gcnew InvalidOperationException();
+
+    GitPool pool;
+
+    GIT_THROW(git_cred_default_new(_cred));
+}

@@ -27,9 +27,11 @@ bool GitClient::Fetch(String ^localRepository, GitFetchArgs ^ args)
 
     for each (GitRemote ^rm in repo.Remotes)
     {
+        GitPool pool(repo.Pool);
+
         try
         {
-            rm->SetCallbacks(get_callbacks());
+            rm->SetCallbacks(get_callbacks(%pool));
             rm->Connect(true, args);
             rm->Download(args);
             rm->UpdateTips(args);
