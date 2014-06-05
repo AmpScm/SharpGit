@@ -73,7 +73,7 @@ static void __cdecl Git_checkout_progress(const char *path, size_t completed_ste
   }
 }
 
-git_checkout_options * GitCheckOutArgs::MakeCheckOutOptions(GitPool ^pool)
+git_checkout_options * GitCheckOutArgs::AllocCheckOutOptions(GitPool ^pool)
 {
     git_checkout_options *opts = (git_checkout_options *)pool->Alloc(sizeof(*opts));
 

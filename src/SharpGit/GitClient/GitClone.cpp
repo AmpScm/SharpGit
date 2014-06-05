@@ -19,7 +19,7 @@ const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callba
 
     opts->bare = CreateBareRepository;
 
-    const git_checkout_options *coo = MakeCheckOutOptions(pool);
+    const git_checkout_options *coo = AllocCheckOutOptions(pool);
     opts->checkout_opts = *coo;
     opts->remote_callbacks = *cb;
 

@@ -104,7 +104,7 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
             branch->RecordAsHeadBranch(args->FetchArgs);
 
             GitPool pool(repo.Pool);
-            GIT_THROW(git_checkout_head(repo.Handle, args->MergeArgs->MakeCheckOutOptions(%pool)));
+            GIT_THROW(git_checkout_head(repo.Handle, args->MergeArgs->AllocCheckOutOptions(%pool)));
             //repo.CheckOut(commit->Tree, args->MergeArgs);
             return true;
         }

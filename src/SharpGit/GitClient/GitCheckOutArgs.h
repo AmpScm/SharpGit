@@ -186,7 +186,7 @@ namespace SharpGit {
     public ref class GitCheckOutArgs : public GitClientArgs
     {
     internal:
-        git_checkout_options * MakeCheckOutOptions(GitPool ^pool);
+        git_checkout_options * AllocCheckOutOptions(GitPool ^pool);
 
     private:
         bool _dryRun;

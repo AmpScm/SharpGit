@@ -7,6 +7,7 @@
 #include "GitClient/GitInitArgs.h"
 #include "GitClient/GitMergeArgs.h"
 #include "GitClient/GitResetArgs.h"
+#include "GitClient/GitRevertCommitArgs.h"
 #include "GitClient/GitStashArgs.h"
 
 #include "GitConfiguration.h"
@@ -403,6 +404,23 @@ bool GitRepository::Commit(GitTree ^tree, ICollection<GitCommit^>^ parents, GitC
     return args->HandleGitError(this, r);
 }
 
+bool GitRepository::RevertCommit(GitCommit^ commit)
+{
+    return RevertCommit(commit, gcnew GitRevertCommitArgs());
+}
+
+bool GitRepository::RevertCommit(GitCommit^ commit, GitRevertCommitArgs ^args)
+{
+    if (!commit)
+        throw gcnew ArgumentNullException("commit");
+    else if (!args)
+        throw gcnew ArgumentNullException("args");
+
+    GitPool pool(Pool);
+
+    return args->HandleGitError(this, git_revert(Handle, commit->Handle, args->AllocRevertOptions(%pool)));
+}
+
 bool GitRepository::CheckOut(GitTree ^tree)
 {
     if (! tree)
@@ -422,7 +440,7 @@ bool GitRepository::CheckOut(GitTree ^tree, GitCheckOutArgs ^args)
     GitPool pool(_pool);
 
     int r = git_checkout_tree(Handle, safe_cast<GitObject^>(tree)->Handle,
-                                  const_cast<git_checkout_options*>(args->MakeCheckOutOptions(%pool)));
+                              args->AllocCheckOutOptions(%pool));
 
     return args->HandleGitError(this, r);
 }
@@ -802,7 +820,7 @@ bool GitRepository::Merge(ICollection<GitMergeDescription^> ^descriptions, GitMe
             heads[headsAlloced++] = mh;
         }
 
-        GIT_THROW(git_merge(Handle, heads, descriptions->Count, args->AllocMergeOptions(%pool), args->MakeCheckOutOptions(%pool)));
+        GIT_THROW(git_merge(Handle, heads, descriptions->Count, args->AllocMergeOptions(%pool), args->AllocCheckOutOptions(%pool)));
     }
     finally
     {

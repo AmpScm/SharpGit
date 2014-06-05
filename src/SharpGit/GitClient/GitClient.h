@@ -18,6 +18,7 @@ namespace SharpGit {
     ref class GitPullArgs;
     ref class GitInitArgs;
     ref class GitResetArgs;
+    ref class GitRevertCommitArgs;
     ref class GitStashArgs;
 
     namespace Implementation {
@@ -153,6 +154,10 @@ namespace SharpGit {
 
         bool Reset(String ^localRepository);
         bool Reset(String ^localRepository, GitResetArgs ^args);
+
+        bool RevertCommit(String ^localRepository, GitId ^commitId);
+        bool RevertCommit(String ^localRepository, GitId ^commitId, GitRevertCommitArgs ^args);
+
     private:
         bool PushAll(GitRepository ^repo, GitPushArgs ^args);
         bool PushMirror(GitRepository ^repo, GitPushArgs ^args);

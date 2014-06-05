@@ -255,6 +255,7 @@
     <ClCompile Include="GitClient\GitPull.cpp" />
     <ClCompile Include="GitClient\GitPush.cpp" />
     <ClCompile Include="GitClient\GitReset.cpp" />
+    <ClCompile Include="GitClient\GitRevertCommit.cpp" />
     <ClCompile Include="GitClient\GitStage.cpp" />
     <ClCompile Include="GitClient\GitStash.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
@@ -301,6 +302,7 @@
     <ClInclude Include="GitClient\GitCommitArgs.h" />
     <ClInclude Include="GitClient\GitDeleteArgs.h" />
     <ClInclude Include="GitClient\GitResetArgs.h" />
+    <ClInclude Include="GitClient\GitRevertCommitArgs.h" />
     <ClInclude Include="GitClient\GitStashArgs.h" />
     <ClInclude Include="GitClient\GitStatusArgs.h" />
     <ClInclude Include="GitClient\GitStatusEventArgs.h" />

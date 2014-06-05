@@ -10,6 +10,7 @@ namespace SharpGit {
     ref class GitMergeArgs;
     ref class GitMergeResult;
     ref class GitMergeAnalysis;
+    ref class GitRevertCommitArgs;
     ref class GitStashArgs;
     ref class GitResetArgs;
 
@@ -224,6 +225,9 @@ namespace SharpGit {
             bool Stash(GitStashArgs ^args, [Out] GitId ^%stashId);
 
             bool Reset(GitResetArgs ^args);
+
+            bool RevertCommit(GitCommit ^commit);
+            bool RevertCommit(GitCommit ^commit, GitRevertCommitArgs ^args);
 
             bool CheckOut(GitTree^ tree);
             bool CheckOut(GitTree^ tree, GitCheckOutArgs^ args);
