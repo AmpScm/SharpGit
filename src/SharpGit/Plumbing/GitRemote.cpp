@@ -224,8 +224,6 @@ bool GitRemote::Delete()
 {
     GIT_THROW(git_remote_delete(Handle));
 
-    _remote = nullptr; // Handle is now invalid
-
     return true;
 }
 
