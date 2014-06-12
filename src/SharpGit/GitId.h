@@ -204,6 +204,12 @@ namespace SharpGit {
             Revert                      = GITERR_REVERT,
             Callback                    = GITERR_CALLBACK,
             CherryPick                  = GITERR_CHERRYPICK,
+
+
+
+            System                      = 0x100001,
+            Storage                     = 0x100002,
+            Operation                   = 0x100003,
         };
 
     }
@@ -254,7 +260,7 @@ namespace SharpGit {
         }
 
         /// <summary>Gets the raw subversion error code</summary>
-        property SharpGit::Plumbing::GitError GitError
+        property SharpGit::Plumbing::GitError Error
         {
             SharpGit::Plumbing::GitError get()
             {
@@ -315,4 +321,57 @@ namespace SharpGit {
     internal:
         static Exception ^Create(int errorcode, const git_error *err);
     };
+
+#define DECLARE_EXCEPTION(type, inherits) \
+    [System::Serializable] \
+    public ref class Git##type##Exception : public inherits \
+    {                                       \
+    protected:                              \
+          Git##type##Exception(System::Runtime::Serialization::SerializationInfo^ info, System::Runtime::Serialization::StreamingContext context) \
+              : inherits(info, context) {} \
+    protected public: \
+          Git##type##Exception(SharpGit::Plumbing::GitError err, String ^message) \
+              : inherits(err, message) {} \
+          Git##type##Exception(SharpGit::Plumbing::GitError err, String ^message, Exception ^inner) \
+              : inherits(err, message, inner) {} \
+          \
+    public: \
+          Git##type##Exception() {} \
+          Git##type##Exception(String^ message) \
+              : inherits(SharpGit::Plumbing::GitError::type, message) {} \
+          Git##type##Exception(String^ message, Exception ^inner) \
+              : inherits(SharpGit::Plumbing::GitError::type, message, inner) {} \
+    }
+
+    DECLARE_EXCEPTION(System, GitException);
+    DECLARE_EXCEPTION(Storage, GitException);
+    DECLARE_EXCEPTION(Operation, GitException);
+
+    DECLARE_EXCEPTION(OperatingSystem, GitSystemException);
+    DECLARE_EXCEPTION(NoMemory, GitOperatingSystemException);
+    DECLARE_EXCEPTION(Invalid, GitException);
+    DECLARE_EXCEPTION(Reference, GitStorageException);
+    DECLARE_EXCEPTION(Zlib, GitSystemException);
+    DECLARE_EXCEPTION(Repository, GitStorageException);
+    DECLARE_EXCEPTION(Configuration, GitStorageException);
+    DECLARE_EXCEPTION(RegularExpression, GitSystemException);
+    DECLARE_EXCEPTION(ObjectDatabase, GitStorageException);
+    DECLARE_EXCEPTION(Index, GitStorageException);
+    DECLARE_EXCEPTION(Object, GitStorageException);
+    DECLARE_EXCEPTION(Network, GitSystemException);
+    DECLARE_EXCEPTION(Tag, GitStorageException);
+    DECLARE_EXCEPTION(Tree, GitStorageException);
+    DECLARE_EXCEPTION(Indexer, GitSystemException);
+    DECLARE_EXCEPTION(SecureSockets, GitNetworkException);
+    DECLARE_EXCEPTION(Submodule, GitStorageException);
+    DECLARE_EXCEPTION(Thread, GitSystemException);
+    DECLARE_EXCEPTION(Stash, GitStorageException);
+    DECLARE_EXCEPTION(CheckOut, GitOperationException);
+    DECLARE_EXCEPTION(FetchHead, GitOperationException);
+    DECLARE_EXCEPTION(Merge, GitOperationException);
+    DECLARE_EXCEPTION(Ssh, GitNetworkException);
+    DECLARE_EXCEPTION(Filter, GitStorageException);
+    DECLARE_EXCEPTION(Revert, GitOperationException);
+    DECLARE_EXCEPTION(Callback, GitException);
+    DECLARE_EXCEPTION(CherryPick, GitOperationException);
 }

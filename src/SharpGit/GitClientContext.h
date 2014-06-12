@@ -374,8 +374,7 @@ namespace SharpGit {
                         if (info)
                         {
                             SharpGit::Plumbing::GitError ge = (SharpGit::Plumbing::GitError)info->klass;
-                            throw gcnew GitException(ge, String::Format("{0}Git {1} Error: {2}", prefix,
-                                                     ge, GitBase::Utf8_PtrToString(info->message)));
+                            throw GitException::Create(r, info);
                         }
                         else
                             throw gcnew GitException();
