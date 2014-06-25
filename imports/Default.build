@@ -20,7 +20,7 @@
 
   <property name="buildLibgit2" value="true" overwrite="false" />
 
-  <property name="opensslVersion" value="1.0.1g" overwrite="false" />
+  <property name="opensslVersion" value="1.0.1h" overwrite="false" />
   <property name="aprVersion" value="1.5.1" overwrite="false" />
   <property name="aprUtilVersion" value="1.5.3" overwrite="false" />
   <property name="expatVersion" value="2.0.1" overwrite="false" />
