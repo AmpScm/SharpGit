@@ -367,15 +367,11 @@ namespace SharpGit {
             default:
                 {
                     const git_error *info = giterr_last();
-                    String^ prefix = defined ? "" : "Undefined ";
 
                     try
                     {
                         if (info)
-                        {
-                            SharpGit::Plumbing::GitError ge = (SharpGit::Plumbing::GitError)info->klass;
                             throw GitException::Create(r, info);
-                        }
                         else
                             throw gcnew GitException();
                     }
