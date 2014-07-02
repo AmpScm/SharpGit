@@ -208,6 +208,21 @@
       <arg value="release" />
     </exec>
     
+    <zip zipfile="release\SGit-${artifactLabel}.zip" ziplevel="9">
+      <fileset basedir="release/net20/x86" prefix="SharpGit">
+        <include name="*.dll" />
+        <include name="*.pdb" />
+        <include name="*.xml" />
+      </fileset>
+      <fileset basedir="release" prefix="SharpGit">
+        <include name="*.wxs" />
+      </fileset>
+      <fileset basedir="release/licenses" prefix="SharpGit/Licenses">
+        <include name="*.txt" />
+        <include name="*.wxs" />
+      </fileset>
+    </zip>
+    
     <foreach item="File" property="file" if="${property::exists('nugetExe')}">
       <in>
         <items basedir="src/nuget">
@@ -227,6 +242,20 @@
     </foreach>
     
     <if test="${property::exists('collabUploadCredentials') and property::exists('collabUploadExe')}">
+
+        <exec program="${collabUploadExe}">
+          <arg line="${collabUploadCredentials}" />
+          <arg line="--site https://sharpsvn.open.collab.net" />
+          <arg line="--max-uploads 15" />
+          <arg line="--keep 28.0:00" />
+          <!--arg line="- -result resulting.uri" /-->
+          
+          <arg line="--folder 738" />
+          
+          <arg value="--description" />
+            <arg value="SharpGit Build ${artifactLabel}" />
+          <arg value="release\SGit-${artifactLabel}.zip" />
+        </exec>
         
         <exec program="${collabUploadExe}">
           <arg line="${collabUploadCredentials}" />
