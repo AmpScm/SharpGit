@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharpGit", "SharpGit\SharpGit.vcxproj", "{0D01253E-6359-43FC-A3C8-1A3754C4468D}"
 EndProject
@@ -10,6 +10,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharpGit-Additions", "SharpGit-Additions\SharpGit-Additions.vcxproj", "{234035DF-232D-483E-A602-6327C234DF27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGit.UI", "SharpGit.UI\SharpGit.UI.csproj", "{305929BD-124E-4AEA-82F8-95333D6153F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E6F3B14-DA53-468D-BF35-D2804354320F}"
+	ProjectSection(SolutionItems) = preProject
+		SharpGit.wxs = SharpGit.wxs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution

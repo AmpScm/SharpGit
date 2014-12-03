@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.microsoft.com/wix/2006/wi tools/wix.xsd">
+  <!-- $Id$ -->
+  <Fragment>
+    <!-- When referenced installs a Win32 SharpGit into the directory DIR_SharpGit -->
+    <ComponentGroup Id="LOCAL_SharpGit_Win32">
+      <ComponentRef Id="C_LOCAL_SharpGit.dll" />
+      <?ifdef SharpGit_Pdb?>
+      <ComponentRef Id="C_LOCAL_SharpGit.pdb" />
+      <?endif?>
+      <?ifndef SharpGit_NoXml?>
+      <ComponentRef Id="C_LOCAL_SharpGit.xml" />
+      <?endif?>
+      <?ifndef SharpGit_NoResources?>
+      <!-- TODO: Add resource dll's -->
+      <?endif?>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <!-- When referenced installs a SharpGit.UI into the directory DIR_SharpGit -->
+    <ComponentGroup Id="LOCAL_SharpGitUI">
+      <ComponentRef Id="C_LOCAL_SharpGit.UI.dll" />
+      <?ifdef SharpGit_Pdb?>
+      <ComponentRef Id="C_LOCAL_SharpGit.UI.pdb" />
+      <?endif?>
+      <?ifndef SharpGit_NoXml?>
+      <ComponentRef Id="C_LOCAL_SharpGit.UI.xml" />
+      <?endif?>
+      <?ifndef SharpGit_NoResources?>
+      <!-- TODO: Add resource dll's -->
+      <?endif?>
+    </ComponentGroup>
+  </Fragment>
+  <?ifdef SharpGit.TargetDir?>
+  <?define SharpGitBinDir=$(var.SharpGit.TargetDir)?>
+  <?else?>
+  <?define SharpGitBinDir=$(sys.SOURCEFILEDIR)?>
+  <?endif?>
+  <Fragment>
+    <!-- Always installed items -->
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.dll" Guid="A54BD2D3-3CD1-416A-AE9D-05CDC7F344D8">
+        <File Id="CF_LOCAL_SharpGit.dll" Name="SharpGit.dll" Vital="yes" KeyPath="yes" Checksum="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.pdb" Guid="913F3679-09A5-4361-8925-5A9FD959D8C7">
+        <File Id="CF_LOCAL_SharpGit.pdb" Name="SharpGit.pdb" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.xml" Guid="30C4CCF7-DC93-477F-9434-E4C1AEC409E9">
+        <File Id="CF_LOCAL_SharpGit.xml" Name="SharpGit.xml" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.UI.dll" Guid="F7C00A94-0744-4B51-96D2-991BDAE3183A">
+        <File Id="CF_LOCAL_SharpGit.UI.dll" Name="SharpGit.UI.dll" Vital="yes" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.UI.pdb" Guid="47A97549-BAFC-4AD5-9F2B-5E2CD5532F8D">
+        <File Id="CF_LOCAL_SharpGit.UI.pdb" Name="SharpGit.UI.pdb" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="DIR_SharpGit" FileSource="$(var.SharpGitBinDir)">
+      <Component Id="C_LOCAL_SharpGit.UI.xml" Guid="CB37C6B2-9E45-4CBE-86A7-531E660BA34D">
+        <File Id="CF_LOCAL_SharpGit.UI.xml" Name="SharpGit.UI.xml" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
