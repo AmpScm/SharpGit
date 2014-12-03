@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
-    <ComponentGroup Id="SharpGitImport_LICENSES">
+    <ComponentGroup Id="SharpGit_LICENSES">
       <?ifndef SharpGit_NoSvnLicenses?>
       <ComponentRef Id="C_SGITLICENSE_Apr" />
       <ComponentRef Id="C_SGITLICENSE_AprUtil" />
