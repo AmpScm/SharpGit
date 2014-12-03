@@ -151,7 +151,24 @@
     <copy file="release/SharpGit.xml" todir="release/net40/x86" />
     <copy file="release/SharpGit.xml" todir="release/net40/x64" />
     <delete file="release/SharpGit.xml" />
-    
+
+    <copy todir="release">
+      <fileset basedir="src">
+        <include name="SharpGit.wxs" />
+      </fileset>
+    </copy>
+
+    <copy todir="release/licenses">
+      <fileset basedir="imports/scripts">
+        <include name="SharpGit-Licenses.wxs" />
+      </fileset>
+    </copy>
+    <copy todir="release/licenses">
+      <fileset basedir="imports/release/licenses">
+        <include name="*.txt" />
+      </fileset>
+    </copy>
+
     <copy todir="release/net20/x86">
       <fileset basedir="src/SharpGit.UI/bin/x86/release">
         <include name="SharpGit.dll" />
