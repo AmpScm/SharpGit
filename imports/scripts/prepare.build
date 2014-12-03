@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <project basedir=".." default="build">
-  <property name="sharpSvnDir" value="${downloads}/../.." overwrite="false" />
+  <property name="sharpGitDir" value="${downloads}/../.." overwrite="false" />
 
   <property name="nunitFilename" value="NUnit-${nunitVersion}.zip" />
   <property name="nunitDir" value="${'build/NUnit-' + nunitVersion}" />
@@ -131,18 +131,26 @@
 			file="${aprDir}/LICENSE"
 			tofile="release/licenses/Apr-License.txt" />
     <copy
+			file="${aprUtilDir}/LICENSE"
+			tofile="release/licenses/Apr-Util-License.txt" />
+    <copy
+			file="${opensslDir}/LICENSE"
+			tofile="release/licenses/OpenSsl-License.txt" />
+    <copy
 			file="${zlibDir}/README"
 			tofile="release/licenses/ZLib-License.txt" />
     <copy if="${buildLibssh2}"
 		  file="${libssh2Dir}/COPYING"
 		  tofile="release/licenses/LibSSH2.txt" />
-
     <copy
-			file="${sharpSvnDir}/LICENSE.txt"
-			tofile="release/licenses/SharpSvn-License.txt"
+		  file="${libgit2Dir}/COPYING"
+		  tofile="release/licenses/Libgit2.txt" />
+    <copy
+			file="${sharpGitDir}/LICENSE.txt"
+			tofile="release/licenses/SharpGit-License.txt"
 			if="${file::exists(sharpSvnDir + '/LICENSE.txt')}"/>
     <copy
-			file="${downloads}/../scripts/SharpSvn-Licenses.wxs"
-			tofile="release/licenses/SharpSvn-Licenses.wxs" />
+			file="${downloads}/../scripts/SharpGit-Licenses.wxs"
+			tofile="release/licenses/SharpGit-Licenses.wxs" />
   </target>
 </project>
