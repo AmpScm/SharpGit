@@ -148,7 +148,7 @@
     <copy
 			file="${sharpGitDir}/LICENSE.txt"
 			tofile="release/licenses/SharpGit-License.txt"
-			if="${file::exists(sharpSvnDir + '/LICENSE.txt')}"/>
+			if="${file::exists(sharpGitDir + '/LICENSE.txt')}"/>
     <copy
 			file="${downloads}/../scripts/SharpGit-Licenses.wxs"
 			tofile="release/licenses/SharpGit-Licenses.wxs" />
