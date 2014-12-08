@@ -57,7 +57,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 
 [assembly:GitLibrary("Libgit2", LIBGIT2_VERSION)]
 [assembly:GitLibrary("Apr", APR_VERSION_STRING)];
-[assembly:GitLibrary("Apr-Util", APR_VERSION_STRING)];
+[assembly:GitLibrary("Apr-Util", APU_VERSION_STRING)];
 [assembly:GitLibrary("eXpat", EXPAT_VERSION)];
 [assembly:GitLibrary("LibSSH2", LIBSSH2_VERSION)];
 [assembly:GitLibrary("OpenSSL", OPENSSL_VERSION_TEXT, SkipPrefix = true)];
