@@ -13,7 +13,7 @@
 
   <property name="platform" value="${guessedPlatform}" if="${not property::exists('platform')}" />
 
-  <property name="libgit2Version" value="0.21.2" overwrite="false" />
+  <property name="libgit2Version" value="0.21.3" overwrite="false" />
   <!-- r1575018              - Properly store author when retrieving directory entries -->
   <property name="aprMerges" value="" overwrite="false" />
   <property name="aprutilMerges" value="" overwrite="false" />
