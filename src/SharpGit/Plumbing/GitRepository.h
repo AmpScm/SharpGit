@@ -138,10 +138,11 @@ namespace SharpGit {
                 }
             }
 
-        internal:
+        public:
             bool Locate(String ^path, GitArgs ^args);
             bool Open(String ^repositoryPath, GitArgs ^args);
 
+        internal:
             void AssertNotOpen()
             {
                 if (_repository)
