@@ -259,6 +259,7 @@
     <ClCompile Include="GitClient\GitStage.cpp" />
     <ClCompile Include="GitClient\GitStash.cpp" />
     <ClCompile Include="GitClient\GitStatus.cpp" />
+    <ClCompile Include="GitClient\GitTools.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
     <ClCompile Include="Plumbing\deep_wrap.c">
       <CompileAsManaged>false</CompileAsManaged>
@@ -307,6 +308,7 @@
     <ClInclude Include="GitClient\GitStatusArgs.h" />
     <ClInclude Include="GitClient\GitStatusEventArgs.h" />
     <ClInclude Include="GitClient\GitTagArgs.h" />
+    <ClInclude Include="GitClient\GitTools.h" />
     <ClInclude Include="GitClient\GitUnstageArgs.h" />
     <ClInclude Include="GitId.h" />
     <ClInclude Include="GitLibraryAttribute.h" />
