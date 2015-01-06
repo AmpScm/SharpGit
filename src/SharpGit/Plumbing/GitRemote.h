@@ -133,10 +133,6 @@ namespace SharpGit {
             git_remote *_remote;
             String^ _name;
 
-            git_packbuilder_progress _pack_progress_cb;
-            git_push_transfer_progress _transfer_progress_cb;
-            git_push_status _push_status_cb;
-            void *_push_payload;
             bool _connected;
 
         internal:
@@ -148,10 +144,6 @@ namespace SharpGit {
 
         internal:
             void SetCallbacks(const git_remote_callbacks *callbacks);
-            void SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
-                                  git_push_transfer_progress transfer_progress_cb,
-                                  git_push_status _git_push_status_cb,
-                                  void *push_payload);
 
             property git_remote * Handle
             {

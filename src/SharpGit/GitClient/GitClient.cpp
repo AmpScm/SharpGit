@@ -132,6 +132,54 @@ static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, c
     }
 }
 
+static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsigned int total, void *payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
+}
+
+static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
+}
+
+static int __cdecl remotecb_push_update_reference(const char *ref, const char *msg, void *payload)
+{
+  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+
+  try
+  {
+      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+
+      return 0;
+  }
+  catch (Exception ^e)
+  {
+      return GitBase::WrapError(e);
+  }
+}
+
 git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
 {
     git_remote_callbacks* cb = (git_remote_callbacks*)pool->Alloc(sizeof(*cb));
@@ -148,6 +196,10 @@ git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
     cb->credentials = remotecb_credentials;
     cb->transfer_progress = remotecb_transfer_progress;
     cb->update_tips = remotecb_update_tips;
+
+    cb->pack_progress = remotecb_pack_progress;
+    cb->push_transfer_progress = remotecb_push_transfer_progress;
+    cb->push_update_reference = remotecb_push_update_reference;
 
     return cb;
 }

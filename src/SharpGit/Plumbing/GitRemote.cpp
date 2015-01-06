@@ -331,17 +331,6 @@ IList<GitRemoteHead^> ^ GitRemote::GetHeads()
     return dynamic_cast<IList<GitRemoteHead^>^>(heads);
 }
 
-void GitRemote::SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
-                                 git_push_transfer_progress transfer_progress_cb,
-                                 git_push_status push_status_cb,
-                                 void *push_payload)
-{
-    _pack_progress_cb = pack_progress_cb;
-    _transfer_progress_cb = transfer_progress_cb;
-    _push_status_cb =  push_status_cb;
-    _push_payload = push_payload;
-}
-
 bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
 {
     if (!args)
