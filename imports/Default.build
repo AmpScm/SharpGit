@@ -1,10 +1,6 @@
 <?xml version="1.0" ?>
 <project basedir="." default="build">
-  <property name="svnBuildType" value="tag" overwrite="false" />
   <property name="libgit2BuildType" value="tag" overwrite="false" />
-  <property name="serfBuildType" value="tag" overwrite="false" />
-  <property name="libgit2BuildType" value="tag" overwrite="false" />
-  <property name="httpdBuildType" value="tag" overwrite="false" />
   
   <property name="guessedPlatform" value="win32" />
   <if test="${environment::variable-exists('LIB')}">
@@ -18,8 +14,6 @@
   <property name="aprMerges" value="" overwrite="false" />
   <property name="aprutilMerges" value="" overwrite="false" />
 
-  <property name="buildLibgit2" value="true" overwrite="false" />
-
   <property name="opensslVersion" value="1.0.1j" overwrite="false" />
   <property name="aprVersion" value="1.5.1" overwrite="false" />
   <property name="aprUtilVersion" value="1.5.4" overwrite="false" />
@@ -29,7 +23,7 @@
 
   <!-- Building only -->
   <property name="nasmVersion" value="2.10.01" overwrite="false" />
-  <property name="cmakeVersion" value="3.1.0-rc2" overwrite="false" />
+  <property name="cmakeVersion" value="3.1.0" overwrite="false" />
 
   <!-- For testcase -->
   <property name="nunitVersion" value="2.6.3" overwrite="false" />
