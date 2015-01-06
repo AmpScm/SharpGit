@@ -365,7 +365,7 @@ bool GitTools::IsBelowManagedPath(String^ path)
         if (len == admDir->Length &&
             (0 == String::Compare(path, i+1, admDir, 0, len, StringComparison::OrdinalIgnoreCase)))
         {
-            // The .svn directory can't contain a working copy..
+            // The .git directory can't contain a working copy..
 
             nStart = nEnd+2; // start looking one character after the '\' if there is one.
 
