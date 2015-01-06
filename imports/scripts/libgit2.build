@@ -20,6 +20,7 @@
         <arg value="-DLIBSSH2_LIBRARY=${path::get-full-path(libssh2Dir + '/libssh2.lib')}" />
         <arg value="-DZLIB_INCLUDE_DIR=${path::get-full-path(zlibDir)}" />
         <arg value="-DZLIB_LIBRARY=${path::get-full-path(zlibDir + '/zlib.lib')}" />
+        <arg value="-DEMBED_SSH_PATH=${path::get-full-path(libssh2Dir + '/embed')}" />
       </CMake>
       
       <FilterFile file="${libgit2Dir}/git2.${vcproj}" generated="true">
