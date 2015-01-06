@@ -349,11 +349,21 @@ bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
 
     GitPool pool(_repository->Pool);
     Git_strarray specs;
+    git_strarray *pSpecs = &specs;
 
     // Copy refspecs
+    if (refspecs)
+    {
+        List<String^>^ sp = gcnew List<String^>();
+
+        for each(GitRefSpec ^spec in refspecs)
+            sp->Add(spec->ToString());
+
+        pSpecs = pool.AllocStringArray(sp);
+    }
 
     GIT_THROW(git_remote_push(Handle,
-                              &specs /*### refspecs */,
+                              pSpecs,
                               args->AllocOptions(%pool),
                               args->Signature->Alloc(_repository, %pool),
                               args->AllocLogMessage(%pool)));
