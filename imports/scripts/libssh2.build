@@ -1,9 +1,8 @@
 <?xml version="1.0" ?>
 <project basedir=".." default="build">
   <property name="libssh2Dir" value="build/${platform}/libssh2" />
-  <property name="buildLibssh2" value="true" overwrite="false" />
   
-  <target name="libssh2-prepare" depends="checkout" if="${buildLibssh2}">
+  <target name="libssh2-prepare" depends="checkout">
     <OnceBlock file="build/libssh2_${platform}.patched">
       <foreach item="File" property="patch" if="${applyPatches}">
         <in>
@@ -22,7 +21,7 @@
     </OnceBlock>
   </target>
   
-  <target name="libssh2-build" depends="libssh2-prepare, openssl-build" if="${buildLibssh2}">
+  <target name="libssh2-build" depends="libssh2-prepare, openssl-build">
     <OnceBlock file="build/libssh2-${libssh2Version}_${platform}.build">
       <FilterFile file="${libssh2Dir}\win32\config.mk">
         <filterchain>
