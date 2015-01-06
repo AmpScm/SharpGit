@@ -100,7 +100,7 @@ bool GitRemote::Connect(bool forFetch, GitArgs ^args)
 
 bool GitRemote::Download(GitArgs ^args)
 {
-    GIT_THROW(git_remote_download(Handle));
+    GIT_THROW(git_remote_download(Handle, nullptr /*### refspecs*/));
 
     return true;
 }
@@ -184,7 +184,7 @@ System::Collections::Generic::IEnumerator<GitRemote^>^ GitRemoteCollection::GetE
     {
         git_remote *rm;
 
-        GIT_THROW(git_remote_load(&rm, _repository->Handle, remotes.strings[i]));
+        GIT_THROW(git_remote_lookup(&rm, _repository->Handle, remotes.strings[i]));
 
         gitRemotes[i] = gcnew GitRemote(_repository, rm);
     }
@@ -209,7 +209,7 @@ bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
         return false;
     }
 
-    if (git_remote_load(&rm, _repository->Handle, pName))
+    if (git_remote_lookup(&rm, _repository->Handle, pName))
     {
         giterr_clear();
         value = nullptr;
@@ -222,7 +222,10 @@ bool GitRemoteCollection::TryGet(String ^name, [Out] GitRemote ^%value)
 
 bool GitRemote::Delete()
 {
-    GIT_THROW(git_remote_delete(Handle));
+    GitPool pool(_repository->Pool);
+
+    const char *pName = pool.AllocString(Name);
+    GIT_THROW(git_remote_delete(_repository->Handle, pName));
 
     return true;
 }
@@ -341,43 +344,21 @@ void GitRemote::SetPushCallbacks(git_packbuilder_progress pack_progress_cb,
 
 bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
 {
-    if (!refspecs)
-        throw gcnew ArgumentNullException("refspecs");
-    else if (!args)
+    if (!args)
         throw gcnew ArgumentNullException("args");
 
     GitPool pool(_repository->Pool);
-    git_push *push;
-    GIT_THROW(git_push_new(&push, Handle));
+    Git_strarray specs;
 
-    try
-    {
-        if (_pack_progress_cb || _transfer_progress_cb)
-            GIT_THROW(git_push_set_callbacks(push, _pack_progress_cb, _push_payload, _transfer_progress_cb, _push_payload));
+    // Copy refspecs
 
-        GIT_THROW(git_push_set_options(push, args->AllocOptions(%pool)));
+    GIT_THROW(git_remote_push(Handle,
+                              &specs /*### refspecs */,
+                              args->AllocOptions(%pool),
+                              args->Signature->Alloc(_repository, %pool),
+                              args->AllocLogMessage(%pool)));
 
-        for each(GitRefSpec ^rs in refspecs)
-          {
-              GIT_THROW(git_push_add_refspec(push, pool.AllocString(rs->ToString())));
-          }
-
-        GIT_THROW(git_push_finish(push));
-
-        if (!git_push_unpack_ok(push))
-            throw gcnew InvalidOperationException("Remote unpack failed");
-
-        if (_push_status_cb)
-            GIT_THROW(git_push_status_foreach(push, _push_status_cb, _push_payload));
-
-        GIT_THROW(git_push_update_tips(push, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
-
-        return true;
-    }
-    finally
-    {
-        git_push_free(push);
-    }
+    return true;
 }
 
 const git_push_options * GitPushArgs::AllocOptions(GitPool ^pool)

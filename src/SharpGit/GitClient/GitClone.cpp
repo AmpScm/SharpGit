@@ -24,8 +24,6 @@ const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callba
     opts->remote_callbacks = *cb;
 
     opts->signature = Signature->Alloc(nullptr, pool);
-    opts->ignore_cert_errors = IgnoreCertificateErrors;
-    opts->remote_name = RemoteName ? pool->AllocString(RemoteName) : nullptr;
     opts->checkout_branch = BranchName ? pool->AllocString(BranchName) : nullptr;
 
     return opts;

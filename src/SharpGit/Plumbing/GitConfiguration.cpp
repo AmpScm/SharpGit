@@ -14,7 +14,7 @@ bool GitConfiguration::IsDisposed::get()
     return !_config || (_repository && _repository->IsDisposed);
 }
 
-bool GitConfiguration::Reload()
+/*bool GitConfiguration::Reload()
 {
     return Reload(gcnew GitNoArgs());
 }
@@ -27,7 +27,7 @@ bool GitConfiguration::Reload(GitArgs ^args)
     int r = git_config_refresh(Handle);
 
     return args->HandleGitError(this, r);
-}
+}*/
 
 bool GitConfiguration::TryGetInt32(String ^key, [Out] int %value)
 {

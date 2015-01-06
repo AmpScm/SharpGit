@@ -27,7 +27,7 @@ struct git_refspec
 struct git_push
 {};
 
-struct git_merge_head
+struct git_annotated_commit
 {};
 
 struct git_index_conflict_iterator

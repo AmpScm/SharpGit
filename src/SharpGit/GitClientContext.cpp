@@ -14,6 +14,8 @@ static GitPool::GitPool()
     GitBase::EnsureInitialized();
 }
 
+extern "C" int git_openssl_set_locking(void);
+
 void GitBase::EnsureInitialized()
 {
     static volatile LONG ensurer = 0;
@@ -40,7 +42,8 @@ void GitBase::EnsureInitialized()
 
                 svn_utf_initialize2(TRUE, pool);
 
-                git_threads_init();
+                git_libgit2_init();
+                git_openssl_set_locking();
 
             LONG v = ::InterlockedExchange(&ensurer, 2);
 
@@ -396,6 +399,20 @@ void GitCredentialEventArgs::SetUsernamePassword(String ^username, String ^passw
 
     GIT_THROW(git_cred_userpass_plaintext_new(_cred, pool.AllocString(username), pool.AllocString(password)));
 }
+
+void GitCredentialEventArgs::SetUsername(String ^username)
+{
+    if (String::IsNullOrEmpty(username))
+        throw gcnew ArgumentNullException("username");
+
+    if (!_cred || *_cred)
+        throw gcnew InvalidOperationException();
+
+    GitPool pool;
+
+    GIT_THROW(git_cred_username_new(_cred, pool.AllocString(username)));
+}
+
 
 void GitCredentialEventArgs::SetDefault()
 {

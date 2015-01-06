@@ -1,5 +1,6 @@
 #pragma once
 #include "GitClientContext.h"
+#include "GitCheckOutArgs.h"
 
 namespace SharpGit {
 
@@ -10,9 +11,10 @@ namespace SharpGit {
         Hard = 2,
     };
 
-    public ref class GitResetArgs : public GitCreateRefArgs
+    public ref class GitResetArgs : public GitCheckOutArgsWithSignature
     {
         GitResetMode _mode;
+        String^ _refLogMessage;
     public:
         GitResetArgs()
         {}
@@ -27,6 +29,18 @@ namespace SharpGit {
             void set(GitResetMode value)
             {
                 _mode = value;
+            }
+        }
+
+        property String ^ RefLogMessage
+        {
+            String ^get()
+            {
+                return _refLogMessage;
+            }
+            void set(String ^value)
+            {
+                _refLogMessage = value;
             }
         }
     };

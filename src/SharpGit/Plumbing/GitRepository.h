@@ -33,7 +33,7 @@ namespace SharpGit {
             None = 0, // GIT_REPOSITORY_STATE_NONE
             Merge = GIT_REPOSITORY_STATE_MERGE,
             Revert = GIT_REPOSITORY_STATE_REVERT,
-            CherryPick = GIT_REPOSITORY_STATE_CHERRY_PICK,
+            CherryPick = GIT_REPOSITORY_STATE_CHERRYPICK,
             Bisect = GIT_REPOSITORY_STATE_BISECT,
             Rebase = GIT_REPOSITORY_STATE_REBASE,
             RebaseInteractive = GIT_REPOSITORY_STATE_REBASE_INTERACTIVE,
@@ -42,10 +42,10 @@ namespace SharpGit {
             MailBoxOrRebase = GIT_REPOSITORY_STATE_APPLY_MAILBOX_OR_REBASE
         };
 
-        public ref class GitMergeDescription : public Implementation::GitBase
+        public ref class GitCommitInfo : public Implementation::GitBase
         {
         internal:
-            git_merge_head *Alloc(GitPool ^pool);
+            git_annotated_commit *Alloc(GitPool ^pool);
 
             initonly GitRepository ^_repository;
             initonly String ^_branchName;
@@ -54,9 +54,9 @@ namespace SharpGit {
             initonly System::Uri ^_uri;
 
         internal:
-            GitMergeDescription(GitReference ^reference);
-            GitMergeDescription(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id);
-            GitMergeDescription(GitRepository ^repository, GitId ^id);
+            GitCommitInfo(GitReference ^reference);
+            GitCommitInfo(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id);
+            GitCommitInfo(GitRepository ^repository, GitId ^id);
 
         public:
             property GitId ^ Id
@@ -239,9 +239,9 @@ namespace SharpGit {
             bool CleanupState(GitArgs ^args);
 
 
-            bool Merge(ICollection<GitMergeDescription^> ^description, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult);
+            bool Merge(ICollection<GitCommitInfo^> ^description, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult);
 
-            bool MergeAnalysis(ICollection<GitMergeDescription^> ^description, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis);
+            bool MergeAnalysis(ICollection<GitCommitInfo^> ^description, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis);
 
         public:
             property bool IsEmpty
@@ -325,9 +325,9 @@ namespace SharpGit {
         internal:
             const char *MakeRelpath(String ^path, GitPool ^pool);
 
-            property ICollection<GitMergeDescription^> ^ LastFetchResult
+            property ICollection<GitCommitInfo^> ^ LastFetchResult
             {
-                ICollection<GitMergeDescription^> ^ get();
+                ICollection<GitCommitInfo^> ^ get();
             }
 
 

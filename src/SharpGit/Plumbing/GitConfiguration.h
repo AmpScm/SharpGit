@@ -78,8 +78,8 @@ namespace SharpGit {
                 bool get();
             }
 
-            bool Reload();
-            bool Reload(GitArgs ^args);
+            /*bool Reload();
+            bool Reload(GitArgs ^args);*/
 
         public:
             bool TryGetInt32(String ^key, [Out] int %value);

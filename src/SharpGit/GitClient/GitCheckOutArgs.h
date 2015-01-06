@@ -348,4 +348,26 @@ namespace SharpGit {
             OnCheckOutProgress(e);
         }
     };
+
+    public ref class GitCheckOutArgsWithSignature abstract : public GitCheckOutArgs
+    {
+        GitSignature ^_signature;
+
+    public:
+        GitCheckOutArgsWithSignature()
+        {
+            _signature = gcnew GitSignature();
+        }
+
+        property GitSignature ^ Signature
+        {
+            GitSignature ^ get()
+            {
+                return _signature;
+            }
+        }
+
+    };
+
+
 };

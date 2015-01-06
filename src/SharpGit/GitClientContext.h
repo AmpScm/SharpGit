@@ -217,6 +217,15 @@ namespace SharpGit {
         }
 
     public:
+        property bool AllowUsername
+        {
+            bool get()
+            {
+                return 0 != (_allowed & GIT_CREDTYPE_USERNAME);
+            }
+        }
+
+
         property bool AllowUsernamePassword
         {
             bool get()
@@ -258,6 +267,7 @@ namespace SharpGit {
         }
 
         void SetUsernamePassword(String ^username, String ^password);
+        void SetUsername(String ^username);
         void SetDefault();
     };
 

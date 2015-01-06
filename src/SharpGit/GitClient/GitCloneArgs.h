@@ -3,12 +3,9 @@
 
 namespace SharpGit {
 
-    public ref class GitCloneArgs : public GitCheckOutArgs
+    public ref class GitCloneArgs : public GitCheckOutArgsWithSignature
     {
-        GitSignature ^_signature;
         bool _bare;
-        bool _ignoreCertErrors;
-        String ^_remoteName;
         String ^_branchName;
         bool _asynchronous;
 
@@ -18,7 +15,6 @@ namespace SharpGit {
     public:
         GitCloneArgs()
         {
-            _signature = gcnew GitSignature();
         }
 
         property bool CreateBareRepository
@@ -30,39 +26,6 @@ namespace SharpGit {
             void set(bool value)
             {
                 _bare = value;
-            }
-        }
-
-        property GitSignature ^ Signature
-        {
-            GitSignature ^ get()
-            {
-                return _signature;
-            }
-        }
-
-        property bool IgnoreCertificateErrors
-        {
-            bool get()
-            {
-                return _ignoreCertErrors;
-            }
-            void set(bool value)
-            {
-                _ignoreCertErrors = value;
-            }
-        }
-
-        property String ^ RemoteName
-        {
-            String ^ get()
-            {
-                return _remoteName;
-            }
-
-            void set(String ^value)
-            {
-                _remoteName = value;
             }
         }
 

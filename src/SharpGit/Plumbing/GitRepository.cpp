@@ -586,7 +586,10 @@ bool GitRepository::Reset(GitResetArgs ^args)
     {
         const git_object *target = Git_ToObject(commit->Handle);
 
-        return args->HandleGitError(this, git_reset(Handle, const_cast<git_object*>(target), mode, args->Signature->Alloc(this, %pool), args->AllocLogMessage(%pool)));
+        return args->HandleGitError(this, git_reset(Handle, const_cast<git_object*>(target), mode,
+                                    args->AllocCheckOutOptions(%pool),
+                                    args->Signature->Alloc(this, %pool),
+                                    args->RefLogMessage ? pool.AllocString(args->RefLogMessage) : nullptr));
     }
     else
         throw gcnew InvalidOperationException();
@@ -710,7 +713,7 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 
 #pragma region MERGE
 
-GitMergeDescription::GitMergeDescription(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id)
+GitCommitInfo::GitCommitInfo(GitRepository ^repository, String ^branchName, System::Uri ^url, GitId ^id)
 {
     if (!repository)
         throw gcnew ArgumentNullException("repository");
@@ -728,7 +731,7 @@ GitMergeDescription::GitMergeDescription(GitRepository ^repository, String ^bran
     _uri = url;
 }
 
-GitMergeDescription::GitMergeDescription(GitReference ^reference)
+GitCommitInfo::GitCommitInfo(GitReference ^reference)
 {
     if (!reference)
         throw gcnew ArgumentNullException("reference");
@@ -738,7 +741,7 @@ GitMergeDescription::GitMergeDescription(GitReference ^reference)
     _id = reference->TargetId;
 }
 
-GitMergeDescription::GitMergeDescription(GitRepository ^repository, GitId ^id)
+GitCommitInfo::GitCommitInfo(GitRepository ^repository, GitId ^id)
 {
     if (!repository)
         throw gcnew ArgumentNullException("repository");
@@ -749,19 +752,19 @@ GitMergeDescription::GitMergeDescription(GitRepository ^repository, GitId ^id)
     _id = id;
 }
 
-git_merge_head *GitMergeDescription::Alloc(GitPool ^pool)
+git_annotated_commit *GitCommitInfo::Alloc(GitPool ^pool)
 {
-  git_merge_head *mh;
+  git_annotated_commit *mh;
 
   if (BranchName)
-    GIT_THROW(git_merge_head_from_fetchhead(&mh, _repository->Handle,
-                                            pool->AllocString(BranchName),
-                                            pool->AllocString(Uri->AbsoluteUri),
-                                            &Id->AsOid()));
+    GIT_THROW(git_annotated_commit_from_fetchhead(&mh, _repository->Handle,
+                                                  pool->AllocString(BranchName),
+                                                  pool->AllocString(Uri->AbsoluteUri),
+                                                  &Id->AsOid()));
   else if (Reference)
-    GIT_THROW(git_merge_head_from_ref(&mh, _repository->Handle, _reference->Handle));
+    GIT_THROW(git_annotated_commit_from_ref(&mh, _repository->Handle, _reference->Handle));
   else
-    GIT_THROW(git_merge_head_from_id(&mh, _repository->Handle, &Id->AsOid()));
+    GIT_THROW(git_annotated_commit_lookup(&mh, _repository->Handle, &Id->AsOid()));
 
   return mh;
 }
@@ -770,7 +773,7 @@ ref class GitFetchHeadInfo
 {
 public:
     GitRepository ^Repository;
-    List<GitMergeDescription^>^ List;
+    List<GitCommitInfo^>^ List;
 };
 
 static int __cdecl foreach_fetchhead(const char *ref_name, const char *remote_url, const git_oid *oid, unsigned int is_merge, void *payload)
@@ -781,15 +784,15 @@ static int __cdecl foreach_fetchhead(const char *ref_name, const char *remote_ur
     GitRoot<GitFetchHeadInfo^> root(payload);
     GitBranch ^branch;
 
-    root->List->Add(gcnew GitMergeDescription(root->Repository, GitBase::Utf8_PtrToString(ref_name), gcnew System::Uri(GitBase::Utf8_PtrToString(remote_url), UriKind::Absolute), gcnew GitId(oid)));
+    root->List->Add(gcnew GitCommitInfo(root->Repository, GitBase::Utf8_PtrToString(ref_name), gcnew System::Uri(GitBase::Utf8_PtrToString(remote_url), UriKind::Absolute), gcnew GitId(oid)));
 
     return 0;
 }
 
-ICollection<GitMergeDescription^> ^ GitRepository::LastFetchResult::get()
+ICollection<GitCommitInfo^> ^ GitRepository::LastFetchResult::get()
 {
     GitFetchHeadInfo ^fhi = gcnew GitFetchHeadInfo();
-    fhi->List = gcnew List<GitMergeDescription^>();
+    fhi->List = gcnew List<GitCommitInfo^>();
     fhi->Repository = this;
 
 
@@ -800,19 +803,19 @@ ICollection<GitMergeDescription^> ^ GitRepository::LastFetchResult::get()
     return fhi->List->AsReadOnly();
 }
 
-bool GitRepository::Merge(ICollection<GitMergeDescription^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult)
+bool GitRepository::Merge(ICollection<GitCommitInfo^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeResult ^%mergeResult)
 {
     GitPool pool(Pool);
 
     mergeResult = nullptr;
 
-    const git_merge_head ** heads = (const git_merge_head **)pool.Alloc(sizeof(const git_merge_head*) * descriptions->Count);
+    const git_annotated_commit ** heads = (const git_annotated_commit **)pool.Alloc(sizeof(const git_annotated_commit*) * descriptions->Count);
     int headsAlloced = 0;
     try
     {
-        for each(GitMergeDescription ^d in descriptions)
+        for each(GitCommitInfo ^d in descriptions)
         {
-            git_merge_head *mh = d->Alloc(%pool);
+            git_annotated_commit *mh = d->Alloc(%pool);
 
             if (!mh)
                 throw gcnew InvalidOperationException();
@@ -826,26 +829,26 @@ bool GitRepository::Merge(ICollection<GitMergeDescription^> ^descriptions, GitMe
     {
         while(headsAlloced)
         {
-            git_merge_head_free(const_cast<git_merge_head*>(heads[--headsAlloced]));
+            git_annotated_commit_free(const_cast<git_annotated_commit*>(heads[--headsAlloced]));
         }
     }
 
     return true;
 }
 
-bool GitRepository::MergeAnalysis(ICollection<GitMergeDescription^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis)
+bool GitRepository::MergeAnalysis(ICollection<GitCommitInfo^> ^descriptions, GitMergeArgs ^args, [Out] GitMergeAnalysis ^%mergeAnalysis)
 {
     GitPool pool(Pool);
 
     mergeAnalysis = nullptr;
 
-    const git_merge_head ** heads = (const git_merge_head **)pool.Alloc(sizeof(const git_merge_head*) * descriptions->Count);
+    const git_annotated_commit ** heads = (const git_annotated_commit **)pool.Alloc(sizeof(const git_annotated_commit*) * descriptions->Count);
     int headsAlloced = 0;
     try
     {
-        for each(GitMergeDescription ^d in descriptions)
+        for each(GitCommitInfo ^d in descriptions)
         {
-            git_merge_head *mh = d->Alloc(%pool);
+            git_annotated_commit *mh = d->Alloc(%pool);
 
             if (!mh)
                 throw gcnew InvalidOperationException();
@@ -863,7 +866,7 @@ bool GitRepository::MergeAnalysis(ICollection<GitMergeDescription^> ^description
     {
         while(headsAlloced)
         {
-            git_merge_head_free(const_cast<git_merge_head*>(heads[--headsAlloced]));
+            git_annotated_commit_free(const_cast<git_annotated_commit*>(heads[--headsAlloced]));
         }
     }
 
