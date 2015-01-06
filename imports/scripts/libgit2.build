@@ -3,6 +3,22 @@
   <property name="libgit2Dir" value="${buildRoot}/${platform}/libgit2" />
 
   <target name="libgit2-build" depends="download,extract,checkout,zlib-build,libssh2-build">
+    <OnceBlock file="build/libgit2-${libgit2Version}_${platform}.patched">
+      <foreach item="File" property="patch">
+        <in>
+          <items basedir="${downloads}/../patches/libgit2">
+            <include name="*.patch" />
+          </items>
+        </in>
+        <do>
+          <Svn verbose="true">
+            <arg value="patch" />
+            <arg value="${patch}" />
+            <arg value="${aprDir}" />
+          </Svn>
+        </do>
+      </foreach>
+    </OnceBlock>
     <OnceBlock file="build/libgit2-${libgit2Version}_${platform}.build">
       <mkdir dir="${libgit2Dir}/build" />
     
