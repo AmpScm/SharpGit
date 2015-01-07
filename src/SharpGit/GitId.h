@@ -204,7 +204,8 @@ namespace SharpGit {
             Revert                      = GITERR_REVERT,
             Callback                    = GITERR_CALLBACK,
             CherryPick                  = GITERR_CHERRYPICK,
-
+            Describe                    = GITERR_DESCRIBE,
+            Rebase                      = GITERR_REBASE,
 
 
             System                      = 0x100001,
@@ -374,4 +375,6 @@ namespace SharpGit {
     DECLARE_EXCEPTION(Revert, GitOperationException);
     DECLARE_EXCEPTION(Callback, GitException);
     DECLARE_EXCEPTION(CherryPick, GitOperationException);
+    DECLARE_EXCEPTION(Describe, GitOperationException);
+    DECLARE_EXCEPTION(Rebase, GitOperationException);
 }

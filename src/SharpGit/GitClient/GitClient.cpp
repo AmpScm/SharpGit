@@ -20,15 +20,15 @@ GitClient::~GitClient()
     delete _clientBaton;
 }
 
-static struct remotecb_payload_t
+static struct remote_baton_t
 {
     void *client;
     int _authNr;
-};
+    apr_pool_t *pool;
 
-static int __cdecl remotecb_sideband_progress(const char *str, int len, void *data)
+static int __cdecl sideband_progress(const char *str, int len, void *data)
 {
-    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
@@ -43,9 +43,9 @@ static int __cdecl remotecb_sideband_progress(const char *str, int len, void *da
     }
 }
 
-static int __cdecl remotecb_completion(git_remote_completion_type type, void *data)
+static int __cdecl completion(git_remote_completion_type type, void *data)
 {
-    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
@@ -60,9 +60,9 @@ static int __cdecl remotecb_completion(git_remote_completion_type type, void *da
     }
 }
 
-static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data)
+static int __cdecl credentials(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data)
 {
-    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
@@ -98,9 +98,9 @@ static int __cdecl remotecb_credentials(git_cred **cred, const char *url, const 
     }
 }
 
-static int __cdecl remotecb_transfer_progress(const git_transfer_progress *stats, void *data)
+static int __cdecl transfer_progress(const git_transfer_progress *stats, void *data)
 {
-    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
@@ -115,9 +115,9 @@ static int __cdecl remotecb_transfer_progress(const git_transfer_progress *stats
     }
 }
 
-static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, const git_oid *b, void *data)
+static int __cdecl update_tips(const char *refname, const git_oid *a, const git_oid *b, void *data)
 {
-    remotecb_payload_t *payload = (remotecb_payload_t*)data;
+    remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
     try
@@ -132,9 +132,9 @@ static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, c
     }
 }
 
-static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsigned int total, void *data)
+static int __cdecl pack_progress(int stage, unsigned int current, unsigned int total, void *data)
 {
-  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
@@ -149,9 +149,9 @@ static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsig
   }
 }
 
-static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* data)
+static int __cdecl push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* data)
 {
-  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
@@ -166,9 +166,9 @@ static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigne
   }
 }
 
-static int __cdecl remotecb_push_update_reference(const char *ref, const char *msg, void *data)
+static int __cdecl push_update_reference(const char *ref, const char *msg, void *data)
 {
-  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
@@ -182,27 +182,30 @@ static int __cdecl remotecb_push_update_reference(const char *ref, const char *m
       return GitBase::WrapError(e);
   }
 }
+
+};
 
 git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
 {
     git_remote_callbacks* cb = (git_remote_callbacks*)pool->Alloc(sizeof(*cb));
     git_remote_init_callbacks(cb, GIT_REMOTE_CALLBACKS_VERSION);
 
-    remotecb_payload_t *payload = (remotecb_payload_t *)pool->Alloc(sizeof(*payload));
+    remote_baton_t *payload = (remote_baton_t *)pool->Alloc(sizeof(*payload));
 
     payload->client = _clientBaton->Handle;
     payload->_authNr = 0;
+    payload->pool = pool->Handle;
 
     cb->payload = payload;
-    cb->sideband_progress = remotecb_sideband_progress;
-    cb->completion = remotecb_completion;
-    cb->credentials = remotecb_credentials;
-    cb->transfer_progress = remotecb_transfer_progress;
-    cb->update_tips = remotecb_update_tips;
+    cb->sideband_progress = remote_baton_t::sideband_progress;
+    cb->completion = remote_baton_t::completion;
+    cb->credentials = remote_baton_t::credentials;
+    cb->transfer_progress = remote_baton_t::transfer_progress;
+    cb->update_tips = remote_baton_t::update_tips;
 
-    cb->pack_progress = remotecb_pack_progress;
-    cb->push_transfer_progress = remotecb_push_transfer_progress;
-    cb->push_update_reference = remotecb_push_update_reference;
+    cb->pack_progress = remote_baton_t::pack_progress;
+    cb->push_transfer_progress = remote_baton_t::push_transfer_progress;
+    cb->push_update_reference = remote_baton_t::push_update_reference;
 
     return cb;
 }

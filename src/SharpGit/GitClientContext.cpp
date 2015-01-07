@@ -371,6 +371,8 @@ Exception ^ GitException::Create(int errorcode, const git_error *err)
         case GitError::Revert           : return gcnew GitRevertException(code, message);
         case GitError::Callback         : return gcnew GitCallbackException(code, message);
         case GitError::CherryPick       : return gcnew GitCherryPickException(code, message);
+        case GitError::Describe         : return gcnew GitDescribeException(code, message);
+        case GitError::Rebase           : return gcnew GitRebaseException(code, message);
       }
     return gcnew GitException(code, message);
 }
