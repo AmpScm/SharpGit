@@ -6,12 +6,13 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool)
+GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool)
 {
     UNUSED(args);
+    _entry = entry;
     _path = path;
     _wcPath = wcPath;
-    _status = status;
+    _status = entry->status;
     _pool = pool;
     _conflicted = GitConflicted::None;
     if (conflict_stages)
@@ -51,10 +52,16 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
         opts->flags |= GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS;
     if (this->IncludeIgnoredRecursive)
         opts->flags |= GIT_STATUS_OPT_RECURSE_IGNORED_DIRS;
+    if (this->IncludeUnreadable)
+        opts->flags |= GIT_STATUS_OPT_INCLUDE_UNREADABLE;
+
 
     if (!String::IsNullOrEmpty(path))
     {
         opts->pathspec = *pool->AllocStringArray(path);
+
+        if (this->UseLiteralPath)
+            opts->flags |= GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
     }
     else
         opts->flags |= GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
@@ -64,11 +71,12 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
     else
         opts->flags |= GIT_STATUS_OPT_SORT_CASE_SENSITIVELY;
 
-    opts->flags |= GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX;
-    opts->flags |= GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR;
-
-    //opts->flags |= GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY;
-    opts->flags |= GIT_STATUS_OPT_RENAMES_FROM_REWRITES;
+    if (this->FindRenames)
+    {
+        opts->flags |= GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX;
+        opts->flags |= GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR;
+        opts->flags |= GIT_STATUS_OPT_RENAMES_FROM_REWRITES;
+    }
 
     if (! NoCacheUpdate)
         opts->flags |= GIT_STATUS_OPT_UPDATE_INDEX;

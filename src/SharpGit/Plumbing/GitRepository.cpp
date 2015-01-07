@@ -610,7 +610,7 @@ public:
     {}
 };
 
-static int __cdecl on_status(const char *path, unsigned int status, void *baton)
+static int __cdecl on_status(const char *path, const git_status_entry *status, void *baton)
 {
     Git_status_data &data = *static_cast<Git_status_data*>(baton);
     GitStatusArgs ^args = data.Args;
@@ -682,12 +682,29 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
             git_index_conflict_iterator_free(it);
         }
 
-        int r = git_status_foreach_ext(_repository,
-                                       args->MakeOptions(path, %pool),
-                                       on_status,
-                                       &data);
+        git_status_list *status;
+        GIT_THROW(git_status_list_new(&status, Handle, args->MakeOptions(path, %pool)));
 
-        if (!r && args->IncludeConflicts && data.walk_conflicts && apr_hash_count(data.walk_conflicts))
+        try
+        {
+            size_t i, cnt;
+
+            for (size_t i = 0, cnt = git_status_list_entrycount(status); i < cnt; i++)
+            {
+                const git_status_entry *status_entry = git_status_byindex(status, i);
+                const char *path = status_entry->head_to_index
+                                      ? status_entry->head_to_index->old_file.path
+                                      : status_entry->index_to_workdir->old_file.path;
+
+                GIT_THROW(on_status(path, status_entry, &data));
+            }
+        }
+        finally
+        {
+            git_status_list_free(status);
+        }
+
+        if (args->IncludeConflicts && data.walk_conflicts && apr_hash_count(data.walk_conflicts))
         {
             for (apr_hash_index_t *hi = apr_hash_first(pool.Handle, data.walk_conflicts); hi; hi = apr_hash_next(hi))
             {
@@ -700,7 +717,7 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
             }
         }
 
-        return args->HandleGitError(this, r);
+        return args->HandleGitError(this, 0);
     }
     finally
     {

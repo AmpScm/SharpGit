@@ -1,6 +1,7 @@
 #pragma once
 
 namespace SharpGit {
+    using System::ComponentModel::DefaultValueAttribute;
     namespace Implementation {
         ref class GitPool;
     };
@@ -19,10 +20,16 @@ namespace SharpGit {
         bool _noIncludeConflicts;
         bool _noRefresh;
         bool _updateCache;
+        bool _noIncludeUnreadable;
+        bool _findRenames;
+
+        bool _includeVersionedDirs;
+        bool _literalPath;
 
     public:
         event EventHandler<GitStatusEventArgs^>^ Status;
 
+        [DefaultValue(true)]
         property bool WorkingDirectoryStatus
         {
             bool get()
@@ -47,6 +54,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(true)]
         property bool IncludeUnversioned
         {
             bool get()
@@ -65,6 +73,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(false)]
         property bool IncludeIgnored
         {
             bool get()
@@ -77,6 +86,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(false)]
         property bool IncludeUnmodified
         {
             bool get()
@@ -89,6 +99,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(true)]
         property bool IncludeSubmodules
         {
             bool get()
@@ -101,6 +112,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(false)]
         property bool IncludeUnversionedRecursive
         {
             bool get()
@@ -119,6 +131,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(false)]
         property bool IncludeIgnoredRecursive
         {
             bool get()
@@ -149,6 +162,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(false)]
         property bool NoRefresh
         {
             bool get()
@@ -161,6 +175,7 @@ namespace SharpGit {
             }
         }
 
+        [DefaultValue(true)]
         property bool NoCacheUpdate
         {
             bool get()
@@ -169,10 +184,11 @@ namespace SharpGit {
             }
             void set(bool value)
             {
-                _updateCache = value;
+                _updateCache = !value;
             }
         }
 
+        [DefaultValue(true)]
         property bool IncludeConflicts
         {
             bool get()
@@ -184,6 +200,61 @@ namespace SharpGit {
                 _noIncludeConflicts = !value;
             }
         }
+
+        [DefaultValue(true)]
+        property bool IncludeUnreadable
+        {
+            bool get()
+            {
+                return !_noIncludeUnreadable;
+            }
+            void set(bool value)
+            {
+                _noIncludeUnreadable = !value;
+            }
+        }
+
+        [DefaultValue(false)]
+        property bool FindRenames
+        {
+            bool get()
+            {
+                return _findRenames;
+            }
+            void set(bool value)
+            {
+                _findRenames = value;
+            }
+        }
+
+    public:
+        /// <summary>Generates reports for versioned directories</summary>
+        [DefaultValue(false)]
+        property bool GenerateVersionedDirs
+        {
+            bool get()
+            {
+                return _includeVersionedDirs;
+            }
+            void set(bool value)
+            {
+                _includeVersionedDirs = value;
+            }
+        }
+
+        [DefaultValue(false)]
+        property bool UseLiteralPath
+        {
+            bool get()
+            {
+                return _literalPath;
+            }
+            void set(bool value)
+            {
+                _literalPath = value;
+            }
+        }
+
 
     protected public:
         virtual void OnStatus(GitStatusEventArgs ^e)

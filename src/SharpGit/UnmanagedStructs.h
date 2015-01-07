@@ -32,3 +32,6 @@ struct git_annotated_commit
 
 struct git_index_conflict_iterator
 {};
+
+struct git_status_list
+{};

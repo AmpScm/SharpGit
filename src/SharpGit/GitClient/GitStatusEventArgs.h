@@ -16,6 +16,7 @@ namespace SharpGit {
         Renamed                 =     0x0020,
         TypeChange              =     0x0040,
 
+        Unreadable              = 0x00100000,
         Deleted                 = 0x01000000,
 
         Ignored                 = 0x10000000,
@@ -39,10 +40,11 @@ namespace SharpGit {
         GitPool^ _pool;
         const char *_path;
         const char *_wcPath;
+        const git_status_entry *_entry;
         GitConflicted _conflicted;
 
     internal:
-        GitStatusEventArgs(const char *path, const char *wcPath, unsigned status, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
+        GitStatusEventArgs(const char *path, const char *wcPath, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
 
     public:
         property String^ RelativePath
@@ -113,7 +115,7 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_MODIFIED | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_TYPECHANGE))
+                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_MODIFIED | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_TYPECHANGE | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_UNREADABLE))
                 {
                 case 0:
                     return GitStatus::Normal;
@@ -123,6 +125,8 @@ namespace SharpGit {
                     return GitStatus::Modified;
                 case GIT_STATUS_WT_DELETED:
                     return GitStatus::Deleted;
+                case GIT_STATUS_WT_UNREADABLE:
+                    return GitStatus::Unreadable;
                 default:
                     assert(false);
                     return GitStatus::Modified;
@@ -162,6 +166,7 @@ namespace SharpGit {
                 _pool = nullptr;
                 _path = nullptr;
                 _wcPath = nullptr;
+                _entry = nullptr;
 
                 __super::Detach(keepValues);
             }
