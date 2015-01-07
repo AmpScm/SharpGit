@@ -132,9 +132,10 @@ static int __cdecl remotecb_update_tips(const char *refname, const git_oid *a, c
     }
 }
 
-static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsigned int total, void *payload)
+static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsigned int total, void *data)
 {
-  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
   {
@@ -148,9 +149,10 @@ static int __cdecl remotecb_pack_progress(int stage, unsigned int current, unsig
   }
 }
 
-static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload)
+static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* data)
 {
-  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
   {
@@ -164,9 +166,10 @@ static int __cdecl remotecb_push_transfer_progress(unsigned int current, unsigne
   }
 }
 
-static int __cdecl remotecb_push_update_reference(const char *ref, const char *msg, void *payload)
+static int __cdecl remotecb_push_update_reference(const char *ref, const char *msg, void *data)
 {
-  GitClient ^client = AprBaton<GitClient^>::Get(payload);
+  remotecb_payload_t *payload = (remotecb_payload_t*)data;
+  GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
   try
   {
