@@ -634,7 +634,7 @@ static int on_status(bool directory, const char *path, const git_status_entry *s
     }
     finally
     {
-        ee->Detach();
+        ee->Detach(false);
     }
 
     return 0;
