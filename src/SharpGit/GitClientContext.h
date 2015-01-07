@@ -33,8 +33,8 @@ namespace SharpGit {
             }
 
         public:
-            void *GetBatonValue() { return (void*)this; }
-            apr_pool_t *GetPool() { return _pool; }
+            void *GetBatonValue() const { return (void*)this; }
+            apr_pool_t *GetPool() const { return _pool; }
         };
 
         public ref class GitBase : public System::MarshalByRefObject

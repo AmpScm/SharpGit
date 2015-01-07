@@ -605,41 +605,53 @@ struct Git_status_data
     git_index *index;
 
 public:
-    Git_status_data(GitStatusArgs^ args, GitPool ^ pool)
-      : Args(args, pool), walk_conflicts(nullptr), index(nullptr)
+    Git_status_data(const char *pPath, GitStatusArgs^ args, GitPool ^ pool)
+      : Args(args, pool), wcPath(pPath), walk_conflicts(nullptr), index(nullptr)
     {}
 };
 
-static int __cdecl on_status(const char *path, const git_status_entry *status, void *baton)
+static int on_status(bool directory, const char *path, const git_status_entry *status, const Git_status_data& data)
 {
-    Git_status_data &data = *static_cast<Git_status_data*>(baton);
-    GitStatusArgs ^args = data.Args;
     GitPool pool(data.Args.GetPool());
+    GitStatusEventArgs^ ee;
+
+    if (!data.walk_conflicts)
+        ee = gcnew GitStatusEventArgs(path, data.wcPath, directory, status, nullptr, data.Args, %pool);
+    else
+    {
+        const git_index_entry *stages[3];
+
+        GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));
+
+        ee = gcnew GitStatusEventArgs(path, data.wcPath, directory, status, stages, data.Args, %pool);
+        svn_hash_sets(data.walk_conflicts, path, nullptr);
+    }
 
     try
     {
-        GitStatusEventArgs^ ee;
 
-        if (!data.walk_conflicts)
-            ee = gcnew GitStatusEventArgs(path, data.wcPath, status, nullptr, args, %pool);
-        else
-        {
-            const git_index_entry *stages[3];
-
-            GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));
-
-            ee = gcnew GitStatusEventArgs(path, data.wcPath, status, stages, args, %pool);
-            svn_hash_sets(data.walk_conflicts, path, nullptr);
-        }
-
-        args->OnStatus(ee);
+        data.Args->OnStatus(ee);
     }
-    catch(Exception^ e)
+    finally
     {
-        return args->WrapException(e);
+        ee->Detach();
     }
 
     return 0;
+}
+
+static void add_one_component(svn_stringbuf_t *sb, const char *dir)
+{
+    const char *p = svn_relpath_skip_ancestor(sb->data, dir);
+    const char *pN = *p ? strchr(p+1, '/') : NULL;
+
+    if (sb->len)
+        svn_stringbuf_appendbyte(sb, '/');
+
+    if (pN)
+        svn_stringbuf_appendbytes(sb, p, pN-p);
+    else
+        svn_stringbuf_appendcstr(sb, p);
 }
 
 bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitStatusEventArgs^>^ handler)
@@ -655,8 +667,7 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
     try
     {
         GitPool pool(Pool);
-        Git_status_data data(args, %pool);
-        data.wcPath = svn_dirent_canonicalize(git_repository_workdir(_repository), data.Args.GetPool());
+        Git_status_data data(svn_dirent_internal_style(git_repository_workdir(_repository), pool.Handle), args, %pool);
 
         GitIndex ^idx = Index;
 
@@ -688,15 +699,64 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
         try
         {
             size_t i, cnt;
+            GitPool iterpool(%pool);
+            svn_stringbuf_t *sb = nullptr;
+            svn_stringbuf_t *dir_tmp = nullptr;
+            const bool introduce_dirs = (args->GenerateVersionedDirs && args->IncludeUnmodified);
+
+            if (introduce_dirs)
+            {
+                sb = svn_stringbuf_create(pool.AllocDirent(path), pool.Handle);
+
+                if (String::IsNullOrEmpty(path))
+                    GIT_THROW(on_status(true, "", nullptr, data));
+                else
+                    svn_path_remove_component(sb);
+            }
 
             for (size_t i = 0, cnt = git_status_list_entrycount(status); i < cnt; i++)
             {
                 const git_status_entry *status_entry = git_status_byindex(status, i);
-                const char *path = status_entry->head_to_index
-                                      ? status_entry->head_to_index->old_file.path
-                                      : status_entry->index_to_workdir->old_file.path;
+                const char *raw_entry_path = status_entry->head_to_index
+                                              ? status_entry->head_to_index->old_file.path
+                                              : status_entry->index_to_workdir->old_file.path;
+                size_t raw_entry_len = strlen(raw_entry_path);
+                bool entry_is_dir = !raw_entry_len || (raw_entry_path[raw_entry_len-1] == '/');
+                const char *entry_path;
 
-                GIT_THROW(on_status(path, status_entry, &data));
+                if (entry_is_dir)
+                {
+                    if (!dir_tmp)
+                        dir_tmp = svn_stringbuf_create(raw_entry_path, pool.Handle);
+                    else
+                        svn_stringbuf_set(dir_tmp, raw_entry_path);
+
+                    svn_stringbuf_chop(dir_tmp, 1);
+                    entry_path = dir_tmp->data;
+                }
+                else
+                    entry_path = raw_entry_path;
+
+                if (introduce_dirs)
+                {
+                    const char *dir = svn_relpath_dirname(entry_path, iterpool.Handle);
+
+                    if (strcmp(dir, sb->data))
+                    {
+                        while (sb->len && !svn_relpath_skip_ancestor(sb->data, dir))
+                            svn_path_remove_component(sb);
+
+                        while (*dir && *svn_relpath_skip_ancestor(sb->data, dir))
+                        {
+                            add_one_component(sb, dir);
+
+                            GIT_THROW(on_status(true, sb->data, nullptr, data));
+                        }
+                        sb = sb;
+                    }
+                }
+
+                GIT_THROW(on_status(entry_is_dir, entry_path, status_entry, data));
             }
         }
         finally
@@ -713,7 +773,7 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 
                 GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));
 
-                args->OnStatus(gcnew GitStatusEventArgs(path, data.wcPath, 0, stages, args, %pool));
+                args->OnStatus(gcnew GitStatusEventArgs(path, data.wcPath, false, nullptr, stages, args, %pool));
             }
         }
 

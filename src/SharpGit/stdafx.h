@@ -6,6 +6,7 @@
 #include <libssh2\libssh2.h>
 #include <apr.h>
 #include <apr_file_io.h>
+#include <svn_path.h>
 #include <svn_dirent_uri.h>
 #include <svn_io.h>
 #include <svn_pools.h>

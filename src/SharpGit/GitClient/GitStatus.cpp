@@ -6,13 +6,14 @@
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 
-GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool)
+GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, bool directory, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool)
 {
     UNUSED(args);
     _entry = entry;
     _path = path;
     _wcPath = wcPath;
-    _status = entry->status;
+    _directory = directory;
+    _status = entry ? entry->status : 0;
     _pool = pool;
     _conflicted = GitConflicted::None;
     if (conflict_stages)
@@ -48,19 +49,18 @@ const git_status_options* GitStatusArgs::MakeOptions(String^ path, Implementatio
         opts->flags |= GIT_STATUS_OPT_INCLUDE_UNMODIFIED;
     if (! this->IncludeSubmodules)
         opts->flags |= GIT_STATUS_OPT_EXCLUDE_SUBMODULES;
-    if (this->IncludeUnversionedRecursive)
+    if (this->IncludeUnversioned && this->IncludeDirectories)
         opts->flags |= GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS;
-    if (this->IncludeIgnoredRecursive)
+    if (this->IncludeIgnored && this->IncludeDirectories)
         opts->flags |= GIT_STATUS_OPT_RECURSE_IGNORED_DIRS;
     if (this->IncludeUnreadable)
         opts->flags |= GIT_STATUS_OPT_INCLUDE_UNREADABLE;
-
 
     if (!String::IsNullOrEmpty(path))
     {
         opts->pathspec = *pool->AllocStringArray(path);
 
-        if (this->UseLiteralPath)
+        if (! this->UseGlobPath)
             opts->flags |= GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
     }
     else

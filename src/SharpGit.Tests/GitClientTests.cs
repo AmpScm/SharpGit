@@ -333,7 +333,7 @@ namespace SharpGit.Tests
         }
 
         [TestMethod]
-        public void StatusTests()
+        public void StatusTest()
         {
             string[] A = new string[] { "A/a", "A/b", "A/c", "A/d" };
             string[] B = new string[] { "B/a", "B/b", "B/c", "B/d" };
@@ -399,6 +399,7 @@ namespace SharpGit.Tests
 
                 GitStatusArgs sa = new GitStatusArgs();
                 sa.IncludeUnmodified = true;
+                sa.UseGlobPath = true;
 
                 git.Status(repos, sa,
                     delegate(object sender, GitStatusEventArgs e)

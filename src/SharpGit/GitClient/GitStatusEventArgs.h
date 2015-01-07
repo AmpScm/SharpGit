@@ -32,11 +32,21 @@ namespace SharpGit {
         HasTheirs   = 3,
     };
 
+    enum class GitNodeKind
+    {
+        None = 0,
+        File = 1,
+        Directory = 2,
+        Unknown = 3,
+        /*SymbolicLink = 4,*/
+    };
+
     public ref class GitStatusEventArgs : public GitClientEventArgs
     {
         initonly unsigned _status;
         String^ _relPath;
         String^ _fullPath;
+        bool _directory;
         GitPool^ _pool;
         const char *_path;
         const char *_wcPath;
@@ -44,7 +54,7 @@ namespace SharpGit {
         GitConflicted _conflicted;
 
     internal:
-        GitStatusEventArgs(const char *path, const char *wcPath, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
+        GitStatusEventArgs(const char *path, const char *wcPath, bool directory, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
 
     public:
         property String^ RelativePath
@@ -71,21 +81,18 @@ namespace SharpGit {
             {
                 if (!_fullPath && _pool && _path && _wcPath)
                 {
-                    int n = (int)strlen(_path);
-
-                    if (n > 0 && _path[n-1] == '/')
-                    {
-                        char *p = (char*)_pool->Alloc(n);
-
-                        memcpy(p, _path, n-1);
-                        p[n-1] = 0;
-                        _path = p;
-                    }
-
                     _fullPath = GitBase::StringFromDirent(svn_dirent_join(_wcPath, _path, _pool->Handle), _pool);
                 }
 
                 return _fullPath;
+            }
+        }
+
+        property GitNodeKind NodeKind
+        {
+            GitNodeKind get()
+            {
+                return _directory ? GitNodeKind::Directory : GitNodeKind::File;
             }
         }
 

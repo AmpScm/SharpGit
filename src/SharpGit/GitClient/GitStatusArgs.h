@@ -13,9 +13,8 @@ namespace SharpGit {
         bool _noUnversioned;
         bool _showIgnored;
         bool _showUnmodified;
+        bool _noDirs;
         bool _noSubmodules;
-        bool _recurseUnversioned;
-        bool _recurseIgnored;
         bool _caseInsensitive;
         bool _noIncludeConflicts;
         bool _noRefresh;
@@ -24,7 +23,7 @@ namespace SharpGit {
         bool _findRenames;
 
         bool _includeVersionedDirs;
-        bool _literalPath;
+        bool _globPath;
 
     public:
         event EventHandler<GitStatusEventArgs^>^ Status;
@@ -63,13 +62,7 @@ namespace SharpGit {
             }
             void set(bool value)
             {
-                if (!value)
-                {
-                    _noUnversioned = true;
-                    _recurseUnversioned = false;
-                }
-                else
-                    _noUnversioned = false;
+                _noUnversioned = !value;
             }
         }
 
@@ -112,41 +105,16 @@ namespace SharpGit {
             }
         }
 
-        [DefaultValue(false)]
-        property bool IncludeUnversionedRecursive
+        [DefaultValue(true)]
+        property bool IncludeDirectories
         {
             bool get()
             {
-                return _recurseUnversioned;
+                return !_noDirs;
             }
             void set(bool value)
             {
-                if (value)
-                {
-                    _recurseUnversioned = true;
-                    _noUnversioned = false;
-                }
-                else
-                    _recurseUnversioned = false;
-            }
-        }
-
-        [DefaultValue(false)]
-        property bool IncludeIgnoredRecursive
-        {
-            bool get()
-            {
-                return _recurseIgnored;
-            }
-            void set(bool value)
-            {
-                if (value)
-                {
-                    _recurseIgnored = true;
-                    _showIgnored = true;
-                }
-                else
-                    _recurseIgnored = false;
+                _noDirs = value;
             }
         }
 
@@ -243,15 +211,15 @@ namespace SharpGit {
         }
 
         [DefaultValue(false)]
-        property bool UseLiteralPath
+        property bool UseGlobPath
         {
             bool get()
             {
-                return _literalPath;
+                return _globPath;
             }
             void set(bool value)
             {
-                _literalPath = value;
+                _globPath = value;
             }
         }
 
