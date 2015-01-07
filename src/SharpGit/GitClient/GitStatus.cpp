@@ -207,7 +207,6 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
 
         try
         {
-            size_t i, cnt;
             GitPool iterpool(%pool);
             svn_stringbuf_t *sb = nullptr;
             svn_stringbuf_t *dir_tmp = nullptr;

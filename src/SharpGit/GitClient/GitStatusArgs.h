@@ -26,8 +26,9 @@ namespace SharpGit {
         bool _globPath;
 
     public:
-        event EventHandler<GitStatusEventArgs^>^ Status;
+        DECLARE_EVENT(GitStatusEventArgs^, Status)
 
+    public:
         [DefaultValue(true)]
         property bool WorkingDirectoryStatus
         {
@@ -114,7 +115,7 @@ namespace SharpGit {
             }
             void set(bool value)
             {
-                _noDirs = value;
+                _noDirs = !value;
             }
         }
 

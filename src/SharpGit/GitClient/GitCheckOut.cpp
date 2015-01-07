@@ -54,22 +54,19 @@ static int __cdecl Git_checkout_notify(git_checkout_notify_t why, const char *pa
 static void __cdecl Git_checkout_progress(const char *path, size_t completed_steps, size_t total_steps, void *payload)
 {
   checkout_cb_info_t *notify = reinterpret_cast<checkout_cb_info_t *>(payload);
-  GitCheckOutProgressEventArgs ^e = nullptr;
 
+  GitCheckOutProgressEventArgs ^ee = gcnew GitCheckOutProgressEventArgs(path, completed_steps, total_steps);
   try
   {
-      e = gcnew GitCheckOutProgressEventArgs(path, completed_steps, total_steps);
-
-      notify->Args->InvokeCheckOutProgress(e);
+      notify->Args->InvokeCheckOutProgress(ee);
   }
-  catch(Exception ^e)
+  catch(Exception ^)
   {
       //return GitBase::WrapError(e);
   }
   finally
   {
-      if (e)
-          e->Detach(false);
+      ee->Detach(false);
   }
 }
 

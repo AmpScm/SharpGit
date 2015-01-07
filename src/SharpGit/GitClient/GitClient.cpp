@@ -20,7 +20,7 @@ GitClient::~GitClient()
     delete _clientBaton;
 }
 
-static struct remote_baton_t
+struct remote_baton_t
 {
     void *client;
     int _authNr;
@@ -31,15 +31,21 @@ static int __cdecl sideband_progress(const char *str, int len, void *data)
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitProgressEventArgs ^ee = gcnew GitProgressEventArgs(str, len);
+
     try
     {
-        client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+        client->InvokeProgress(ee);
 
         return 0;
     }
     catch (Exception ^e)
     {
         return GitBase::WrapError(e);
+    }
+    finally
+    {
+        ee->Detach(false);
     }
 }
 
@@ -48,15 +54,20 @@ static int __cdecl completion(git_remote_completion_type type, void *data)
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitRemoteCompletedEventArgs ^ee = gcnew GitRemoteCompletedEventArgs(type);
     try
     {
-        client->InvokeRemoteCompleted(gcnew GitRemoteCompletedEventArgs(type));
+        client->InvokeRemoteCompleted(ee);
 
         return 0;
     }
     catch (Exception ^e)
     {
         return GitBase::WrapError(e);
+    }
+    finally
+    {
+        ee->Detach(false);
     }
 }
 
@@ -65,14 +76,15 @@ static int __cdecl credentials(git_cred **cred, const char *url, const char *use
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitCredentialEventArgs ^ee = gcnew GitCredentialEventArgs(cred, url, username_from_url, allowed_types, payload->_authNr++);
+
     try
     {
-        GitCredentialEventArgs ^e = gcnew GitCredentialEventArgs(cred, url, username_from_url, allowed_types, payload->_authNr++);
         bool ok = false;
 
         try
         {
-            client->InvokeCredential(e);
+            client->InvokeCredential(ee);
             ok = true;
             if (*cred && GitAuthContext::Current)
                 GitAuthContext::Current->Attempt();
@@ -96,6 +108,10 @@ static int __cdecl credentials(git_cred **cred, const char *url, const char *use
     {
         return GitBase::WrapError(e);
     }
+    finally
+    {
+        ee->Detach(false);
+    }
 }
 
 static int __cdecl certificate_check(git_cert *cert, int valid, const char *host, void *data)
@@ -103,15 +119,22 @@ static int __cdecl certificate_check(git_cert *cert, int valid, const char *host
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitCertificateEventArgs ^ee = gcnew GitCertificateEventArgs(cert, valid, host);
+
     try
     {
         //client->InvokeTransferProgress(gcnew GitTransferProgressEventArgs(*stats));
+        client->InvokeCertificate(ee);
 
         return 0;
     }
     catch (Exception ^e)
     {
         return GitBase::WrapError(e);
+    }
+    finally
+    {
+        ee->Detach(false);
     }
 }
 
@@ -120,15 +143,20 @@ static int __cdecl transfer_progress(const git_transfer_progress *stats, void *d
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitTransferProgressEventArgs ^ee = gcnew GitTransferProgressEventArgs(*stats);
     try
     {
-        client->InvokeTransferProgress(gcnew GitTransferProgressEventArgs(*stats));
+        client->InvokeTransferProgress(ee);
 
         return 0;
     }
     catch (Exception ^e)
     {
         return GitBase::WrapError(e);
+    }
+    finally
+    {
+        ee->Detach(false);
     }
 }
 
@@ -137,15 +165,20 @@ static int __cdecl update_tips(const char *refname, const git_oid *a, const git_
     remote_baton_t *payload = (remote_baton_t*)data;
     GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+    GitUpdateTipsEventArgs ^ee = gcnew GitUpdateTipsEventArgs(refname, a, b);
     try
     {
-        client->InvokeUpdateTips(gcnew GitUpdateTipsEventArgs(refname, a, b));
+        client->InvokeUpdateTips(ee);
 
         return 0;
     }
     catch (Exception ^e)
     {
         return GitBase::WrapError(e);
+    }
+    finally
+    {
+        ee->Detach(false);
     }
 }
 
@@ -154,15 +187,20 @@ static int __cdecl pack_progress(int stage, unsigned int current, unsigned int t
   remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+  GitPackProgressEventArgs ^ee = gcnew GitPackProgressEventArgs(stage, current, total);
   try
   {
-      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+      client->InvokePackProgress(ee);
 
       return 0;
   }
   catch (Exception ^e)
   {
       return GitBase::WrapError(e);
+  }
+  finally
+  {
+      ee->Detach(false);
   }
 }
 
@@ -171,15 +209,20 @@ static int __cdecl push_transfer_progress(unsigned int current, unsigned int tot
   remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+  GitPushTransferProgressEventArgs ^ee = gcnew GitPushTransferProgressEventArgs(current, total, bytes);
   try
   {
-      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+      client->InvokePushTransferProgress(ee);
 
       return 0;
   }
   catch (Exception ^e)
   {
       return GitBase::WrapError(e);
+  }
+  finally
+  {
+      ee->Detach(false);
   }
 }
 
@@ -188,15 +231,20 @@ static int __cdecl push_update_reference(const char *ref, const char *msg, void 
   remote_baton_t *payload = (remote_baton_t*)data;
   GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
 
+  GitPushUpdateReferenceEventArgs ^ee = gcnew GitPushUpdateReferenceEventArgs(ref, msg);
   try
   {
-      //client->InvokeProgress(gcnew GitProgressEventArgs(str, len));
+      client->InvokePushUpdateReference(ee);
 
       return 0;
   }
   catch (Exception ^e)
   {
       return GitBase::WrapError(e);
+  }
+  finally
+  {
+      ee->Detach(false);
   }
 }
 
@@ -280,6 +328,18 @@ void GitClient::HookCredentials(bool add, EventHandler<GitCredentialEventArgs^>^
 
 void GitClient::OnCredential(GitCredentialEventArgs ^e)
 {
-    if (_credentialHandlers->Count)
-      _credentialHandlers[0](this, e);
+    if (!e->Invocation)
+        _nextCredentialHandler = 0;
+
+    while (_nextCredentialHandler < _credentialHandlers->Count)
+    {
+        EventHandler<GitCredentialEventArgs^>^ ev_handler = _credentialHandlers[_nextCredentialHandler];
+
+        ev_handler(this, e);
+
+        if (e->HasCredential)
+            break;
+
+        _nextCredentialHandler++;
+    }
 }

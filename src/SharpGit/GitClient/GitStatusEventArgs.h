@@ -32,15 +32,6 @@ namespace SharpGit {
         HasTheirs   = 3,
     };
 
-    public enum class GitNodeKind
-    {
-        None = 0,
-        File = 1,
-        Directory = 2,
-        Unknown = 3,
-        /*SymbolicLink = 4,*/
-    };
-
     public ref class GitStatusEventArgs : public GitClientEventArgs
     {
         initonly unsigned _status;

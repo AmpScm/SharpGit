@@ -20,7 +20,7 @@ int sharpgit_refspec_parse(git_refspec **refspec, const char *str, BOOL isFetch)
   int r;
   *refspec = malloc(sizeof(**refspec));
 
-  r = git_refspec__parse(*refspec, str, isFetch);
+  r = git_refspec__parse(*refspec, str, isFetch != 0);
 
   if (r)
   {

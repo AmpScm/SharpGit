@@ -42,6 +42,11 @@ namespace SharpGit {
     internal:
         GitCheckOutNotifyEventArgs(git_checkout_notify_t why, const char *path, const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir, GitPool ^pool)
         {
+            UNUSED(pool);
+            UNUSED(workdir);
+            UNUSED(target);
+            UNUSED(baseline);
+
             _pPath = path;
             _notify = (GitCheckoutNotify)(int)why;
         }

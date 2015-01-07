@@ -1,6 +1,16 @@
 #pragma once
 namespace SharpGit {
 
+    // This was designed to match SvnNodeKind in SharpSvn upto Unknown.
+    public enum class GitNodeKind
+    {
+        None = 0,
+        File = 1,
+        Directory = 2,
+        Unknown = 3,
+        /*SymbolicLink = 4,*/
+    };
+
     public ref class GitId sealed
         : public System::IComparable<GitId^>,
           public System::IEquatable<GitId^>

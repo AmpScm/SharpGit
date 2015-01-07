@@ -34,16 +34,71 @@ namespace SharpGit {
 
     public ref class GitProgressEventArgs : public GitEventArgs
     {
+        initonly int _len;
+        String ^_text;
+        const char *_str;
+
     internal:
         GitProgressEventArgs(const char *str, int len)
-        {}
+        {
+            _str = str;
+            _len = len;
+        }
+
+    public:
+        property String ^ Text
+        {
+            String ^ get()
+            {
+                if (!_text && _str)
+                    _text = GitBase::Utf8_PtrToString(_str);
+
+                return _text;
+            }
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+                if (keepValues)
+                {
+                    GC::KeepAlive(Text);
+                }
+            }
+            finally
+            {
+                _str = nullptr;
+                __super::Detach(keepValues);
+            }
+        }
+    };
+
+    public enum class GitCompletedAction
+    {
+        Download = GIT_REMOTE_COMPLETION_DOWNLOAD,
+        Indexing = GIT_REMOTE_COMPLETION_INDEXING,
+        Error = GIT_REMOTE_COMPLETION_ERROR,
     };
 
     public ref class GitRemoteCompletedEventArgs : public GitEventArgs
     {
+        initonly GitCompletedAction _action;
     internal:
         GitRemoteCompletedEventArgs(git_remote_completion_type completion)
-        {}
+        {
+            _action = (GitCompletedAction)completion;
+        }
+
+    public:
+        property GitCompletedAction Action
+        {
+            GitCompletedAction get()
+            {
+                return _action;
+            }
+        }
     };
 
     [Flags]
@@ -57,18 +112,142 @@ namespace SharpGit {
         SshInteractive = GIT_CREDTYPE_SSH_INTERACTIVE,
     };
 
-    public ref class GitTransferProgressEventArgs : public GitEventArgs
+    public ref class GitCertificateEventArgs : public GitEventArgs
     {
     internal:
+        GitCertificateEventArgs(git_cert *cert, int valid, const char *host)
+        {
+            UNUSED(cert);
+            UNUSED(valid);
+            UNUSED(host);
+        }
+    };
+
+
+    public ref class GitTransferProgressEventArgs : public GitEventArgs
+    {
+        initonly unsigned int _total_objects;
+        initonly unsigned int _indexed_objects;
+        initonly unsigned int _received_objects;
+        initonly unsigned int _local_objects;
+        initonly unsigned int _total_deltas;
+        initonly unsigned int _indexed_deltas;
+        initonly size_t _received_bytes;
+    internal:
         GitTransferProgressEventArgs(const git_transfer_progress &stats)
-        {}
+        {
+            _total_objects =    stats.total_objects;
+            _indexed_objects =  stats.indexed_objects;
+            _received_objects = stats.received_objects;
+            _local_objects =    stats.local_objects;
+            _total_deltas =     stats.total_deltas;
+            _indexed_deltas =   stats.indexed_deltas;
+            _received_bytes =   stats.received_bytes;
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+                if (keepValues)
+                {
+                    //GC::KeepAlive(Text);
+                }
+            }
+            finally
+            {
+                //_str = nullptr;
+                __super::Detach(keepValues);
+            }
+        }
     };
 
     public ref class GitUpdateTipsEventArgs : public GitEventArgs
     {
+        GitId ^_id1, ^_id2;
+        const char *_pRefname;
+        const git_oid *_a, *_b;
     internal:
         GitUpdateTipsEventArgs(const char *refname, const git_oid *a, const git_oid *b)
-        {}
+        {
+            _pRefname = refname;
+            _a = a;
+            _b = b;
+        }
+
+    public:
+        property GitId ^ Id1
+        {
+            GitId^ get()
+            {
+                if (!_id1 && _a)
+                    _id1 = gcnew GitId(_a);
+                return _id1;
+            }
+        }
+
+        property GitId ^ Id2
+        {
+            GitId^ get()
+            {
+                if (!_id2 && _b)
+                    _id2 = gcnew GitId(_b);
+                return _id2;
+            }
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+                if (keepValues)
+                {
+                    GC::KeepAlive(Id1);
+                    GC::KeepAlive(Id2);
+                }
+            }
+            finally
+            {
+                _pRefname = nullptr;
+                _a = nullptr;
+                _b = nullptr;
+                __super::Detach(keepValues);
+            }
+        }
+    };
+
+    public ref class GitPackProgressEventArgs : public GitEventArgs
+    {
+    internal:
+        GitPackProgressEventArgs(int stage, unsigned int current, unsigned int total)
+        {
+            UNUSED(stage);
+            UNUSED(current);
+            UNUSED(total);
+        }
+    };
+
+    public ref class GitPushTransferProgressEventArgs : public GitEventArgs
+    {
+    internal:
+        GitPushTransferProgressEventArgs(unsigned int current, unsigned int total, size_t bytes)
+        {
+            UNUSED(current);
+            UNUSED(total);
+            UNUSED(bytes);
+        }
+    };
+
+    public ref class GitPushUpdateReferenceEventArgs : public GitEventArgs
+    {
+    internal:
+        GitPushUpdateReferenceEventArgs(const char *ref, const char *msg)
+        {
+            UNUSED(ref);
+            UNUSED(msg);
+        }
     };
 
     /// <summary>Git client instance; main entrance to the SharpGit Client api</summary>
@@ -78,6 +257,8 @@ namespace SharpGit {
         static ICollection<GitLibrary^>^ _gitLibraries;
         initonly Implementation::AprBaton<GitClient^> ^_clientBaton;
         initonly System::Collections::Generic::List<System::EventHandler<GitCredentialEventArgs^>^> ^_credentialHandlers;
+        int _nextCredentialHandler;
+
     public:
         GitClient();
 
@@ -186,11 +367,25 @@ namespace SharpGit {
         }
 
     protected:
-        virtual void OnProgress(GitProgressEventArgs ^e) {}
-        virtual void OnRemoteCompleted(GitRemoteCompletedEventArgs ^e) {}
+        DECLARE_EVENT(GitProgressEventArgs^, Progress)
+        DECLARE_EVENT(GitRemoteCompletedEventArgs^, RemoteCompleted)
+        DECLARE_EVENT(GitCertificateEventArgs^, Certificate)
+        DECLARE_EVENT(GitTransferProgressEventArgs^, TransferProgress)
+        DECLARE_EVENT(GitUpdateTipsEventArgs^, UpdateTips)
+        DECLARE_EVENT(GitPackProgressEventArgs^, PackProgress)
+        DECLARE_EVENT(GitPushTransferProgressEventArgs^, PushTransferProgress)
+        DECLARE_EVENT(GitPushUpdateReferenceEventArgs^, PushUpdateReference)
+
+    protected:
+        virtual void OnProgress(GitProgressEventArgs ^e) { Progress(this, e); }
+        virtual void OnRemoteCompleted(GitRemoteCompletedEventArgs ^e) { RemoteCompleted(this, e); }
         virtual void OnCredential(GitCredentialEventArgs ^e);
-        virtual void OnTransferProgress(GitTransferProgressEventArgs ^e) {}
-        virtual void OnUpdateTips(GitUpdateTipsEventArgs ^e) {}
+        virtual void OnCertificate(GitCertificateEventArgs ^e) { Certificate(this, e); }
+        virtual void OnTransferProgress(GitTransferProgressEventArgs ^e) { TransferProgress(this, e); }
+        virtual void OnUpdateTips(GitUpdateTipsEventArgs ^e) { UpdateTips(this, e); }
+        virtual void OnPackProgress(GitPackProgressEventArgs ^e) { PackProgress(this, e); }
+        virtual void OnPushTransferProgress(GitPushTransferProgressEventArgs ^e) { PushTransferProgress(this, e); }
+        virtual void OnPushUpdateReference(GitPushUpdateReferenceEventArgs ^e) { PushUpdateReference(this, e); }
 
     internal:
         void InvokeProgress(GitProgressEventArgs ^e) { OnProgress(e); }
@@ -199,8 +394,12 @@ namespace SharpGit {
         {
             OnCredential(e);
         }
+        void InvokeCertificate(GitCertificateEventArgs ^e) { OnCertificate(e); }
         void InvokeTransferProgress(GitTransferProgressEventArgs ^e) { OnTransferProgress(e); }
         void InvokeUpdateTips(GitUpdateTipsEventArgs ^e) { OnUpdateTips(e); }
+        void InvokePackProgress(GitPackProgressEventArgs ^e) { OnPackProgress(e); }
+        void InvokePushTransferProgress(GitPushTransferProgressEventArgs ^e) { OnPushTransferProgress(e); }
+        void InvokePushUpdateReference(GitPushUpdateReferenceEventArgs ^e) { OnPushUpdateReference(e); }
 
         virtual void HookCredentials(bool add, System::EventHandler<GitCredentialEventArgs^> ^handler) override;
     private:

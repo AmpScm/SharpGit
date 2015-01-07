@@ -55,6 +55,7 @@ namespace SharpGit {
         internal:
             static int WrapError(Exception ^e)
             {
+                UNUSED(e);
                 return -1;
             }
 
@@ -199,12 +200,17 @@ namespace SharpGit {
         git_cred **_cred;
         initonly int _nr;
         initonly unsigned _allowed;
+        initonly System::Uri ^_uri;
+        initonly String ^_usernameFromUrl;
+
     internal:
         GitCredentialEventArgs(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, int nr)
         {
             _allowed = allowed_types;
             _nr = nr;
             _cred = cred;
+            _uri = gcnew System::Uri(GitBase::Utf8_PtrToString(url));
+            _usernameFromUrl = GitBase::Utf8_PtrToString(username_from_url);
         }
 
     public:
@@ -213,6 +219,22 @@ namespace SharpGit {
             int get()
             {
                 return _nr;
+            }
+        }
+
+        property System::Uri ^Url
+        {
+            System::Uri ^get()
+            {
+                return _uri;
+            }
+        }
+
+        property System::String ^UsernameFromUrl
+        {
+            String ^get()
+            {
+                return _usernameFromUrl;
             }
         }
 
@@ -269,6 +291,28 @@ namespace SharpGit {
         void SetUsernamePassword(String ^username, String ^password);
         void SetUsername(String ^username);
         void SetDefault();
+
+    public:
+        property bool HasCredential
+        {
+            bool get()
+            {
+                return _cred && *_cred;
+            }
+        }
+
+    protected public:
+        virtual void Detach(bool keepValues) override
+        {
+            try
+            {
+            }
+            finally
+            {
+                _cred = nullptr;
+                __super::Detach(keepValues);
+            }
+        }
     };
 
     public ref class GitAuthentication : public Implementation::GitBase
@@ -297,6 +341,8 @@ namespace SharpGit {
         private:
             void raise(Object^ sender, GitCredentialEventArgs ^e)
             {
+                UNUSED(sender);
+                UNUSED(e);
                 throw gcnew NotImplementedException();
             }
         }
