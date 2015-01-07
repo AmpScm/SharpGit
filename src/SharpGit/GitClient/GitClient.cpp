@@ -98,6 +98,23 @@ static int __cdecl credentials(git_cred **cred, const char *url, const char *use
     }
 }
 
+static int __cdecl certificate_check(git_cert *cert, int valid, const char *host, void *data)
+{
+    remote_baton_t *payload = (remote_baton_t*)data;
+    GitClient ^client = AprBaton<GitClient^>::Get(payload->client);
+
+    try
+    {
+        //client->InvokeTransferProgress(gcnew GitTransferProgressEventArgs(*stats));
+
+        return 0;
+    }
+    catch (Exception ^e)
+    {
+        return GitBase::WrapError(e);
+    }
+}
+
 static int __cdecl transfer_progress(const git_transfer_progress *stats, void *data)
 {
     remote_baton_t *payload = (remote_baton_t*)data;
@@ -200,6 +217,7 @@ git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
     cb->sideband_progress = remote_baton_t::sideband_progress;
     cb->completion = remote_baton_t::completion;
     cb->credentials = remote_baton_t::credentials;
+    cb->certificate_check = remote_baton_t::certificate_check;
     cb->transfer_progress = remote_baton_t::transfer_progress;
     cb->update_tips = remote_baton_t::update_tips;
 

@@ -32,7 +32,7 @@ namespace SharpGit {
         HasTheirs   = 3,
     };
 
-    enum class GitNodeKind
+    public enum class GitNodeKind
     {
         None = 0,
         File = 1,
