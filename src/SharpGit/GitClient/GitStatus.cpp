@@ -18,6 +18,21 @@ GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, boo
     _status = entry ? entry->status : 0;
     _pool = pool;
     _conflicted = GitConflicted::None;
+
+    _has = GitStatusHas::None;
+    if (!entry)
+        _has = _has | GitStatusHas::Dummy;
+
+    if (directory)
+        _has = _has | GitStatusHas::Directory;
+    else
+        _has = _has | GitStatusHas::File;
+
+    if (entry && entry->head_to_index)
+        _has = _has | GitStatusHas::Index;
+    if (entry && entry->index_to_workdir)
+        _has = _has | GitStatusHas::Working;
+
     if (conflict_stages)
     {
         if (conflict_stages[0])

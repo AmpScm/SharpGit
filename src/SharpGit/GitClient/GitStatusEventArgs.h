@@ -20,6 +20,9 @@ namespace SharpGit {
         Deleted                 = 0x01000000,
 
         Ignored                 = 0x10000000,
+
+        /// <summary>GitSharp specific flag value, representing that the node is invisible/unknown/unreported for git</summary>
+        None                    = 0x40000000,
     };
 
 
@@ -32,9 +35,22 @@ namespace SharpGit {
         HasTheirs   = 3,
     };
 
+    [Flags]
+    enum class GitStatusHas
+    {
+        None = 0,
+        Index       = 0x0001,
+        Working     = 0x0002,
+
+        File        = 0x0010,
+        Directory   = 0x0020,
+        Dummy       = 0x0040,
+    };
+
     public ref class GitStatusEventArgs : public GitClientEventArgs
     {
         initonly unsigned _status;
+        initonly GitStatusHas _has;
         String^ _relPath;
         String^ _fullPath;
         bool _directory;
@@ -53,14 +69,7 @@ namespace SharpGit {
             String^ get()
             {
                 if (!_relPath && _path)
-                {
-                    int n = (int)strlen(_path);
-
-                    if (n > 0 && _path[n-1] == '/')
-                        n--;
-
-                    _relPath = GitBase::Utf8_PtrToString(_path, n);
-                }
+                    _relPath = GitBase::Utf8_PtrToString(_path);
 
                 return _relPath;
             }
@@ -71,9 +80,7 @@ namespace SharpGit {
             String^ get()
             {
                 if (!_fullPath && _pool && _path && _wcPath)
-                {
                     _fullPath = GitBase::StringFromDirent(svn_dirent_join(_wcPath, _path, _pool->Handle), _pool);
-                }
 
                 return _fullPath;
             }
@@ -83,7 +90,12 @@ namespace SharpGit {
         {
             GitNodeKind get()
             {
-                return _directory ? GitNodeKind::Directory : GitNodeKind::File;
+                if ((int)(_has & GitStatusHas::File))
+                    return GitNodeKind::File;
+                else if ((int)(_has & GitStatusHas::Directory))
+                    return GitNodeKind::Directory;
+
+                return GitNodeKind::Unknown;
             }
         }
 
@@ -92,7 +104,10 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_MODIFIED | GIT_STATUS_INDEX_DELETED | GIT_STATUS_INDEX_RENAMED | GIT_STATUS_INDEX_TYPECHANGE))
+                if ((int)(_has & GitStatusHas::Index))
+                    return GitStatus::None;
+
+                switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_DELETED | GIT_STATUS_INDEX_RENAMED | GIT_STATUS_INDEX_TYPECHANGE))
                 {
                 case 0:
                     return GitStatus::Normal;
@@ -102,10 +117,24 @@ namespace SharpGit {
                     return GitStatus::Modified;
                 case GIT_STATUS_INDEX_DELETED:
                     return GitStatus::Deleted;
+                case GIT_STATUS_INDEX_RENAMED:
+                    return GitStatus::Renamed;
+                case GIT_STATUS_INDEX_TYPECHANGE:
+                    return GitStatus::TypeChange;
                 default:
-                    assert(false);
-                    return GitStatus::Modified;
+                    if (_status & GIT_STATUS_INDEX_MODIFIED)
+                        return GitStatus::Modified;
+                    else
+                        return GitStatus::Normal;
                 }
+            }
+        }
+
+        property bool IndexModified
+        {
+            bool get()
+            {
+                return (int)(_has & GitStatusHas::Index) && (_status & GIT_STATUS_INDEX_MODIFIED);
             }
         }
 
@@ -113,22 +142,37 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_MODIFIED | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_TYPECHANGE | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_UNREADABLE))
+                if ((int)(_has & GitStatusHas::Working))
+                    return GitStatus::None;
+
+                switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_TYPECHANGE | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_UNREADABLE))
                 {
                 case 0:
                     return GitStatus::Normal;
                 case GIT_STATUS_WT_NEW:
                     return GitStatus::New;
-                case GIT_STATUS_WT_MODIFIED:
-                    return GitStatus::Modified;
                 case GIT_STATUS_WT_DELETED:
                     return GitStatus::Deleted;
+                case GIT_STATUS_WT_TYPECHANGE:
+                    return GitStatus::Deleted;
+                case GIT_STATUS_WT_RENAMED:
+                    return GitStatus::Renamed;
                 case GIT_STATUS_WT_UNREADABLE:
                     return GitStatus::Unreadable;
                 default:
-                    assert(false);
-                    return GitStatus::Modified;
+                    if (_status & GIT_STATUS_WT_MODIFIED)
+                        return GitStatus::Modified;
+                    else
+                        return GitStatus::Normal;
                 }
+            }
+        }
+
+        property bool WorkingDirectoryModified
+        {
+            bool get()
+            {
+                return (int)(_has & GitStatusHas::Working) && (_status & GIT_STATUS_WT_MODIFIED);
             }
         }
 
