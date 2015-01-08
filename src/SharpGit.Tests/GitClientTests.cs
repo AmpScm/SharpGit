@@ -82,11 +82,12 @@ namespace SharpGit.Tests
                             case "newfile":
                                 //Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Added));
                                 Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal), "newfile index normal");
-                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Modified), "newfile wc modified");
+                                Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal), "newfile wc modified");
+                                Assert.That(e.WorkingDirectoryModified);
                                 Assert.That(e.Ignored, Is.False);
                                 break;
                             case "dir/file2":
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Added), "file2 index added");
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.New), "file2 index added");
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal), "file2 wc normal");
                                 Assert.That(e.Ignored, Is.False);
                                 break;

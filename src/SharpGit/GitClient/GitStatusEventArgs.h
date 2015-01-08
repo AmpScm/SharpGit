@@ -4,25 +4,16 @@ namespace SharpGit {
 
     ref class GitStatusArgs;
 
-    [FlagsAttribute]
     public enum class GitStatus
     {
-        Normal = 0,
+        None,
+        Normal,
+        New,
+        Deleted,
+        Renamed,
+        TypeChanged,
 
-        New                     =     0x0001,
-        Added                   =     0x0002,
-
-        Modified                =     0x0010,
-        Renamed                 =     0x0020,
-        TypeChange              =     0x0040,
-
-        Unreadable              = 0x00100000,
-        Deleted                 = 0x01000000,
-
-        Ignored                 = 0x10000000,
-
-        /// <summary>GitSharp specific flag value, representing that the node is invisible/unknown/unreported for git</summary>
-        None                    = 0x40000000,
+        Unreadable              = 0x10000
     };
 
 
@@ -110,18 +101,15 @@ namespace SharpGit {
                 switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_DELETED | GIT_STATUS_INDEX_RENAMED | GIT_STATUS_INDEX_TYPECHANGE))
                 {
                 case GIT_STATUS_INDEX_NEW:
-                    return GitStatus::Added;
+                    return GitStatus::New;
                 case GIT_STATUS_INDEX_DELETED:
                     return GitStatus::Deleted;
                 case GIT_STATUS_INDEX_RENAMED:
                     return GitStatus::Renamed;
                 case GIT_STATUS_INDEX_TYPECHANGE:
-                    return GitStatus::TypeChange;
+                    return GitStatus::TypeChanged;
                 default:
-                    if (_status & GIT_STATUS_INDEX_MODIFIED)
-                        return GitStatus::Modified;
-                    else
-                        return GitStatus::Normal;
+                    return GitStatus::Normal;
                 }
             }
         }
@@ -154,10 +142,7 @@ namespace SharpGit {
                 case GIT_STATUS_WT_UNREADABLE:
                     return GitStatus::Unreadable;
                 default:
-                    if (_status & GIT_STATUS_WT_MODIFIED)
-                        return GitStatus::Modified;
-                    else
-                        return GitStatus::Normal;
+                    return GitStatus::Normal;
                 }
             }
         }

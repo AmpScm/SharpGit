@@ -103,7 +103,7 @@ namespace SharpGit.Tests
                             Assert.IsTrue(paths.Remove(e.FullPath), "Can remove {0}", e.FullPath);
                             if (e.NodeKind == GitNodeKind.File)
                             {
-                                Assert.AreEqual(GitStatus.Added, e.IndexStatus, "Invalid index status on {0}", e.RelativePath);
+                                Assert.AreEqual(GitStatus.New, e.IndexStatus, "Invalid index status on {0}", e.RelativePath);
                                 Assert.AreEqual(GitStatus.Normal, e.WorkingDirectoryStatus, "Invalid working status on {0}", e.RelativePath);
                                 Assert.IsFalse(e.Ignored);
                             }
