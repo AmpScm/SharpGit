@@ -39,8 +39,8 @@ namespace SharpGit {
     enum class GitStatusHas
     {
         None = 0,
-        Index       = 0x0001,
-        Working     = 0x0002,
+        HeadToIndex       = 0x0001,
+        IndexToWorking    = 0x0002,
 
         File        = 0x0010,
         Directory   = 0x0020,
@@ -104,17 +104,13 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                if ((int)(_has & GitStatusHas::Index))
+                if (! (int)(_has & GitStatusHas::HeadToIndex))
                     return GitStatus::None;
 
                 switch (_status & (GIT_STATUS_INDEX_NEW | GIT_STATUS_INDEX_DELETED | GIT_STATUS_INDEX_RENAMED | GIT_STATUS_INDEX_TYPECHANGE))
                 {
-                case 0:
-                    return GitStatus::Normal;
                 case GIT_STATUS_INDEX_NEW:
                     return GitStatus::Added;
-                case GIT_STATUS_INDEX_MODIFIED:
-                    return GitStatus::Modified;
                 case GIT_STATUS_INDEX_DELETED:
                     return GitStatus::Deleted;
                 case GIT_STATUS_INDEX_RENAMED:
@@ -134,7 +130,7 @@ namespace SharpGit {
         {
             bool get()
             {
-                return (int)(_has & GitStatusHas::Index) && (_status & GIT_STATUS_INDEX_MODIFIED);
+                return (int)(_has & GitStatusHas::HeadToIndex) && (_status & GIT_STATUS_INDEX_MODIFIED);
             }
         }
 
@@ -142,13 +138,11 @@ namespace SharpGit {
         {
             GitStatus get()
             {
-                if ((int)(_has & GitStatusHas::Working))
+                if (! (int)(_has & GitStatusHas::IndexToWorking))
                     return GitStatus::None;
 
                 switch (_status & (GIT_STATUS_WT_NEW | GIT_STATUS_WT_DELETED | GIT_STATUS_WT_TYPECHANGE | GIT_STATUS_WT_RENAMED | GIT_STATUS_WT_UNREADABLE))
                 {
-                case 0:
-                    return GitStatus::Normal;
                 case GIT_STATUS_WT_NEW:
                     return GitStatus::New;
                 case GIT_STATUS_WT_DELETED:
@@ -172,7 +166,7 @@ namespace SharpGit {
         {
             bool get()
             {
-                return (int)(_has & GitStatusHas::Working) && (_status & GIT_STATUS_WT_MODIFIED);
+                return (int)(_has & GitStatusHas::IndexToWorking) && (_status & GIT_STATUS_WT_MODIFIED);
             }
         }
 

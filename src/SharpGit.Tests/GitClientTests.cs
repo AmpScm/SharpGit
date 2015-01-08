@@ -91,7 +91,7 @@ namespace SharpGit.Tests
                                 Assert.That(e.Ignored, Is.False);
                                 break;
                             case "other":
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.None));
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.New));
                                 Assert.That(e.Ignored, Is.False);
                                 break;
@@ -102,7 +102,7 @@ namespace SharpGit.Tests
                                 break;
                             case "q.ignore":
                                 // TODO: Make this ignored
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal));
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.None));
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Normal));
                                 Assert.That(e.Ignored, Is.True);
                                 break;
@@ -149,15 +149,15 @@ namespace SharpGit.Tests
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.New), "dir wc normal");
                                 break;*/
                             case "newfile":
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal), "newfile index normal");
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.None), "newfile index normal");
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.Deleted), "newfile wc deleted");
                                 break;
                             case "newfile.a":
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal), "newfile.a index normal");
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.None), "newfile.a index normal");
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.New), "newfile.a wc new");
                                 break;
                             case "other":
-                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.Normal), "other index normal");
+                                Assert.That(e.IndexStatus, Is.EqualTo(GitStatus.None), "other index normal");
                                 Assert.That(e.WorkingDirectoryStatus, Is.EqualTo(GitStatus.New), "other wc normal");
                                 break;
                             default:

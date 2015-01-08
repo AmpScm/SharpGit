@@ -29,9 +29,9 @@ GitStatusEventArgs::GitStatusEventArgs(const char *path, const char *wcPath, boo
         _has = _has | GitStatusHas::File;
 
     if (entry && entry->head_to_index)
-        _has = _has | GitStatusHas::Index;
+        _has = _has | GitStatusHas::HeadToIndex;
     if (entry && entry->index_to_workdir)
-        _has = _has | GitStatusHas::Working;
+        _has = _has | GitStatusHas::IndexToWorking;
 
     if (conflict_stages)
     {
