@@ -279,45 +279,6 @@ namespace SharpGit {
             }
         }
 
-        /// <summary>Gets the root cause of the exception; commonly the most <see cref="InnerException" /></summary>
-        property Exception^ RootCause
-        {
-            Exception^ get()
-            {
-                Exception^ e = this;
-                while (e->InnerException)
-                    e = e->InnerException;
-
-                return e;
-            }
-        }
-
-        Exception^ GetCause(System::Type^ exceptionType)
-        {
-            if (!exceptionType)
-                throw gcnew ArgumentNullException("exceptionType");
-            else if (!Exception::typeid->IsAssignableFrom(exceptionType))
-                throw gcnew ArgumentOutOfRangeException("exceptionType");
-
-            Exception^ e = this;
-
-            while (e)
-            {
-                if (exceptionType->IsAssignableFrom(e->GetType()))
-                    return e;
-
-                e = e->InnerException;
-            }
-
-            return nullptr;
-        }
-
-        generic<typename T> where T : Exception
-        T GetCause()
-        {
-            return (T)GetCause(T::typeid);
-        }
-
     public:
         [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::LinkDemand, Flags = System::Security::Permissions::SecurityPermissionFlag::SerializationFormatter)]
         virtual void GetObjectData(System::Runtime::Serialization::SerializationInfo^ info, System::Runtime::Serialization::StreamingContext context) override
