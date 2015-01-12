@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <project basedir="." default="build">
   <property name="libgit2BuildType" value="tag" overwrite="false" />
-  
+  <property name="libssh2BuildType" value="tag" overwrite="false" />
+
   <property name="guessedPlatform" value="win32" />
   <if test="${environment::variable-exists('LIB')}">
     <property name="guessedPlatform" value="x64" if="${string::contains(string::to-upper(environment::get-variable('LIB')),'LIB\AMD64')}" />
@@ -9,7 +10,7 @@
 
   <property name="platform" value="${guessedPlatform}" if="${not property::exists('platform')}" />
 
-  <property name="libgit2Version" value="0.22.0-rc1" overwrite="false" />
+  <property name="libgit2Version" value="0.22.0-rc2" overwrite="false" />
   <!-- r1575018              - Properly store author when retrieving directory entries -->
   <property name="aprMerges" value="" overwrite="false" />
   <property name="aprutilMerges" value="" overwrite="false" />

@@ -63,7 +63,7 @@
       <arg value="https://github.com/madler/zlib.git/tags/v${zlibVersion}/" />
       <arg value="${zlibDir}" />
     </Svn>
-    
+
     <Svn
       verbose="true"
       unless="${directory::exists(opensslDir)}">
@@ -112,15 +112,16 @@
 
     <Svn unless="${directory::exists(libgit2Dir)}">
       <arg value="co" />
-      <arg value="https://github.com/libgit2/libgit2.git/trunk/" if="${libgit2BuildType == 'trunk'}" />
-      <arg value="https://github.com/libgit2/libgit2.git/tags/v${libgit2Version}/" if="${libgit2BuildType == 'tag'}" />
-      <arg value="https://github.com/libgit2/libgit2.git/branches/${libgit2Version}/" if="${libgit2BuildType == 'branch'}" />
+      <arg value="https://github.com/libgit2/libgit2/trunk/"                      if="${libgit2BuildType == 'trunk'}" />
+      <arg value="https://github.com/libgit2/libgit2/tags/v${libgit2Version}/"    if="${libgit2BuildType == 'tag'}" />
+      <arg value="https://github.com/libgit2/libgit2/branches/${libgit2Version}/" if="${libgit2BuildType == 'branch'}" />
       <arg value="${libgit2Dir}" />
     </Svn>
     
     <Svn unless="${directory::exists(libssh2Dir)}">
       <arg value="co" />
-      <arg value="https://github.com/rhuijben/libssh2/tags/libssh2-${libssh2Version}" />
+      <arg value="https://github.com/rhuijben/libssh2/trunk/"                            if="${libssh2BuildType == 'trunk'}" />
+      <arg value="https://github.com/rhuijben/libssh2/tags/libssh2-${libssh2Version}"    if="${libssh2BuildType == 'tag'}" />
       <arg value="${libssh2Dir}" />
     </Svn>
 

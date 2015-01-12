@@ -377,6 +377,10 @@ Exception ^ GitException::Create(int errorcode, const git_error *err)
     return gcnew GitException(code, message);
 }
 
+void __cdecl sharpgit_set_error(int clear, int error_class)
+{
+}
+
 void GitAuthentication::Credentials::add(System::EventHandler<GitCredentialEventArgs^>^ value)
 {
     _ctx->HookCredentials(true, value);
