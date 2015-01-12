@@ -12,6 +12,9 @@
   <property name="cmakeFilename" value="cmake-${cmakeVersion}-win32-x86.zip" />
   <property name="cmakeDir" value="build/cmake-${cmakeVersion}-win32-x86" />
 
+  <property name="nasmFilename" value="nasm-${nasmVersion}-win32.zip" />
+  <property name="nasmDir" value="${buildRoot}\nasm-${nasmVersion}" />
+  
   <property name="ltcgFlags" value="" />
   <property name="ltcgFlags" value="-GL" if="${ltcg}" />
   <property name="ltcgFlags" value="${ltcgFlags} -Gw" if="${int::parse(VSversion) &gt;= 2013}" />
@@ -37,6 +40,15 @@
       todir="build"
       unless="${directory::exists(nunitDir)}" />
 
+    <get src="http://www.nasm.us/pub/nasm/releasebuilds/${nasmVersion}/win32/${nasmFilename}"
+      dest="${downloads + nasmFilename}"
+      unless="${file::exists(downloads + nasmFilename)}" />
+
+    <unzip
+      zipfile="${downloads + nasmFilename}"
+      todir="build"
+      unless="${directory::exists(nasmDir)}" />
+      
     <unzip
       zipfile="${downloads + cmakeFilename}"
       todir="build"
@@ -50,6 +62,15 @@
       <arg value="co" />
       <arg value="https://github.com/madler/zlib.git/tags/v${zlibVersion}/" />
       <arg value="${zlibDir}" />
+    </Svn>
+    
+    <Svn
+      verbose="true"
+      unless="${directory::exists(opensslDir)}">
+      
+      <arg value="co" />
+      <arg value="https://github.com/openssl/openssl.git/tags/OpenSSL_${string::replace(opensslVersion,'.','_')}/" />
+      <arg value="${opensslDir}" />
     </Svn>
 
     <Svn
@@ -91,16 +112,15 @@
 
     <Svn unless="${directory::exists(libgit2Dir)}">
       <arg value="co" />
-      <arg value="https://github.com/libgit2/libgit2/trunk/"                      if="${libgit2BuildType == 'trunk'}" />
-      <arg value="https://github.com/libgit2/libgit2/tags/v${libgit2Version}/"    if="${libgit2BuildType == 'tag'}" />
-      <arg value="https://github.com/libgit2/libgit2/branches/${libgit2Version}/" if="${libgit2BuildType == 'branch'}" />
+      <arg value="https://github.com/libgit2/libgit2.git/trunk/" if="${libgit2BuildType == 'trunk'}" />
+      <arg value="https://github.com/libgit2/libgit2.git/tags/v${libgit2Version}/" if="${libgit2BuildType == 'tag'}" />
+      <arg value="https://github.com/libgit2/libgit2.git/branches/${libgit2Version}/" if="${libgit2BuildType == 'branch'}" />
       <arg value="${libgit2Dir}" />
     </Svn>
     
     <Svn unless="${directory::exists(libssh2Dir)}">
       <arg value="co" />
-      <arg value="https://github.com/rhuijben/libssh2/trunk/"                            if="${libssh2BuildType == 'trunk'}" />
-      <arg value="https://github.com/rhuijben/libssh2/tags/libssh2-${libssh2Version}"    if="${libssh2BuildType == 'tag'}" />
+      <arg value="https://github.com/rhuijben/libssh2/tags/libssh2-${libssh2Version}" />
       <arg value="${libssh2Dir}" />
     </Svn>
 
@@ -113,6 +133,9 @@
     <copy
 			file="${aprUtilDir}/LICENSE"
 			tofile="release/licenses/Apr-Util-License.txt" />
+    <copy
+			file="${opensslDir}/LICENSE"
+			tofile="release/licenses/OpenSsl-License.txt" />
     <copy
 			file="${zlibDir}/README"
 			tofile="release/licenses/ZLib-License.txt" />

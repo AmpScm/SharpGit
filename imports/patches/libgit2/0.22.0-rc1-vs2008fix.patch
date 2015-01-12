@@ -1,0 +1,14 @@
+Index: src/submodule.c
+===================================================================
+--- src/submodule.c	(revision 27530)
++++ src/submodule.c	(working copy)
+@@ -889,8 +889,8 @@ static int git_submodule_update_repo_init_cb(
+ 	int bare,
+ 	void *payload)
+ {
++	git_submodule *sm = payload;
+ 	GIT_UNUSED(bare);
+-	git_submodule *sm = payload;
+ 
+ 	return submodule_repo_create(out, sm->repo, path);
+ }

@@ -21,7 +21,7 @@
     </OnceBlock>
   </target>
   
-  <target name="libssh2-build" depends="libssh2-prepare">
+  <target name="libssh2-build" depends="libssh2-prepare, openssl-build">
     <OnceBlock file="build/libssh2-${libssh2Version}_${platform}.build">
       <FilterFile file="${libssh2Dir}\win32\config.mk">
         <filterchain>
@@ -49,10 +49,25 @@
           <LineRegexReplace re='(#define LIBSSH2_VERSION)\s+"(.*)_DEV"' to='$1 "$2"' />
         </filterchain>
       </FilterFile>
+      <NMake workingdir="${libssh2Dir}" makeFile="${libssh2Dir}\NMakefile">
+      
+      </NMake>
     </OnceBlock>
+    <copy todir="${intDir}/lib" flatten="true">
+      <fileset basedir="${libssh2Dir}">
+        <include name="*.lib" />
+        <include name="*.pdb" />
+      </fileset>
+    </copy>
     <copy todir="${intDir}/include/libssh2" flatten="true">
       <fileset basedir="${libssh2Dir}\include">
         <include name="*.h" />
+      </fileset>
+    </copy>
+    <mkdir dir="${libssh2Dir}/embed" />
+    <copy todir="${libssh2Dir}/embed">
+      <fileset basedir="${libssh2Dir}">
+        <include name="include/**" />
       </fileset>
     </copy>
   </target>
