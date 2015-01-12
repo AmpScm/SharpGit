@@ -20,7 +20,6 @@
 
 #include <apr-1/apr_version.h>
 #include <apr-1/apu_version.h>
-#include <openssl/opensslv.h>
 #include <zlib.h>
 #include <expat.h>
 #include <svn_version.h>
@@ -45,7 +44,6 @@ using SharpGit::Implementation::GitLibraryAttribute;
                                        ", apr-util " APU_VERSION_STRING
                                        ", eXpat " EXPAT_VERSION
                                        ", LibSSH2 " LIBSSH2_VERSION
-                                       ", " OPENSSL_VERSION_TEXT
                                        ", ZLib " ZLIB_VERSION
                                        " and some platform support libraries of Subversion " SVN_VER_NUMBER)];
 [assembly:AssemblyConfigurationAttribute("")];
@@ -60,7 +58,6 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:GitLibrary("Apr-Util", APU_VERSION_STRING)];
 [assembly:GitLibrary("eXpat", EXPAT_VERSION)];
 [assembly:GitLibrary("LibSSH2", LIBSSH2_VERSION)];
-[assembly:GitLibrary("OpenSSL", OPENSSL_VERSION_TEXT, SkipPrefix = true)];
 [assembly:GitLibrary("Subversion", SVN_VER_NUMBER)];
 [assembly:GitLibrary("ZLib", ZLIB_VERSION)];
 
@@ -99,8 +96,6 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:AssemblyVersionAttribute("0.2000.*")]; 
 
 #pragma comment(lib, "xml.lib")
-#pragma comment(lib, "libssh2.lib")
-#pragma comment(lib, "libeay32.lib")
 #pragma comment(lib, "zlib.lib")
 
 
