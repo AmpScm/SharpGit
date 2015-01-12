@@ -2,11 +2,18 @@
 #include "GitClient.h"
 #include "GitCloneArgs.h"
 
+#include "GitClient/GitInitArgs.h"
 #include "Plumbing/GitRepository.h"
 #include "Plumbing/GitIndex.h"
 
 using namespace SharpGit;
+using namespace SharpGit::Implementation;
 using namespace SharpGit::Plumbing;
+
+GitCloneArgs::GitCloneArgs()
+{
+    _initArgs = gcnew GitInitArgs();
+}
 
 const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callbacks *cb, GitPool ^pool)
 {
@@ -17,10 +24,10 @@ const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callba
 
     git_clone_init_options(opts, GIT_CLONE_OPTIONS_VERSION);
 
-    opts->bare = CreateBareRepository;
-
     const git_checkout_options *coo = AllocCheckOutOptions(pool);
     opts->checkout_opts = *coo;
+
+    /* opts->bare = <ignored-in-callback>; */
     opts->remote_callbacks = *cb;
 
     opts->signature = Signature->Alloc(nullptr, pool);
@@ -69,6 +76,34 @@ bool GitClient::Clone(String ^localRepository, String ^path, GitCloneArgs ^args)
     return CloneInternal(pool.AllocDirent(localRepository), path, args, %pool);
 }
 
+struct create_repository
+{
+  gcroot<GitPool^> _pool;
+  gcroot<GitClient^> _client;
+  gcroot<GitCloneArgs^> _args;
+
+  create_repository(GitClient^ client, GitCloneArgs^ args, GitPool^ pool)
+    : _client(client), _args(args), _pool(pool)
+  {}
+
+  static int __cdecl repository_create_cb(git_repository **out, const char *path, int bare, void *payload)
+  {
+      create_repository *cr = (create_repository *)payload;
+
+      try
+      {
+          cr->_client->Init(GitBase::StringFromDirent(path, cr->_pool), cr->_args->InitArgs);
+
+
+          return git_repository_open(out, path);
+      }
+      catch(GitException ^e)
+      {
+          return GitBase::WrapError(e);
+      }
+  }
+};
+
 bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneArgs ^args, GitPool ^pool)
 {
     git_repository *repository;
@@ -77,7 +112,13 @@ bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneA
 
     if (args->Synchronous)
     {
-        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), args->MakeCloneOptions(get_callbacks(pool), pool));
+        create_repository create(this, args, pool);
+        git_clone_options *opts = const_cast<git_clone_options *>(args->MakeCloneOptions(get_callbacks(pool), pool));
+
+        opts->repository_cb = create_repository::repository_create_cb;
+        opts->repository_cb_payload = &create;
+
+        r = git_clone(&repository, rawRepository, pool->AllocDirent(path), opts);
     }
     else
         throw gcnew NotImplementedException();

@@ -496,7 +496,7 @@ namespace SharpGit.Tests
 
                 string cloneDir = GetTempPath();
                 GitCloneArgs cca = new GitCloneArgs();
-                cca.CreateBareRepository = true;
+                cca.InitArgs.CreateBareRepository = true;
                 git.Clone(repos, cloneDir, cca);
 
                 string clone2Dir = GetTempPath();

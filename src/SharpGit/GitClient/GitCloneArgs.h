@@ -3,29 +3,25 @@
 
 namespace SharpGit {
 
+    ref class GitInitArgs;
+
     public ref class GitCloneArgs : public GitCheckOutArgsWithSignature
     {
-        bool _bare;
         String ^_branchName;
         bool _asynchronous;
+        GitInitArgs ^_initArgs;
 
     internal:
         const git_clone_options * MakeCloneOptions(const git_remote_callbacks *cb, GitPool ^pool);
 
     public:
-        GitCloneArgs()
-        {
-        }
+        GitCloneArgs();
 
-        property bool CreateBareRepository
+        property GitInitArgs ^InitArgs
         {
-            bool get()
+            GitInitArgs ^get()
             {
-                return _bare;
-            }
-            void set(bool value)
-            {
-                _bare = value;
+                return _initArgs;
             }
         }
 
