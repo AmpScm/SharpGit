@@ -43,6 +43,10 @@ namespace SharpGit {
             initonly static Object^ _ensurerLock = gcnew Object();
 
         internal:
+            [ThreadStaticAttribute]
+            static Exception ^_threadException;
+
+        internal:
             GitBase() { EnsureInitialized(); }
             static void EnsureInitialized();
 
@@ -53,11 +57,7 @@ namespace SharpGit {
             static System::String ^StringFromDirent(const char *dirent, GitPool ^pool);
 
         internal:
-            static int WrapError(Exception ^e)
-            {
-                UNUSED(e);
-                return -1;
-            }
+            static int WrapError(Exception ^e);
 
             static array<char>^ _invalidCharMap;
 
@@ -383,73 +383,7 @@ namespace SharpGit {
         }
 
     internal:
-        literal int WrappedError = 1099001;
-        Exception ^_ex;
-
-        bool HandleGitError(Object^ q, int r)
-        {
-            if (_ex && (r == WrappedError || r == GIT_EUSER))
-            {
-                try
-                {
-                    throw gcnew Exception(String::Format("Wrapped Exception: {0}", _ex), _ex);
-                }
-                finally
-                {
-                    _ex = nullptr;
-                }
-            }
-
-            UNUSED(q);
-            _ex = nullptr;
-            bool defined = false;
-
-            switch (r)
-            {
-            case GIT_OK /* 0 */:
-                return true;
-
-            case GIT_ERROR:
-            case GIT_ENOTFOUND:
-            case GIT_EEXISTS:
-            case GIT_EAMBIGUOUS:
-            case GIT_EBUFS:
-
-            case GIT_EUSER:
-            case GIT_EBAREREPO:
-            case GIT_EUNBORNBRANCH:
-            case GIT_EUNMERGED:
-            case GIT_ENONFASTFORWARD:
-            case GIT_EINVALIDSPEC:
-            case GIT_EMERGECONFLICT:
-        case GIT_ELOCKED:
-
-            case GIT_PASSTHROUGH:
-            case GIT_ITEROVER:
-                defined = true;
-                // Fall through
-
-            default:
-                {
-                    const git_error *info = giterr_last();
-
-                    try
-                    {
-                        if (info)
-                            throw GitException::Create(r, info);
-                        else
-                            throw gcnew GitException();
-                    }
-                    finally
-                    {
-                        if (info)
-                            giterr_clear();
-                    }
-                }
-            }
-
-            return false;
-        }
+        bool HandleGitError(Object^ q, int r);
 
         bool HandleException(Exception ^e)
         {
@@ -457,18 +391,6 @@ namespace SharpGit {
                 throw e;
 
             return true;
-        }
-
-        int WrapException(Exception ^e)
-        {
-            if (e)
-            {
-                System::Diagnostics::Debug::WriteLine(String::Format("Wrapping: {0}", e));
-                _ex = e;
-                return WrappedError;
-            }
-
-            return 0;
         }
     };
 

@@ -337,48 +337,96 @@ const char * GitCreateRefArgs::AllocLogMessage(GitPool ^pool)
     return msg;
 }
 
+static __declspec(thread) int _threadExceptionDepth = 0;
+
 Exception ^ GitException::Create(int errorcode, const git_error *err)
 {
     GitError code = (GitError)err->klass;
     String ^message = GitBase::Utf8_PtrToString(err->message);
+    Exception ^inner = GitBase::_threadException;
+    GitBase::_threadException = nullptr;
+    _threadExceptionDepth = 0;
 
     switch (code)
       {
-        case GitError::NoMemory         : return gcnew GitNoMemoryException(code, message);
-        case GitError::OperatingSystem  : return gcnew GitOperatingSystemException(code, message);
-        case GitError::Invalid          : return gcnew GitInvalidException(code, message);
-        case GitError::Reference        : return gcnew GitReferenceException(code, message);
-        case GitError::Zlib             : return gcnew GitZlibException(code, message);
-        case GitError::Repository       : return gcnew GitRepositoryException(code, message);
-        case GitError::Configuration    : return gcnew GitConfigurationException(code, message);
-        case GitError::RegularExpression: return gcnew GitRegularExpressionException(code, message);
-        case GitError::ObjectDatabase   : return gcnew GitObjectDatabaseException(code, message);
-        case GitError::Index            : return gcnew GitIndexException(code, message);
-        case GitError::Object           : return gcnew GitObjectException(code, message);
-        case GitError::Network          : return gcnew GitNetworkException(code, message);
-        case GitError::Tag              : return gcnew GitTagException(code, message);
-        case GitError::Tree             : return gcnew GitTreeException(code, message);
-        case GitError::Indexer          : return gcnew GitIndexerException(code, message);
-        case GitError::SecureSockets    : return gcnew GitSecureSocketsException(code, message);
-        case GitError::Submodule        : return gcnew GitSubmoduleException(code, message);
-        case GitError::Thread           : return gcnew GitThreadException(code, message);
-        case GitError::Stash            : return gcnew GitStashException(code, message);
-        case GitError::CheckOut         : return gcnew GitCheckOutException(code, message);
-        case GitError::FetchHead        : return gcnew GitFetchHeadException(code, message);
-        case GitError::Merge            : return gcnew GitMergeException(code, message);
-        case GitError::Ssh              : return gcnew GitSshException(code, message);
-        case GitError::Filter           : return gcnew GitFilterException(code, message);
-        case GitError::Revert           : return gcnew GitRevertException(code, message);
-        case GitError::Callback         : return gcnew GitCallbackException(code, message);
-        case GitError::CherryPick       : return gcnew GitCherryPickException(code, message);
-        case GitError::Describe         : return gcnew GitDescribeException(code, message);
-        case GitError::Rebase           : return gcnew GitRebaseException(code, message);
+        case GitError::NoMemory         : return gcnew GitNoMemoryException(code, message, inner);
+        case GitError::OperatingSystem  : return gcnew GitOperatingSystemException(code, message, inner);
+        case GitError::Invalid          : return gcnew GitInvalidException(code, message, inner);
+        case GitError::Reference        : return gcnew GitReferenceException(code, message, inner);
+        case GitError::Zlib             : return gcnew GitZlibException(code, message, inner);
+        case GitError::Repository       : return gcnew GitRepositoryException(code, message, inner);
+        case GitError::Configuration    : return gcnew GitConfigurationException(code, message, inner);
+        case GitError::RegularExpression: return gcnew GitRegularExpressionException(code, message, inner);
+        case GitError::ObjectDatabase   : return gcnew GitObjectDatabaseException(code, message, inner);
+        case GitError::Index            : return gcnew GitIndexException(code, message, inner);
+        case GitError::Object           : return gcnew GitObjectException(code, message, inner);
+        case GitError::Network          : return gcnew GitNetworkException(code, message, inner);
+        case GitError::Tag              : return gcnew GitTagException(code, message, inner);
+        case GitError::Tree             : return gcnew GitTreeException(code, message, inner);
+        case GitError::Indexer          : return gcnew GitIndexerException(code, message, inner);
+        case GitError::SecureSockets    : return gcnew GitSecureSocketsException(code, message, inner);
+        case GitError::Submodule        : return gcnew GitSubmoduleException(code, message, inner);
+        case GitError::Thread           : return gcnew GitThreadException(code, message, inner);
+        case GitError::Stash            : return gcnew GitStashException(code, message, inner);
+        case GitError::CheckOut         : return gcnew GitCheckOutException(code, message, inner);
+        case GitError::FetchHead        : return gcnew GitFetchHeadException(code, message, inner);
+        case GitError::Merge            : return gcnew GitMergeException(code, message, inner);
+        case GitError::Ssh              : return gcnew GitSshException(code, message, inner);
+        case GitError::Filter           : return gcnew GitFilterException(code, message, inner);
+        case GitError::Revert           : return gcnew GitRevertException(code, message, inner);
+        case GitError::Callback         : return gcnew GitCallbackException(code, message, inner);
+        case GitError::CherryPick       : return gcnew GitCherryPickException(code, message, inner);
+        case GitError::Describe         : return gcnew GitDescribeException(code, message, inner);
+        case GitError::Rebase           : return gcnew GitRebaseException(code, message, inner);
       }
-    return gcnew GitException(code, message);
+    return gcnew GitException(code, message, inner);
 }
 
-void __cdecl sharpgit_set_error(int clear, int error_class)
+int GitBase::WrapError(Exception ^e)
 {
+    _threadException = e;
+    _threadExceptionDepth = 1;
+    return -1;
+}
+
+extern "C" void __cdecl sharpgit_set_error(int error_class)
+{
+    if (_threadExceptionDepth > 0)
+    {
+        if (error_class)
+            _threadExceptionDepth++;
+        else
+        {
+            _threadExceptionDepth--;
+
+            if (!_threadExceptionDepth)
+                GitBase::_threadException = nullptr;
+        }
+    }
+}
+
+bool GitArgs::HandleGitError(Object^ q, int r)
+{
+    try
+    {
+        if (r > 0)
+        {
+            const git_error *info = giterr_last();
+
+            if (info)
+                throw GitException::Create(r, info);
+            else
+                throw gcnew GitException();
+        }
+
+        return true;
+    }
+    finally
+    {
+        GitBase::_threadException = nullptr;
+        _threadExceptionDepth = 0;
+        giterr_clear();
+    }
 }
 
 void GitAuthentication::Credentials::add(System::EventHandler<GitCredentialEventArgs^>^ value)
