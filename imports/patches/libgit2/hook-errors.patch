@@ -1,0 +1,20 @@
+Index: src/errors.c
+===================================================================
+--- src/errors.c	(revision 27584)
++++ src/errors.c	(working copy)
+@@ -12,6 +12,7 @@
+ /********************************************
+  * New error handling
+  ********************************************/
++void sharpgit_set_error(int error_class);
+ 
+ static git_error g_git_oom_error = {
+ 	"Out of memory",
+@@ -29,6 +30,7 @@ static void set_error(int error_class, char *strin
+ 	error->klass = error_class;
+ 
+ 	GIT_GLOBAL->last_error = error;
++	sharpgit_set_error(error_class);
+ }
+ 
+ void giterr_set_oom(void)

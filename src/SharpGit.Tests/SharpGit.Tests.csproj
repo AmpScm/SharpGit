@@ -60,6 +60,7 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthTests.cs" />
     <Compile Include="DiffTests.cs" />
     <Compile Include="GitClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

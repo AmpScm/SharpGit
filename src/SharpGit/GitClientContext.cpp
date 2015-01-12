@@ -409,7 +409,7 @@ bool GitArgs::HandleGitError(Object^ q, int r)
 {
     try
     {
-        if (r > 0)
+        if (r != 0)
         {
             const git_error *info = giterr_last();
 

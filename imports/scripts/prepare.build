@@ -23,7 +23,7 @@
     <mkdir dir="${downloads}" />
 
     <get
-      src="http://launchpad.net/nunitv2/trunk/${nunitVersionMMR}/+download/${nunitFilename}"
+      src="http://github.com/nunit/nunitv2/releases/download/${nunitVersionMMR}/${nunitFilename}"
       dest="${downloads + nunitFilename}"
       unless="${file::exists(downloads + nunitFilename)}" />
 

@@ -11,7 +11,6 @@
   <property name="platform" value="${guessedPlatform}" if="${not property::exists('platform')}" />
 
   <property name="libgit2Version" value="0.22.0-rc2" overwrite="false" />
-  <!-- r1575018              - Properly store author when retrieving directory entries -->
   <property name="aprMerges" value="" overwrite="false" />
   <property name="aprutilMerges" value="" overwrite="false" />
 
@@ -26,8 +25,8 @@
   <property name="nasmVersion" value="2.11.06" overwrite="false" />
   <property name="cmakeVersion" value="3.1.0" overwrite="false" />
 
-  <!-- For testcase -->
-  <property name="nunitVersion" value="2.6.3" overwrite="false" />
+  <!-- For testcases -->
+  <property name="nunitVersion" value="2.6.4" overwrite="false" />
 
   <!-- Prefer http or https -->
   <property name="httpOrHttps" value="http" />
