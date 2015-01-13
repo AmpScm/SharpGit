@@ -10,8 +10,8 @@
     <projectUrl>http://sharpsvn.net/</projectUrl>
     <iconUrl>http://sharpsvn.open.collab.net/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>SharpGit is a SharpSvn like api for Git basd on libgit2. This is the x64/64-bit version, See SharpGit-x86 for the 32 bit version</description>
-    <copyright>(C) Copyright 2013-2014 The SharpSvn Project</copyright>
+    <description>SharpGit is a SharpSvn like api for Git based on libgit2. This is the x64/64-bit version, See SharpGit-x86 for the 32 bit version</description>
+    <copyright>(C) Copyright 2013-2015 The SharpSvn Project</copyright>
     <tags>Git libgit2 SharpSvn</tags>
   </metadata>
   <files>
