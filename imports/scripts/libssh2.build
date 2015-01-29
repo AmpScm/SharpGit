@@ -50,7 +50,7 @@
         </filterchain>
       </FilterFile>
       <NMake workingdir="${libssh2Dir}" makeFile="${libssh2Dir}\NMakefile">
-      
+        <arg value="WITH_WINCNG=0" /><!-- CNG is not compatible with Windows XP-->
       </NMake>
     </OnceBlock>
     <copy todir="${intDir}/lib" flatten="true">
