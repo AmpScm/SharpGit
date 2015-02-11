@@ -35,17 +35,14 @@
 
   <target name="help">
     <echo>
-      The following targets are defined
-      - build      - Build all
-      - clean      - Clean all
-      - distclean  - Clean all + clean downloads
-      - clean-svn  - Clean+Update subversion
+  The following targets are defined
+  - build      - Build all
+  - clean      - Clean all
+  - distclean  - Clean all + clean downloads
+  - clean-svn  - Clean+Update subversion
 
-      Use nant /D:platform=x64 to build/clean the x64 binaries if autodetect fails
-
-      The following targets try to start nant within the specified context using vcvars.cmd
-      - x86
-      - x64
+  Make sure you run this command from the proper Visual C++ SDK context to
+  build for the right target architecture.
     </echo>
   </target>
 </project>
