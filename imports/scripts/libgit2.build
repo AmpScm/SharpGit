@@ -21,7 +21,13 @@
     </OnceBlock>
     <OnceBlock file="build/libgit2-${libgit2Version}_${platform}.build">
       <mkdir dir="${libgit2Dir}/build" />
-    
+
+      <FilterFile file="${libgit2Dir}\include\git2\common.h">
+        <filterchain>
+          <replacestring from="__declspec(dllexport)" to="/* __declspec( dllexport ) */" />
+        </filterchain>
+      </FilterFile>
+
       <CMake workingdir="${libgit2Dir}">
         <arg value="-DBUILD_SHARED_LIBS=OFF" />
         <arg value="-DBUILD_CLAR=OFF" />
