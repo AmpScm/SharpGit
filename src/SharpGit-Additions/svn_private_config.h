@@ -8,7 +8,7 @@
 
 #define SVN_PATH_LOCAL_SEPARATOR '\\'
 #define SVN_BUILD_HOST "SharpGit"
-
+#define SVN_UNUSED(v) ( (void)(v) )
 #ifndef alloca
 #define alloca  _alloca
 #endif

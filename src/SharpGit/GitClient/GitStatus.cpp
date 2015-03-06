@@ -291,7 +291,7 @@ bool GitRepository::Status(String ^path, GitStatusArgs ^args, EventHandler<GitSt
         {
             for (apr_hash_index_t *hi = apr_hash_first(pool.Handle, data.walk_conflicts); hi; hi = apr_hash_next(hi))
             {
-                const char *path = static_cast<const char*>(svn__apr_hash_index_key(hi));
+                const char *path = static_cast<const char*>(apr_hash_this_key(hi));
                 const git_index_entry *stages[3];
 
                 GIT_THROW(git_index_conflict_get(&stages[0], &stages[1], &stages[2], data.index, path));

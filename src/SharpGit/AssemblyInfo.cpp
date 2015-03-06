@@ -51,7 +51,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("SharpSvn Project")];
 [assembly:AssemblyProductAttribute("SharpGit")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) SharpSvn Project 2013")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) SharpSvn Project 2013-2015")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 

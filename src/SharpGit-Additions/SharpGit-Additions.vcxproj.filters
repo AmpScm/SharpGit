@@ -153,9 +153,6 @@
     <ClCompile Include="libsvn_subr\mergeinfo.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libsvn_subr\named_atomic.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="libsvn_subr\nls.c">
       <Filter>Source Files</Filter>
     </ClCompile>

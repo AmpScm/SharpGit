@@ -210,7 +210,6 @@
     <ClCompile Include="libsvn_subr\md5.c" />
     <ClCompile Include="libsvn_subr\mergeinfo.c" />
     <ClCompile Include="libsvn_subr\mutex.c" />
-    <ClCompile Include="libsvn_subr\named_atomic.c" />
     <ClCompile Include="libsvn_subr\nls.c" />
     <ClCompile Include="libsvn_subr\opt.c" />
     <ClCompile Include="libsvn_subr\path.c" />
