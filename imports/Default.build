@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <project basedir="." default="build">
   <property name="libgit2BuildType" value="tag" overwrite="false" />
-  <property name="libssh2BuildType" value="trunk" overwrite="false" />
+  <property name="libssh2BuildType" value="tag" overwrite="false" />
 
   <property name="guessedPlatform" value="win32" />
   <if test="${environment::variable-exists('LIB')}">
@@ -19,7 +19,7 @@
   <property name="aprUtilVersion" value="1.5.4" overwrite="false" />
   <property name="expatVersion" value="2.1.0" overwrite="false" />
   <property name="zlibVersion" value="1.2.8" overwrite="false" />
-  <property name="libssh2Version" value="1.4.3" overwrite="false" />
+  <property name="libssh2Version" value="1.5.0" overwrite="false" />
 
   <!-- Building only -->
   <property name="nasmVersion" value="2.11.06" overwrite="false" />
