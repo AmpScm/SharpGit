@@ -107,6 +107,15 @@ bool GitRepository::Locate(String ^path, GitArgs ^args)
         }
     }
 
+    svn_node_kind_t kind;
+    SVN_THROW(svn_io_check_path(dirent, &kind, pool.Handle));
+    while (kind == svn_node_none
+           && !svn_dirent_is_root(dirent, strlen(dirent)))
+    {
+        dirent = svn_dirent_dirname(dirent, pool.Handle);
+        SVN_THROW(svn_io_check_path(dirent, &kind, pool.Handle));
+    }
+
     git_repository *repository;
     int r = git_repository_open_ext(&repository,
                                     dirent,

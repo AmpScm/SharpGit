@@ -66,6 +66,18 @@ using System::Collections::Generic::KeyValuePair;
     { giterr_clear(); }                                   \
     else
 
+#define SVN_THROW(expr)                                   \
+    do                                                    \
+    {                                                     \
+        svn_error_t *git__throw_err = (expr);             \
+                                                          \
+        if (git__throw_err)                               \
+        {                                                 \
+            svn_error_clear(git__throw_err);              \
+            throw gcnew InvalidOperationException();      \
+        }                                                 \
+    } while (0)
+
 struct Git_buf : public git_buf
 {
     Git_buf()
