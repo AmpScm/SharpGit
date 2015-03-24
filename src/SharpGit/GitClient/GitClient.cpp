@@ -276,13 +276,17 @@ git_remote_callbacks *GitClient::get_callbacks(GitPool ^pool)
     return cb;
 }
 
+static GitClient::GitClient()
+{
+#ifndef LIBGIT2_VER_PATCH /* Unavailable pre 0.23.0 */
+# define LIBGIT2_VER_PATCH 0
+#endif
+    _version = gcnew System::Version(LIBGIT2_VER_MAJOR, LIBGIT2_VER_MINOR, LIBGIT2_VER_REVISION, LIBGIT2_VER_PATCH);
+}
+
 System::Version^ GitClient::Version::get()
 {
-    int major, minor, rev;
-
-    git_libgit2_version(&major, &minor, &rev);
-
-    return gcnew System::Version(major, minor, rev);
+    return _version;
 }
 
 System::Version^ GitClient::SharpGitVersion::get()

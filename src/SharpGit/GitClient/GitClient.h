@@ -257,7 +257,9 @@ namespace SharpGit {
         static ICollection<GitLibrary^>^ _gitLibraries;
         initonly Implementation::AprBaton<GitClient^> ^_clientBaton;
         initonly System::Collections::Generic::List<System::EventHandler<GitCredentialEventArgs^>^> ^_credentialHandlers;
+        static initonly System::Version ^_version;
         int _nextCredentialHandler;
+        static GitClient();
 
     public:
         GitClient();
