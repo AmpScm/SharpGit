@@ -100,36 +100,38 @@ bool GitClient::Stage(IEnumerable<String^>^ paths, GitStageArgs^ args)
 
     bool havePath = (nPath < c_paths->nelts);
     bool haveIndex = (nIndex < git_index_entrycount(index));
-    const char *repo_abspath = nullptr;
+    const char *repo_abspath = svn_dirent_internal_style(git_repository_workdir(repo.Handle), pool.Handle);
 
     while (havePath)
     {
+        const char *c_path = APR_ARRAY_IDX(c_paths, nPath, const char*);
+        const char *abspath = svn_dirent_join(repo_abspath, c_path, pool.Handle);
+
         if (haveIndex)
         {
             const git_index_entry *entry = git_index_get_byindex(index, nIndex);
-            const char *c_path = APR_ARRAY_IDX(c_paths, nPath, const char*);
+            svn_node_kind_t kind;
+
+            SVN_THROW(svn_io_check_path(abspath, &kind, pool.Handle));
 
             int n = strcmp(entry->path, c_path);
             if (n == 0)
             {
-                if (!repo_abspath)
-                    repo_abspath = svn_dirent_internal_style(git_repository_workdir(repo.Handle), pool.Handle);
-
-                const char *abspath = svn_dirent_join(repo_abspath, c_path, pool.Handle);
-                svn_node_kind_t kind;
-
-                SVN_THROW(svn_io_check_path(abspath, &kind, pool.Handle));
-
                 if (kind != svn_node_none)
                 {
-                    if (!repo.Index->Add(c_path, args, %pool))
-                        return false;
+                    int r = git_index_add_bypath(index, c_path);
+                    if (r)
+                        return args->HandleGitError(this, r);
+
                     nIndex++;
                 }
                 else
                 {
-                    repo.Index->Remove(nIndex);
-                    // Keep nIndex
+                    int r = git_index_remove(index, c_path, git_index_entry_stage(entry));
+                    if (r)
+                        return args->HandleGitError(this, r);
+
+                    // Don't increment index
                 }
                 nPath++;
             }
@@ -137,40 +139,46 @@ bool GitClient::Stage(IEnumerable<String^>^ paths, GitStageArgs^ args)
                 nIndex++;
             else if (svn_relpath_skip_ancestor(c_path, entry->path))
             {
-                nPath++;
-            }
-            else
-            {
-                if (!repo_abspath)
-                    repo_abspath = svn_dirent_internal_style(git_repository_workdir(repo.Handle), pool.Handle);
-
-                const char *abspath = svn_dirent_join(repo_abspath, c_path, pool.Handle);
                 svn_node_kind_t kind;
 
                 SVN_THROW(svn_io_check_path(abspath, &kind, pool.Handle));
 
+                if (kind == svn_node_file)
+                {
+                    int r = git_index_remove_directory(index, c_path, 0);
+                    if (r)
+                        return args->HandleGitError(this, r);
+                }
+
+                nPath++;
+            }
+            else
+            {
                 if (kind != svn_node_none)
                 {
-                    if (!repo.Index->Add(c_path, args, %pool))
-                        return false;
-                    nIndex++;
-                }
-                else
-                {
-                    repo.Index->Remove(nIndex);
-                    nIndex--;
+                    int r = git_index_add_bypath(index, c_path);
+                    if (r)
+                        return args->HandleGitError(this, r);
+
+                    nIndex++; // Now in index
                 }
                 nPath++;
             }
         }
         else
         {
-            const char *c_path = APR_ARRAY_IDX(c_paths, nPath, const char*);
+            svn_node_kind_t kind;
+            SVN_THROW(svn_io_check_path(abspath, &kind, pool.Handle));
 
-            if (!repo.Index->Add(c_path, args, %pool))
-                return false;
-            else
-                nIndex++; /* Now in index */
+            if (kind != svn_node_none)
+            {
+                int r = git_index_add_bypath(index, c_path);
+                if (r)
+                    return args->HandleGitError(this, r);
+                nIndex++; // Now in index
+            }
+            // else: We already know it is not in the index
+
             nPath++;
         }
 
