@@ -110,7 +110,7 @@ namespace SharpGit {
                     if (IsDisposed)
                         return 0;
 
-                    return git_index_entrycount(_index);
+                    return (int)git_index_entrycount(_index);
                 }
             }
 
