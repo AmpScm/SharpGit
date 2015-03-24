@@ -349,6 +349,11 @@ namespace SharpGit {
             System::Version^ get();
         }
 
+        static property String ^VersionString
+        {
+            String^ get();
+        }
+
         /// <summary>Gets the SharpGit version</summary>
         static property System::Version ^SharpGitVersion
         {

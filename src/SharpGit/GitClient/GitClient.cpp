@@ -289,6 +289,11 @@ System::Version^ GitClient::Version::get()
     return _version;
 }
 
+String^ GitClient::VersionString::get()
+{
+    return LIBGIT2_VERSION;
+}
+
 System::Version^ GitClient::SharpGitVersion::get()
 {
     return (gcnew System::Reflection::AssemblyName(GitClient::typeid->Assembly->FullName))->Version;
