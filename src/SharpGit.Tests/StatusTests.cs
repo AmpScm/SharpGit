@@ -202,6 +202,39 @@ namespace SharpGit.Tests
                 paths.Remove(Path.Combine(dir, "A\\C"));
                 paths.Remove(Path.Combine(dir, "A\\B\\F"));
 
+                List<string> paths2 = new List<string>(paths);
+
+                n = 0;
+                client.Status(dir, sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        Assert.IsTrue(GitTools.IsNormalizedFullPath(e.FullPath));
+                        Assert.IsTrue(paths.Remove(e.FullPath), "Can remove {0}", e.FullPath);
+                        Assert.IsFalse(e.IndexModified);
+                        Assert.IsFalse(e.WorkingDirectoryModified);
+                        n++;
+                    });
+                Assert.AreEqual(21, n);
+                Assert.AreEqual(0, paths.Count);
+
+                client.Status(dir, sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        switch (e.WorkingDirectoryStatus)
+                        {
+                            case GitStatus.New:
+                            case GitStatus.Deleted:
+                            case GitStatus.TypeChanged:
+                                client.Stage(e.FullPath);
+                                break;
+                            default:
+                                if (e.WorkingDirectoryModified)
+                                    goto case GitStatus.New;
+                                break;
+                        }
+                    });
+
+                paths = new List<string>(paths2);
                 n = 0;
                 client.Status(dir, sa,
                     delegate(object sender, GitStatusEventArgs e)

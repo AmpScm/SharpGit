@@ -32,8 +32,9 @@ namespace SharpGit {
         };
 
         public ref class GitIndex : public Implementation::GitBase,
-                                                                public System::Collections::Generic::ICollection<GitIndexEntry^>
+                                    public System::Collections::Generic::ICollection<GitIndexEntry^>
         {
+            /* No detach. Lifetime is handled by GitIndex */
         private:
             git_index *_index;
 
