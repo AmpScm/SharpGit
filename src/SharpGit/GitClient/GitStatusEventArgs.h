@@ -52,7 +52,8 @@ namespace SharpGit {
         GitConflicted _conflicted;
 
     internal:
-        GitStatusEventArgs(const char *path, const char *wcPath, bool directory, const git_status_entry *entry, const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
+        GitStatusEventArgs(const char *path, const char *wcPath, bool directory, const git_status_entry *entry, const git_status_entry *entry2,
+                           const git_index_entry *conflict_stages[3], GitStatusArgs ^args, Implementation::GitPool ^pool);
 
     public:
         property String^ RelativePath

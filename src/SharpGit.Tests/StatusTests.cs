@@ -35,7 +35,7 @@ namespace SharpGit.Tests
                     client.Status(dir, sa,
                         delegate(object sender, GitStatusEventArgs e)
                         {
-                            Assert.IsTrue(Path.IsPathRooted(e.FullPath));
+                            Assert.IsTrue(GitTools.IsNormalizedFullPath(e.FullPath));
                             Assert.IsTrue(paths.Remove(e.FullPath), "Can remove {0}", e.FullPath);
                             if (e.NodeKind == GitNodeKind.File)
                             {
@@ -80,7 +80,7 @@ namespace SharpGit.Tests
                     client.Status(A_dir, sa,
                         delegate(object sender, GitStatusEventArgs e)
                         {
-                            Assert.IsTrue(Path.IsPathRooted(e.FullPath));
+                            Assert.IsTrue(GitTools.IsNormalizedFullPath(e.FullPath));
                             Assert.IsTrue(e.FullPath.StartsWith(A_dir + "\\") || e.FullPath == A_dir);
                             n++;
                         });
@@ -144,7 +144,7 @@ namespace SharpGit.Tests
                     client.Status(dir, sa,
                         delegate(object sender, GitStatusEventArgs e)
                         {
-                            Assert.IsTrue(Path.IsPathRooted(e.FullPath));
+                            Assert.IsTrue(GitTools.IsNormalizedFullPath(e.FullPath));
                             Assert.IsTrue(paths.Remove(e.FullPath), "Can remove {0}", e.FullPath);
                             Assert.AreEqual(e.NodeKind, File.Exists(e.FullPath) ? GitNodeKind.File : GitNodeKind.Directory);
                             Assert.IsFalse(e.IndexModified);
@@ -154,6 +154,66 @@ namespace SharpGit.Tests
                     Assert.AreEqual(21, n);
                     Assert.AreEqual(0, paths.Count);
                 }
+            }
+        }
+
+        [TestMethod]
+        public void TreeReplacements()
+        {
+            using (GitClient client = new GitClient())
+            {
+                string dir = GitTools.GetTruePath(GetTempPath(), true);
+                client.Init(dir);
+
+                GitStatusArgs sa = new GitStatusArgs();
+                sa.GenerateVersionedDirs = true;
+                sa.IncludeUnmodified = true;
+                sa.IncludeIgnored = true; // Directories with 0 files are ignored
+                sa.IncludeUnversioned = true;
+
+                BuildGreek(dir);
+
+                foreach (string[] k in GreekTree())
+                {
+                    string p = Path.Combine(dir, k[0]);
+                    if (File.Exists(p))
+                        client.Stage(p);
+                }
+                client.Commit(dir);
+
+                Directory.Delete(Path.Combine(dir, "A"), true);
+                File.WriteAllText(Path.Combine(dir, "A"), "'A' file");
+
+                File.Delete(Path.Combine(dir, "mu"));
+                Directory.CreateDirectory(Path.Combine(dir, "mu"));
+                File.WriteAllText(Path.Combine(dir, "mu/AAAA"), "AAAA file");
+
+
+                List<string> paths = new List<string>();
+                int n = 0;
+                foreach (string[] s in GreekTree())
+                    paths.Add(GitTools.GetNormalizedFullPath(Path.Combine(dir, s[0])));
+
+                paths.Add(dir);
+                paths.Add(Path.Combine(dir, "mu"));
+                paths.Add(Path.Combine(dir, "mu\\AAAA"));
+
+                /* Empty dirs are not versioned, so not reported deleted */
+                paths.Remove(Path.Combine(dir, "A\\C"));
+                paths.Remove(Path.Combine(dir, "A\\B\\F"));
+
+                n = 0;
+                client.Status(dir, sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        Assert.IsTrue(GitTools.IsNormalizedFullPath(e.FullPath));
+                        Assert.IsTrue(paths.Remove(e.FullPath), "Can remove {0}", e.FullPath);
+                        Assert.IsFalse(e.IndexModified);
+                        Assert.IsFalse(e.WorkingDirectoryModified);
+                        n++;
+                    });
+                Assert.AreEqual(21, n);
+                Assert.AreEqual(0, paths.Count);
             }
         }
     }

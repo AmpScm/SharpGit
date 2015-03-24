@@ -21,6 +21,7 @@ namespace SharpGit {
         bool _updateCache;
         bool _noIncludeUnreadable;
         bool _findRenames;
+        bool _noCollapseReplacements;
 
         bool _includeVersionedDirs;
         bool _globPath;
@@ -193,6 +194,19 @@ namespace SharpGit {
             void set(bool value)
             {
                 _findRenames = value;
+            }
+        }
+
+        [DefaultValue(true)]
+        property bool CollapseReplacements
+        {
+            bool get()
+            {
+                return !_noCollapseReplacements;
+            }
+            void set(bool value)
+            {
+                _noCollapseReplacements = value;
             }
         }
 
