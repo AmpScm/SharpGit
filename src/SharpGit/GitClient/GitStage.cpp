@@ -7,7 +7,6 @@
 
 #include <private/svn_sorts_private.h>
 
-using System::IO::FileInfo;
 using namespace SharpGit;
 using namespace SharpGit::Plumbing;
 

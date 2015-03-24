@@ -247,6 +247,20 @@ namespace SharpGit.Tests
                     });
                 Assert.AreEqual(21, n);
                 Assert.AreEqual(0, paths.Count);
+
+
+                client.Status(dir, sa,
+                    delegate(object sender, GitStatusEventArgs e)
+                    {
+                        switch (e.IndexStatus)
+                        {
+                            case GitStatus.New:
+                            case GitStatus.Deleted:
+                            case GitStatus.TypeChanged:
+                                client.Unstage(e.FullPath);
+                                break;
+                        }
+                    });
             }
         }
     }
