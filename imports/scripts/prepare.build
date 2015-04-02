@@ -127,31 +127,48 @@
 
   </target>
 
+  <filterchain id="license-filter">
+    <LineRegexReplace re='(?&lt;!\r)\n' to='&#x0D;&#x0A;' />
+  </filterchain>
   <target name="copy-licenses">
     <copy
-			file="${aprDir}/LICENSE"
-			tofile="release/licenses/Apr-License.txt" />
+      file="${aprDir}/LICENSE"
+      tofile="release/licenses/Apr-License.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-			file="${aprUtilDir}/LICENSE"
-			tofile="release/licenses/Apr-Util-License.txt" />
+      file="${aprUtilDir}/LICENSE"
+      tofile="release/licenses/Apr-Util-License.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-			file="${opensslDir}/LICENSE"
-			tofile="release/licenses/OpenSsl-License.txt" />
+      file="${opensslDir}/LICENSE"
+      tofile="release/licenses/OpenSsl-License.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-			file="${zlibDir}/README"
-			tofile="release/licenses/ZLib-License.txt" />
+      file="${zlibDir}/README"
+      tofile="release/licenses/ZLib-License.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-		  file="${libssh2Dir}/COPYING"
-		  tofile="release/licenses/LibSSH2.txt" />
+      file="${libssh2Dir}/COPYING"
+      tofile="release/licenses/LibSSH2.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-		  file="${libgit2Dir}/COPYING"
-		  tofile="release/licenses/Libgit2.txt" />
+      file="${libgit2Dir}/COPYING"
+      tofile="release/licenses/Libgit2.txt">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-			file="${sharpGitDir}/LICENSE.txt"
-			tofile="release/licenses/SharpGit-License.txt"
-			if="${file::exists(sharpGitDir + '/LICENSE.txt')}"/>
+      file="${sharpGitDir}/LICENSE.txt"
+      tofile="release/licenses/SharpGit-License.txt"
+      if="${file::exists(sharpGitDir + '/LICENSE.txt')}">
+      <filterchain refid="license-filter" />
+    </copy>
     <copy
-			file="${downloads}/../scripts/SharpGit-Licenses.wxs"
-			tofile="release/licenses/SharpGit-Licenses.wxs" />
+      file="${downloads}/../scripts/SharpGit-Licenses.wxs"
+      tofile="release/licenses/SharpGit-Licenses.wxs" />
   </target>
 </project>
