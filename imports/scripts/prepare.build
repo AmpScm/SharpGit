@@ -153,12 +153,12 @@
     </copy>
     <copy
       file="${libssh2Dir}/COPYING"
-      tofile="release/licenses/LibSSH2.txt">
+      tofile="release/licenses/LibSSH2-License.txt">
       <filterchain refid="license-filter" />
     </copy>
     <copy
       file="${libgit2Dir}/COPYING"
-      tofile="release/licenses/Libgit2.txt">
+      tofile="release/licenses/Libgit2-License.txt">
       <filterchain refid="license-filter" />
     </copy>
     <copy

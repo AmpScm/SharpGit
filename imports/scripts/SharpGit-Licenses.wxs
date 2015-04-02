@@ -34,11 +34,11 @@
       <Component Id="C_SGITLICENSE_SharpGit" Guid="A84EAD0F-ADED-423D-B149-A257BAF67F75">
         <File Id="CF_SGITLICENSE_SharpGit" Name="SharpGit-License.txt" Vital="yes" KeyPath="yes"/>
       </Component>
-      <Component Id="C_SGITLICENSE_LibGit2" Guid="85254625-00F2-4443-B9F5-790B5FDA4707">
-        <File Id="CF_SGITLICENSE_LibGit2" Name="Libgit2.txt" Vital="yes" KeyPath="yes"/>
+      <Component Id="C_SGITLICENSE_LibGit2" Guid="21C257F5-D890-4409-AFC9-958D31EA8BEC">
+        <File Id="CF_SGITLICENSE_LibGit2" Name="Libgit2-License.txt" Vital="yes" KeyPath="yes"/>
       </Component>
-      <Component Id="C_SGITLICENSE_LibSSH2" Guid="39CAB557-7B07-4259-AA87-AB539C868479">
-        <File Id="CF_SGITLICENSE_LibSSH2" Name="LibSSH2.txt" Vital="yes" KeyPath="yes"/>
+      <Component Id="C_SGITLICENSE_LibSSH2" Guid="3BF8050B-3436-4049-B983-BDEC3794E75D">
+        <File Id="CF_SGITLICENSE_LibSSH2" Name="LibSSH2-License.txt" Vital="yes" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
   </Fragment>
