@@ -19,7 +19,7 @@
   <property name="aprUtilVersion" value="1.5.4" overwrite="false" />
   <property name="expatVersion" value="2.1.0" overwrite="false" />
   <property name="zlibVersion" value="1.2.8" overwrite="false" />
-  <property name="libssh2Version" value="1.5.0" overwrite="false" />
+  <property name="libssh2Version" value="1.6.0" overwrite="false" />
 
   <!-- Building only -->
   <property name="nasmVersion" value="2.11.06" overwrite="false" />
