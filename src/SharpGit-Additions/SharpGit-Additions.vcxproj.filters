@@ -165,9 +165,6 @@
     <ClCompile Include="libsvn_subr\properties.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libsvn_subr\pseudo_md5.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="libsvn_subr\quoprint.c">
       <Filter>Source Files</Filter>
     </ClCompile>

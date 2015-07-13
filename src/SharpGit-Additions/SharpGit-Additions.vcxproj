@@ -216,7 +216,6 @@
     <ClCompile Include="libsvn_subr\pool.c" />
     <ClCompile Include="libsvn_subr\prompt.c" />
     <ClCompile Include="libsvn_subr\properties.c" />
-    <ClCompile Include="libsvn_subr\pseudo_md5.c" />
     <ClCompile Include="libsvn_subr\quoprint.c" />
     <ClCompile Include="libsvn_subr\simple_providers.c" />
     <ClCompile Include="libsvn_subr\skel.c" />
