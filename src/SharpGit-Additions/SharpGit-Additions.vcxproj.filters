@@ -242,5 +242,8 @@
     <ClInclude Include="libsvn_subr\win32_xlate.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="config_keys.inc">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -245,6 +245,7 @@
     <ClCompile Include="libsvn_subr\xml.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config_keys.inc" />
     <ClInclude Include="libsvn_subr\auth.h" />
     <ClInclude Include="libsvn_subr\config_impl.h" />
     <ClInclude Include="libsvn_subr\dirent_uri.h" />
