@@ -144,7 +144,7 @@ namespace SharpGit {
             GitRefSpec ^AsRefSpec();
 
             /// <summary>Marks this branch as the currently checked out HEAD branch</summary>
-            bool RecordAsHeadBranch(GitCreateRefArgs ^args);
+            bool RecordAsHeadBranch(GitClientArgs ^args);
         };
 
 
@@ -177,9 +177,9 @@ namespace SharpGit {
 
         public:
             bool Create(GitCommit^ commit, String^ name);
-            bool Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args);
+            bool Create(GitCommit^ commit, String^ name, GitClientArgs^ args);
             bool Create(GitCommit^ commit, String^ name, [Out] GitBranch^% branch);
-            bool Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args, [Out] GitBranch^% branch);
+            bool Create(GitCommit^ commit, String^ name, GitClientArgs^ args, [Out] GitBranch^% branch);
 
 
 

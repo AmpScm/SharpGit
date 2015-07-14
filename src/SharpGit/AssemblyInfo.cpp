@@ -90,6 +90,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "Gdi32.lib")
 #pragma comment(lib, "User32.lib")
+#pragma comment(lib, "winhttp.lib")
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Psapi.lib")

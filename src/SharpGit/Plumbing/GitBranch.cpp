@@ -171,13 +171,11 @@ GitRefSpec ^GitBranch::AsRefSpec()
     return gcnew GitRefSpec(Name, RemoteUpstreamName);
 }
 
-bool GitBranch::RecordAsHeadBranch(GitCreateRefArgs ^args)
+bool GitBranch::RecordAsHeadBranch(GitClientArgs ^args)
 {
     GitPool pool(Repository->Pool);
 
-    GIT_THROW(git_repository_set_head(Repository->Handle, pool.AllocString(Name),
-                                      args->Signature->Alloc(Repository, %pool),
-                                      args->AllocLogMessage(%pool)));
+    GIT_THROW(git_repository_set_head(Repository->Handle, pool.AllocString(Name)));
 
     return true;
 }
@@ -248,7 +246,7 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name)
     return Create(commit, name, gcnew GitNoArgs(), ignored);
 }
 
-bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args)
+bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitClientArgs^ args)
 {
     GitBranch ^ignored;
     return Create(commit, name, args, ignored);
@@ -259,7 +257,7 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name, [Out] GitBranc
     return Create(commit, name, gcnew GitNoArgs(), branch);
 }
 
-bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitCreateRefArgs^ args, [Out] GitBranch^% branch)
+bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitClientArgs^ args, [Out] GitBranch^% branch)
 {
     if (_repository->IsDisposed)
         throw gcnew ObjectDisposedException("repository");
@@ -280,9 +278,7 @@ bool GitBranchCollection::Create(GitCommit^ commit, String^ name, GitCreateRefAr
     if (slash)
       p_name = slash + 1;
 
-    int r = git_branch_create(&result, _repository->Handle, p_name, commit->Handle, FALSE /* force */,
-                              args->Signature->Alloc(_repository, %pool),
-                              args->AllocLogMessage(%pool));
+    int r = git_branch_create(&result, _repository->Handle, p_name, commit->Handle, FALSE /* ### force */);
 
     if (!r)
         branch = gcnew GitBranch(_repository, name, gcnew GitReference(_repository, result));

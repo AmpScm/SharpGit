@@ -218,19 +218,6 @@ namespace SharpGit {
             }
         }
 
-        /// <summary>If true, don't create missing files during checkout</summary>
-        property bool SkipMissingFiles
-        {
-            bool get()
-            {
-                return _noCreateMissing;
-            }
-            void set(bool value)
-            {
-                _noCreateMissing = value;
-            }
-        }
-
         property bool OverwriteExisting
         {
             bool get()

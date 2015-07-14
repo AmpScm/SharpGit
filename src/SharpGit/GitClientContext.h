@@ -596,7 +596,7 @@ namespace SharpGit {
         }
     };
 
-    private ref class GitNoArgs sealed : GitCreateRefArgs
+    private ref class GitNoArgs sealed : GitClientArgs
     {
     };
 

@@ -596,9 +596,7 @@ bool GitRepository::Reset(GitResetArgs ^args)
         const git_object *target = Git_ToObject(commit->Handle);
 
         return args->HandleGitError(this, git_reset(Handle, const_cast<git_object*>(target), mode,
-                                    args->AllocCheckOutOptions(%pool),
-                                    args->Signature->Alloc(this, %pool),
-                                    args->RefLogMessage ? pool.AllocString(args->RefLogMessage) : nullptr));
+                                    args->AllocCheckOutOptions(%pool)));
     }
     else
         throw gcnew InvalidOperationException();

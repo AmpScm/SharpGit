@@ -58,19 +58,13 @@ bool GitClient::Pull(String ^localRepository, GitPullArgs ^args)
 
     try
     {
-        GitPool pool(repo.Pool);
-        rm->SetCallbacks(get_callbacks(%pool));
-        rm->Connect(true, args->FetchArgs);
-        rm->Download(args->FetchArgs);
-        rm->UpdateTips(args->FetchArgs);
+        rm->Fetch(nullptr, args->FetchArgs, this);
 
         if (initialCheckout)
         {
             heads = rm->GetHeads();
             defaultBranch = rm->DefaultBranch;
         }
-
-        rm->Disconnect(args->FetchArgs);
     }
     finally
     {

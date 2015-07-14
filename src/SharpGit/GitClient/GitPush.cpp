@@ -85,13 +85,7 @@ bool GitClient::PushAll(GitRepository ^repo, GitPushArgs ^args)
     {
         GitRemote ^rm = kv->Value;
 
-        GitPool iterPool(%pool);
-
-        rm->SetCallbacks(get_callbacks(%iterPool));
-        rm->Connect(false, args);
-        rm->Push(refSpecs[rm->Name], args);
-
-        rm->Disconnect(args);
+        rm->Push(refSpecs[rm->Name], args, this);
 
         delete rm;
     }

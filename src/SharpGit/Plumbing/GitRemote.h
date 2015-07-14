@@ -7,6 +7,9 @@ namespace SharpGit {
     using System::Collections::Generic::IEnumerable;
 
     namespace Implementation {
+
+      interface class IHasRemoteCallbacks;
+
       ref class GitAuthContext sealed : IDisposable
       {
             [ThreadStatic]
@@ -54,12 +57,15 @@ namespace SharpGit {
         };
     }
 
+    ref class GitFetchArgs;
+
     namespace Plumbing {
 
         ref class GitRefSpec;
 
         public enum class GitTagSynchronize
         {
+            Unspecified = GIT_REMOTE_DOWNLOAD_TAGS_UNSPECIFIED,
             Auto = GIT_REMOTE_DOWNLOAD_TAGS_AUTO,
             None = GIT_REMOTE_DOWNLOAD_TAGS_NONE,
             All = GIT_REMOTE_DOWNLOAD_TAGS_ALL
@@ -143,8 +149,6 @@ namespace SharpGit {
             !GitRemote();
 
         internal:
-            void SetCallbacks(const git_remote_callbacks *callbacks);
-
             property git_remote * Handle
             {
                 git_remote * get()
@@ -156,23 +160,28 @@ namespace SharpGit {
                 }
             }
 
+//        public:
+//            //bool Connect(bool forFetch, GitArgs ^args);
+//            bool Push(GitPushArgs ^args);
+//            bool Fetch(GitFetchArgs ^args);
+
         public:
-            bool Connect(bool forFetch, GitArgs ^args);
-            bool Download(GitArgs ^args);
-            bool Disconnect(GitArgs ^args);
-            bool UpdateTips(GitCreateRefArgs ^args);
-
-            bool Save(GitArgs ^args);
-
             void Stop(GitArgs ^args);
 
             bool Delete();
 
-        public:
-            bool Push(IEnumerable<GitRefSpec^>^ references, GitPushArgs ^args);
+        internal:
+            
+
+//        public:
+//            bool Push(IEnumerable<GitRefSpec^>^ references, GitPushArgs ^args);
 
         internal:
             String ^FetchSpecTransformToSource(String ^spec);
+
+            bool Fetch(IEnumerable<GitRefSpec^>^ refspecs, GitFetchArgs ^args, Implementation::IHasRemoteCallbacks ^cb);
+            bool Push(IEnumerable<GitRefSpec^>^ refspecs, GitPushArgs ^args, Implementation::IHasRemoteCallbacks ^cb);
+
 
         public:
             property String^ Name
@@ -188,10 +197,13 @@ namespace SharpGit {
                 }
                 void set(GitTagSynchronize value)
                 {
-                    git_remote_set_autotag(Handle, (git_remote_autotag_option_t)value);
+                    git_remote_set_autotag(_repository->Handle,
+                                           git_remote_name(Handle),
+                                           (git_remote_autotag_option_t)value);
                 }
             }
 
+#if 0
             property bool FetchHead
             {
                 bool get()
@@ -203,6 +215,7 @@ namespace SharpGit {
                     git_remote_set_update_fetchhead(Handle, value);
                 }
             }
+#endif
 
             property System::Uri ^ Uri
             {

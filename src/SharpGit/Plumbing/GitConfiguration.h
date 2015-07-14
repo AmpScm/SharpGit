@@ -11,7 +11,8 @@ namespace SharpGit {
             System = GIT_CONFIG_LEVEL_SYSTEM,
             XDG = GIT_CONFIG_LEVEL_XDG,
             User = GIT_CONFIG_LEVEL_GLOBAL,
-            Repository = GIT_CONFIG_LEVEL_LOCAL
+            Repository = GIT_CONFIG_LEVEL_LOCAL,
+            Application = GIT_CONFIG_LEVEL_APP
         };
 
         public ref class GitConfiguration : public Implementation::GitBase

@@ -2,6 +2,8 @@
 
 #include "GitRepository.h"
 #include "GitRemote.h"
+#include "GitClient/GitClient.h"
+#include "GitClient/GitFetchArgs.h"
 #include "GitClient/GitPushArgs.h"
 #include "GitRefSpec.h"
 
@@ -59,14 +61,24 @@ String ^ GitRemote::Name::get()
     return _name;
 }
 
-void GitRemote::SetCallbacks(const git_remote_callbacks *callbacks)
+bool GitRemote::Fetch(IEnumerable<GitRefSpec^>^ refspecs, GitFetchArgs ^args, Implementation::IHasRemoteCallbacks ^cb)
 {
-    GIT_THROW(git_remote_set_callbacks(Handle, callbacks));
-}
-
-bool GitRemote::Connect(bool forFetch, GitArgs ^args)
-{
+    GitPool pool(_repository->Pool);
     GitAuthContext authContext;
+
+    Git_strarray specs;
+    git_strarray *pSpecs = &specs;
+
+    // Copy refspecs
+    if (refspecs)
+    {
+        List<String^>^ sp = gcnew List<String^>();
+
+        for each(GitRefSpec ^spec in refspecs)
+            sp->Add(spec->ToString());
+
+        pSpecs = pool.AllocStringArray(sp);
+    }
 
     int maxAttempts = 15;
     int r = 0;
@@ -78,7 +90,7 @@ bool GitRemote::Connect(bool forFetch, GitArgs ^args)
 
         authContext.Clear();
 
-        r = git_remote_connect(Handle, forFetch ? GIT_DIRECTION_FETCH : GIT_DIRECTION_PUSH);
+        r = git_remote_fetch(Handle, pSpecs, args->AllocOptions(%pool), nullptr);
 
         if (r)
             switch((GitError)giterr_last()->klass)
@@ -93,37 +105,8 @@ bool GitRemote::Connect(bool forFetch, GitArgs ^args)
     }
     while (--maxAttempts && authContext.Continue());
 
-    args->HandleGitError(this, r);
     _connected = true;
-    return true;
-}
-
-bool GitRemote::Download(GitArgs ^args)
-{
-    GIT_THROW(git_remote_download(Handle, nullptr /*### refspecs*/));
-
-    return true;
-}
-bool GitRemote::Disconnect(GitArgs ^args)
-{
-    _connected = false;
-    git_remote_disconnect(Handle);
-    return true;
-}
-
-bool GitRemote::UpdateTips(GitCreateRefArgs ^args)
-{
-    GitPool pool(_repository->Pool);
-
-    GIT_THROW(git_remote_update_tips(Handle, args->Signature->Alloc(_repository, %pool), args->AllocLogMessage(%pool)));
-    return true;
-}
-
-bool GitRemote::Save(GitArgs ^args)
-{
-    GIT_THROW(git_remote_save(Handle));
-
-    return true;
+    return args->HandleGitError(this, r);;
 }
 
 void GitRemote::Stop(GitArgs ^args)
@@ -236,8 +219,7 @@ GitRemote ^ GitRemoteCollection::CreateAnonymous(Uri ^remoteRepository)
     git_remote *rm;
 
     GIT_THROW(git_remote_create_anonymous(&rm, _repository->Handle,
-                                          svn_uri_canonicalize(pool.AllocString(remoteRepository->AbsoluteUri), pool.Handle),
-                                          nullptr));
+                                          svn_uri_canonicalize(pool.AllocString(remoteRepository->AbsoluteUri), pool.Handle)));
 
     return gcnew GitRemote(_repository, rm);
 }
@@ -253,7 +235,8 @@ void GitRemote::Uri::set(System::Uri ^value)
         throw gcnew InvalidOperationException();
 
     GitPool pool;
-    GIT_THROW(git_remote_set_url(Handle, svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
+    GIT_THROW(git_remote_set_url(_repository->Handle, git_remote_name(Handle),
+                                 svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
 }
 
 System::Uri ^ GitRemote::PushUri::get()
@@ -267,7 +250,8 @@ void GitRemote::PushUri::set(System::Uri ^value)
         throw gcnew InvalidOperationException();
 
     GitPool pool;
-    GIT_THROW(git_remote_set_pushurl(Handle, svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
+    GIT_THROW(git_remote_set_pushurl(_repository->Handle, git_remote_name(Handle),
+                                     svn_uri_canonicalize(pool.AllocString(value->AbsoluteUri), pool.Handle)));
 }
 
 IEnumerable<GitRefSpec^>^ GitRemote::FetchRefSpecs::get()
@@ -331,12 +315,13 @@ IList<GitRemoteHead^> ^ GitRemote::GetHeads()
     return dynamic_cast<IList<GitRemoteHead^>^>(heads);
 }
 
-bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
+bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args, Implementation::IHasRemoteCallbacks ^cb)
 {
     if (!args)
         throw gcnew ArgumentNullException("args");
 
     GitPool pool(_repository->Pool);
+    GitAuthContext authContext;
     Git_strarray specs;
     git_strarray *pSpecs = &specs;
 
@@ -351,22 +336,58 @@ bool GitRemote::Push(IEnumerable<GitRefSpec^> ^refspecs, GitPushArgs ^args)
         pSpecs = pool.AllocStringArray(sp);
     }
 
-    GIT_THROW(git_remote_push(Handle,
-                              pSpecs,
-                              args->AllocOptions(%pool),
-                              args->Signature->Alloc(_repository, %pool),
-                              args->AllocLogMessage(%pool)));
+    git_push_options *options = args->AllocOptions(%pool);
 
-    return true;
+    options->callbacks = *cb->get_callbacks(%pool);
+
+    int r = 0;
+    int maxAttempts = 15;
+
+    do
+    {
+        if (r)
+            giterr_clear();
+
+        authContext.Clear();
+
+        r = git_remote_push(Handle,
+                            pSpecs,
+                            options);
+
+        if (r)
+            switch((GitError)giterr_last()->klass)
+            {
+              case GitError::Network:
+              case GitError::Ssh:
+              case GitError::SecureSockets:
+                  continue;
+            }
+
+        break;
+    }
+    while (--maxAttempts && authContext.Continue());
+
+    return args->HandleGitError(this, r);
 }
 
-const git_push_options * GitPushArgs::AllocOptions(GitPool ^pool)
+git_push_options * GitPushArgs::AllocOptions(GitPool ^pool)
 {
     git_push_options *options = (git_push_options *)pool->Alloc(sizeof(*options));
 
     git_push_init_options(options, GIT_PUSH_OPTIONS_VERSION);
 
     options->pb_parallelism = 0; // Auto
+
+    return options;
+}
+
+
+git_fetch_options * GitFetchArgs::AllocOptions(GitPool ^pool)
+{
+    git_fetch_options *options = (git_fetch_options *)pool->Alloc(sizeof(*options));
+
+    git_fetch_init_options(options, GIT_FETCH_OPTIONS_VERSION);
+
 
     return options;
 }

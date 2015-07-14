@@ -11,12 +11,12 @@ namespace SharpGit {
         Tags = 3
     };
 
-    public ref class GitPushArgs : public GitCreateRefArgs
+    public ref class GitPushArgs : public GitClientArgs
     {
         GitPushMode _mode;
 
     internal:
-        const git_push_options * AllocOptions(GitPool ^pool);
+        git_push_options * AllocOptions(GitPool ^pool);
 
     public:
         property GitPushMode Mode

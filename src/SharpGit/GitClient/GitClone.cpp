@@ -15,7 +15,7 @@ GitCloneArgs::GitCloneArgs()
     _initArgs = gcnew GitInitArgs();
 }
 
-const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callbacks *cb, GitPool ^pool)
+const git_clone_options * GitCloneArgs::MakeCloneOptions(GitPool ^pool)
 {
     if (! pool)
         throw gcnew ArgumentNullException("pool");
@@ -27,11 +27,9 @@ const git_clone_options * GitCloneArgs::MakeCloneOptions(const git_remote_callba
     const git_checkout_options *coo = AllocCheckOutOptions(pool);
     opts->checkout_opts = *coo;
 
-    /* opts->bare = <ignored-in-callback>; */
-    opts->remote_callbacks = *cb;
-
-    opts->signature = Signature->Alloc(nullptr, pool);
     opts->checkout_branch = BranchName ? pool->AllocString(BranchName) : nullptr;
+
+    // Remote and Callbacks are handled in caller
 
     return opts;
 }
@@ -104,6 +102,33 @@ struct create_repository
   }
 };
 
+struct create_remote
+{
+  gcroot<GitPool^> _pool;
+  gcroot<GitClient^> _client;
+  gcroot<GitCloneArgs^> _args;
+
+  create_remote(GitClient^ client, GitCloneArgs^ args, GitPool^ pool)
+    : _client(client), _args(args), _pool(pool)
+  {}
+
+  static int __cdecl create_remote_cb(git_remote **out, git_repository *repo, const char *name, const char *url, void *payload)
+  {
+      create_remote *cr = (create_remote *)payload;
+
+      try
+      {
+          //cr->_client->Init(GitBase::StringFromDirent(path, cr->_pool), cr->_args->InitArgs);
+
+          return git_remote_create(out, repo, name, url);
+      }
+      catch(GitException ^e)
+      {
+          return GitBase::WrapError(e);
+      }
+  }
+};
+
 bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneArgs ^args, GitPool ^pool)
 {
     git_repository *repository;
@@ -112,11 +137,16 @@ bool GitClient::CloneInternal(const char *rawRepository, String ^path, GitCloneA
 
     if (args->Synchronous)
     {
-        create_repository create(this, args, pool);
-        git_clone_options *opts = const_cast<git_clone_options *>(args->MakeCloneOptions(get_callbacks(pool), pool));
+        create_repository c_repository(this, args, pool);
+        create_remote c_remote(this, args, pool);
+        git_clone_options *opts = const_cast<git_clone_options *>(args->MakeCloneOptions(pool));
 
         opts->repository_cb = create_repository::repository_create_cb;
-        opts->repository_cb_payload = &create;
+        opts->repository_cb_payload = &c_repository;
+
+        opts->remote_cb = create_remote::create_remote_cb;
+        opts->remote_cb_payload = &c_remote;
+        
 
         r = git_clone(&repository, rawRepository, pool->AllocDirent(path), opts);
     }

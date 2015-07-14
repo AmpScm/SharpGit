@@ -23,6 +23,13 @@ namespace SharpGit {
 
     namespace Implementation {
         ref class GitLibrary;
+
+      interface class IHasRemoteCallbacks
+      {
+          git_remote_callbacks *get_callbacks(GitPool ^pool);
+      };
+
+
     }
     namespace Plumbing {
         ref class GitRepository;
@@ -252,7 +259,7 @@ namespace SharpGit {
 
     /// <summary>Git client instance; main entrance to the SharpGit Client api</summary>
     /// <threadsafety static="true" instance="false"/>
-    public ref class GitClient : GitClientContext
+    public ref class GitClient : GitClientContext, Implementation::IHasRemoteCallbacks
     {
         static ICollection<GitLibrary^>^ _gitLibraries;
         initonly Implementation::AprBaton<GitClient^> ^_clientBaton;
@@ -265,7 +272,7 @@ namespace SharpGit {
         GitClient();
 
     internal:
-        git_remote_callbacks *get_callbacks(GitPool ^pool);
+        virtual git_remote_callbacks *get_callbacks(GitPool ^pool) = Implementation::IHasRemoteCallbacks::get_callbacks;
 
     private:
         static void AssertNotBare(GitRepository ^repository);

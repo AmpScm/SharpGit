@@ -11,7 +11,7 @@ namespace SharpGit {
         Hard = 2,
     };
 
-    public ref class GitResetArgs : public GitCheckOutArgsWithSignature
+    public ref class GitResetArgs : public GitCheckOutArgs
     {
         GitResetMode _mode;
         String^ _refLogMessage;

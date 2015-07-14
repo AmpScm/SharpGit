@@ -7,6 +7,9 @@ namespace SharpGit {
     {
         bool _all;
 
+    internal:
+        git_fetch_options *AllocOptions(GitPool ^pool);
+
     public:
         property bool All
         {
