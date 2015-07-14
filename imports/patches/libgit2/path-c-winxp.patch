@@ -1,0 +1,13 @@
+Index: src/path.c
+===================================================================
+--- src/path.c	(revision 32661)
++++ src/path.c	(working copy)
+@@ -1122,7 +1122,7 @@ int git_path_diriter_init(
+ 
+ 	diriter->handle = FindFirstFileExW(
+ 		path_filter,
+-		FindExInfoBasic,
++		FindExInfoNormal,
+ 		&diriter->current,
+ 		FindExSearchNameMatch,
+ 		NULL,
