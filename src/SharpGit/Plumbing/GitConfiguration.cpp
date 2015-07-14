@@ -129,7 +129,7 @@ bool GitConfiguration::TryGetString(GitConfigurationLevel level, String ^key, [O
         // Returns string owned by configuration
         r = git_config_get_string(&v, cfg, pool.AllocString(key));
 
-        value = v ? Utf8_PtrToString(v) : nullptr;
+        value = (!r && v) ? Utf8_PtrToString(v) : nullptr;
 
         if (level != GitConfigurationLevel::Unspecified)
             git_config_free(cfg);
