@@ -16,7 +16,6 @@ namespace SharpGit {
         bool _noDirs;
         bool _noSubmodules;
         bool _caseInsensitive;
-        bool _noIncludeConflicts;
         bool _noRefresh;
         bool _updateCache;
         bool _noIncludeUnreadable;
@@ -155,19 +154,6 @@ namespace SharpGit {
             void set(bool value)
             {
                 _updateCache = !value;
-            }
-        }
-
-        [DefaultValue(true)]
-        property bool IncludeConflicts
-        {
-            bool get()
-            {
-                return !_noIncludeConflicts;
-            }
-            void set(bool value)
-            {
-                _noIncludeConflicts = !value;
             }
         }
 
