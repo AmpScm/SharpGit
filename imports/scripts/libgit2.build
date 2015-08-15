@@ -27,6 +27,12 @@
           <replacestring from="__declspec(dllexport)" to="/* __declspec( dllexport ) */" />
         </filterchain>
       </FilterFile>
+      <FilterFile file="${libgit2Dir}\src\path.c">
+        <filterchain>
+          <LineRegexReplace re='\bFindExInfoStandard\b' to='0 /* FindExInfoStandard */' />
+          <LineRegexReplace re='\bFindExInfoBasic\b' to='1 /* FindExInfoBasic */' />
+        </filterchain>
+      </FilterFile>
 
       <CMake workingdir="${libgit2Dir}">
         <arg value="-DBUILD_SHARED_LIBS=OFF" />
