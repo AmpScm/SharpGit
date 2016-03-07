@@ -22,8 +22,8 @@
   <property name="libssh2Version" value="1.7.0" overwrite="false" />
 
   <!-- Building only -->
-  <property name="nasmVersion" value="2.11.06" overwrite="false" />
-  <property name="cmakeVersion" value="3.3.1" overwrite="false" />
+  <property name="nasmVersion" value="2.12" overwrite="false" />
+  <property name="cmakeVersion" value="3.4.3" overwrite="false" />
 
   <!-- For testcases -->
   <property name="nunitVersion" value="2.6.4" overwrite="false" />
