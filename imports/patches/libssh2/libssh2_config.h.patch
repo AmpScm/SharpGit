@@ -1,0 +1,14 @@
+Index: win32/libssh2_config.h
+===================================================================
+--- win32/libssh2_config.h	(revision 1867)
++++ win32/libssh2_config.h	(working copy)
+@@ -24,7 +24,9 @@
+ #define HAVE_SELECT
+ 
+ #ifdef _MSC_VER
++#if _MSC_VER < 1900
+ #define snprintf _snprintf
++#endif
+ #if _MSC_VER < 1500
+ #define vsnprintf _vsnprintf
+ #endif
