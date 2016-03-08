@@ -16,10 +16,12 @@ git_merge_options *GitMergeArgs::AllocMergeOptions(GitPool ^pool)
 
     GIT_THROW(git_merge_init_options(mo, GIT_MERGE_OPTIONS_VERSION));
 
-    mo->tree_flags = (git_merge_tree_flag_t)0;
+    //mo->flags = (git_merge_flag_t)0;
 
-    if (!SkipFindingRenames)
-      mo->tree_flags = (git_merge_tree_flag_t)((int)mo->tree_flags | GIT_MERGE_TREE_FIND_RENAMES);
+    if (SkipFindingRenames)
+        mo->flags = (git_merge_flag_t)((int)mo->flags & ~GIT_MERGE_FIND_RENAMES);
+    else
+        mo->flags = (git_merge_flag_t)((int)mo->flags | GIT_MERGE_FIND_RENAMES);
 
     mo->rename_threshold = RenameTreshold;
     mo->target_limit = RenameTargetLimit;
