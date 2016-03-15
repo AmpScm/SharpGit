@@ -41,6 +41,7 @@
         <arg value="-DSTATIC_CRT=OFF" />
         <arg value="-DSTDCALL=OFF" />
         <arg value="-DTHREADSAFE=ON" />
+        <arg value="-DUSE_NSEC=ON" />
         <arg value="-DBIN_INSTALL_DIR=${release}/bin" />
         <arg value="-DLIB_INSTALL_DIR=${release}/lib" />
         <arg value="-DINCLUDE_INSTALL_DIR=${release}/include" />
