@@ -80,7 +80,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:GitLibrary("LibSSH2", LIBSSH2_VERSION)];
 [assembly:GitLibrary("OpenSSL", OPENSSL_VERSION_TEXT, SkipPrefix = true)];
 [assembly:GitLibrary("Subversion", SVN_VER_NUMBER)];
-[assembly:SvnLibrary("Utf8proc", UTF8PROC_VERSION)];
+[assembly:GitLibrary("Utf8proc", UTF8PROC_VERSION)];
 [assembly:GitLibrary("ZLib", ZLIB_VERSION)];
 
 
