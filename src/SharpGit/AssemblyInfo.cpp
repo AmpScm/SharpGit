@@ -25,6 +25,21 @@
 #include <expat.h>
 #include <svn_version.h>
 
+extern "C" {
+#if _MSC_VER < 1900
+#define bool Q_bool
+#define false Q_false
+#define true Q_true
+#endif
+#undef ssize_t
+#include <../SharpGit-Additions/libsvn_subr/utf8proc/utf8proc.h>
+#if _MSC_VER < 1900
+#undef true
+#undef false
+#undef bool
+#endif
+};
+
 using namespace System;
 using namespace System::Reflection;
 using namespace System::Resources;
@@ -34,6 +49,8 @@ using namespace System::Security::Permissions;
 using SharpGit::Implementation::GitLibraryAttribute;
 
 #define EXPAT_VERSION APR_STRINGIFY(XML_MAJOR_VERSION) "." APR_STRINGIFY(XML_MINOR_VERSION) "." APR_STRINGIFY(XML_MICRO_VERSION)
+#define UTF8PROC_VERSION APR_STRINGIFY(UTF8PROC_VERSION_MAJOR) "." APR_STRINGIFY(UTF8PROC_VERSION_MINOR) "." APR_STRINGIFY(UTF8PROC_VERSION_PATCH)
+
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -44,6 +61,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
                                        ", apr " APR_VERSION_STRING
                                        ", apr-util " APU_VERSION_STRING
                                        ", eXpat " EXPAT_VERSION
+                                       ", utf8proc " UTF8PROC_VERSION
                                        ", LibSSH2 " LIBSSH2_VERSION
                                        ", " OPENSSL_VERSION_TEXT
                                        ", ZLib " ZLIB_VERSION
@@ -62,6 +80,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:GitLibrary("LibSSH2", LIBSSH2_VERSION)];
 [assembly:GitLibrary("OpenSSL", OPENSSL_VERSION_TEXT, SkipPrefix = true)];
 [assembly:GitLibrary("Subversion", SVN_VER_NUMBER)];
+[assembly:SvnLibrary("Utf8proc", UTF8PROC_VERSION)];
 [assembly:GitLibrary("ZLib", ZLIB_VERSION)];
 
 
