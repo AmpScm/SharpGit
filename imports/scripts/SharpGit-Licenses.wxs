@@ -7,10 +7,10 @@
       <ComponentRef Id="C_SGITLICENSE_AprUtil" />
       <ComponentRef Id="C_SGITLICENSE_OpenSsl" />
       <ComponentRef Id="C_SGITLICENSE_ZLib" />
+      <ComponentRef Id="C_SGITLICENSE_LibSSH2" />
       <?endif?>
       <ComponentRef Id="C_SGITLICENSE_SharpGit" />
       <ComponentRef Id="C_SGITLICENSE_LibGit2" />
-      <ComponentRef Id="C_SGITLICENSE_LibSSH2" />
     </ComponentGroup>
   </Fragment>
   <Fragment>
