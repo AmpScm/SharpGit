@@ -10,12 +10,12 @@
 
   <property name="platform" value="${guessedPlatform}" if="${not property::exists('platform')}" />
 
-  <property name="libgit2Version" value="0.24.2" overwrite="false" />
+  <property name="libgit2Version" value="0.25.1" overwrite="false" />
   <property name="aprMerges" value="" overwrite="false" />
   <property name="aprutilMerges" value="" overwrite="false" />
 
-  <property name="opensslVersion" value="1.0.2j" overwrite="false" />
-  <property name="aprVersion" value="1.5.1" overwrite="false" />
+  <property name="opensslVersion" value="1.0.2k" overwrite="false" />
+  <property name="aprVersion" value="1.5.2" overwrite="false" />
   <property name="aprUtilVersion" value="1.5.4" overwrite="false" />
   <property name="expatVersion" value="2.2.0" overwrite="false" />
   <property name="zlibVersion" value="1.2.8" overwrite="false" />
