@@ -18,7 +18,7 @@
       <import namespace="NAnt.Core.Util"/>
     </imports>
     <code>
-      <![CDATA[			
+      <![CDATA[
 
 public abstract class ExternalAppTask : NAnt.Core.Tasks.ExternalProgramBase
 {
@@ -329,9 +329,19 @@ public class NMake : ExternalAppTask
 
     public override string ProgramArguments
     {
-        get { return string.Format("/f \"{0}\"{1}{2}", MakeFile.FullName, 
-                                                       NoLogo ? " /NOLOGO" : "",
-                                                       Verbose ? "" : " /S"); }
+        get
+        {
+          StringBuilder sb = new StringBuilder();
+          
+          sb.AppendFormat("/f \"{0}\"", MakeFile.FullName);
+          
+          if (!NoLogo)
+            sb.Append(" /NOLOGO");
+          if (!Verbose)
+            sb.Append(" /S");
+
+          return sb.ToString().Trim();
+        }
     }
 }
 
@@ -340,6 +350,7 @@ public class NMake : ExternalAppTask
 public class OnceBlock : NAnt.Core.TaskContainer
 {
     FileInfo _touchFile;
+    FileSet _fileset;
 
     [TaskAttribute("file", Required = true)]
     public FileInfo TouchFile
@@ -348,16 +359,48 @@ public class OnceBlock : NAnt.Core.TaskContainer
         set { _touchFile = value; }
     }
 
+    [BuildElement("fileset")]
+    public virtual FileSet CopyFileSet
+    {
+        get
+        {
+            return this._fileset;
+        }
+        set
+        {
+            this._fileset = value;
+        }
+    }
+
     protected override void ExecuteTask()
     {
-        if (!_touchFile.Exists)
+        if (_touchFile.Exists)
         {
-            base.ExecuteTask();
+            if (_fileset == null)
+                return;
 
-            using (_touchFile.Create())
+            DateTime stamp = File.GetLastWriteTimeUtc(_touchFile.FullName);
+            bool skip = true;
+
+            foreach(string f in _fileset.FileNames)
             {
-                // Create NOP file if execute succeeded
+               if (File.Exists(f)
+                   && File.GetLastWriteTimeUtc(f) > stamp)
+               {
+                  skip = false;
+                  break;
+               }
             }
+
+            if (skip)
+                return;
+        }
+
+        base.ExecuteTask();
+
+        using (_touchFile.Create())
+        {
+            // Create NOP file if execute succeeded
         }
     }
 }
@@ -647,10 +690,10 @@ public class CMake : ExternalAppTask
         get
         {
             StringBuilder sb = new StringBuilder();
-            
+
             if (Targets.Count == 0)
                 sb.AppendFormat(" -G \"{0}\"", Properties["cmakeGenerator"]);
-                
+
             foreach(Option o in AppProperties)
             {
                 if (o.IfDefined && !o.UnlessDefined)
@@ -668,13 +711,18 @@ public class CMake : ExternalAppTask
                     haveTargets = true;
                 }
             }
-            
+
             if (haveTargets)
             {
                 sb.AppendFormat(" --config \"{0}\"", Configuration);
                 sb.AppendFormat(" --use-stderr"); // Use direct output of MSBuild, etc.
             }
-                
+
+            if (!Verbose)
+            {
+                sb.Append(" -Wno-dev");
+            }
+
             return sb.ToString().Trim();
         }
     }
@@ -746,6 +794,46 @@ public class LineRegexReplace : Filter
          return _next[0];      
       else
          return Read(); // Recurse
+  }  
+}
+
+[ElementName("AppendAtEnd")]
+public class AppendAtEnd : Filter
+{
+  string _value;
+  ChainableReader _from;
+
+  [TaskAttribute("value", Required=true)]
+  public string Value
+  {
+      get { return _value; }
+      set { _value = value; }
+  }
+  
+  public override void Chain(ChainableReader chainedReader)
+  {
+      base.Chain(chainedReader);
+      _from = chainedReader;
+  }
+  
+  public override int Peek()
+  {
+      throw new NotImplementedException();
+  }
+  
+  int _iNext;
+  public override int Read()
+  {
+      if (_iNext == 0)
+      {
+          int n = _from.Read();
+
+          if (n >= 0)
+              return n;
+      }
+      if (_iNext >= _value.Length)
+          return -1;
+      return _value[_iNext++];
   }  
 }
 

@@ -23,7 +23,7 @@
     <mkdir dir="${downloads}" />
 
     <get
-      src="http://github.com/nunit/nunitv2/releases/download/${nunitVersionMMR}/${nunitFilename}"
+      src="https://github.com/nunit/nunitv2/releases/download/${nunitVersionMMR}/${nunitFilename}"
       dest="${downloads + nunitFilename}"
       unless="${file::exists(downloads + nunitFilename)}" />
 
@@ -93,20 +93,11 @@
 
     <Svn
       verbose="true"
-      if="${file::exists(aprUtilDir + '/xml/expat/lib/map_osd_ebcdic_df04_1.h')}">
-
-      <arg value="up" />
-      <arg line="--set-depth exclude" />
-      <arg line="${aprUtilDir + '/xml/expat/lib'}" />
-    </Svn>
-
-    <Svn
-      verbose="true"
-      unless="${directory::exists(aprUtilDir + '/xml/expat/lib')}">
+      unless="${directory::exists(libexpatDir)}">
 
       <arg value="co" />
-      <arg value="https://github.com/libexpat/libexpat.git/tags/R_${string::replace(expatVersion,'.','_')}/expat/lib/" />
-      <arg value="${aprUtilDir + '/xml/expat/lib'}" />
+      <arg value="https://github.com/libexpat/libexpat.git/tags/R_${string::replace(expatVersion,'.','_')}/expat/" />
+      <arg value="${libexpatDir}" />
     </Svn>
 
     <Svn unless="${directory::exists(libgit2Dir)}">
