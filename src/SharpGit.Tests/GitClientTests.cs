@@ -675,7 +675,7 @@ int main(int argc, const char **argv)
                 }
                 catch(GitException ge)
                 {
-                    Assert.IsTrue(ge.Message.Contains("Cannot push"));
+                    Assert.That(ge.Message, Contains.Substring(/*C*/"annot push"));
                 }
 
                 GitPullArgs pa = new GitPullArgs();
