@@ -3,7 +3,7 @@ name: SharpGit
 on: [push]
 
 env:
-  # Path to the solution file relative to the root of the project.
+  # Path to the solution file relative to the root of the Project.
   SOLUTION_FILE_PATH: SharpGit/src/SharpGit.sln
 
   # Configuration type to build.
@@ -21,12 +21,13 @@ jobs:
       with:
         path: SharpGit
 
-    - name: Build proj via VCPKG
+    - name: Build Dependencies via VCPKG
       uses: lukka/run-vcpkg@v7
       with:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 030cfaa24de9ea1bbf0a4d9c615ce7312ba77af1
-        vcpkgArguments: libgit2:x64-windows-static-md libgit2:x86-windows-static-md
+        vcpkgGitCommitId: 4278a5f9eafbdadfaa65d7aafd914964841cba42
+        vcpkgArguments: libgit2:x64-windows-static-md libgit2:x86-windows-static-md apr-util:x64-windows-static-md apr-util:x86-windows-static-md libssh2:x64-windows-static-md libssh2:x86-windows-static-md
+        additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
@@ -42,3 +43,11 @@ jobs:
     - name: Build-x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /restore /p:Platform=x64 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+
+    - name: VSTest-x86
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: vstest.console.exe /InIsolation /Platform:x86 SharpGit/src/SharpGit.Tests/bin/x86/Release/SharpGit.Tests.dll "--testcasefilter:TestCategory!=NeedsNetwork"
+
+    - name: VSTest-x64
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: vstest.console.exe /InIsolation /Platform:x64 SharpGit/src/SharpGit.Tests/bin/x64/Release/SharpGit.Tests.dll "--testcasefilter:TestCategory!=NeedsNetwork"
