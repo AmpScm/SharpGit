@@ -26,6 +26,7 @@
     <SccAuxPath>Svn</SccAuxPath>
     <SccLocalPath>Svn</SccLocalPath>
     <SccProvider>SubversionScc</SccProvider>
+    <VCPKG_ROOT Condition="'$(VCPKG_ROOT)' == ''">..\..\..\vcpkg</VCPKG_ROOT>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -105,7 +106,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -121,7 +122,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -139,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -159,7 +160,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -174,82 +175,82 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libsvn_subr\adler32.c" />
-    <ClCompile Include="libsvn_subr\atomic.c" />
-    <ClCompile Include="libsvn_subr\auth.c" />
-    <ClCompile Include="libsvn_subr\base64.c" />
-    <ClCompile Include="libsvn_subr\cache-inprocess.c" />
-    <ClCompile Include="libsvn_subr\cache-membuffer.c" />
-    <ClCompile Include="libsvn_subr\cache-memcache.c" />
-    <ClCompile Include="libsvn_subr\cache.c" />
-    <ClCompile Include="libsvn_subr\cache_config.c" />
-    <ClCompile Include="libsvn_subr\checksum.c" />
-    <ClCompile Include="libsvn_subr\cmdline.c" />
-    <ClCompile Include="libsvn_subr\compat.c" />
-    <ClCompile Include="libsvn_subr\config.c" />
-    <ClCompile Include="libsvn_subr\config_auth.c" />
-    <ClCompile Include="libsvn_subr\config_file.c" />
-    <ClCompile Include="libsvn_subr\config_win.c" />
-    <ClCompile Include="libsvn_subr\crypto.c" />
-    <ClCompile Include="libsvn_subr\ctype.c" />
-    <ClCompile Include="libsvn_subr\date.c" />
-    <ClCompile Include="libsvn_subr\debug.c" />
-    <ClCompile Include="libsvn_subr\dirent_uri.c" />
-    <ClCompile Include="libsvn_subr\dso.c" />
-    <ClCompile Include="libsvn_subr\eol.c" />
-    <ClCompile Include="libsvn_subr\error.c" />
-    <ClCompile Include="libsvn_subr\fnv1a.c" />
-    <ClCompile Include="libsvn_subr\gpg_agent.c" />
-    <ClCompile Include="libsvn_subr\hash.c" />
-    <ClCompile Include="libsvn_subr\io.c" />
-    <ClCompile Include="libsvn_subr\iter.c" />
-    <ClCompile Include="libsvn_subr\lock.c" />
-    <ClCompile Include="libsvn_subr\log.c" />
-    <ClCompile Include="libsvn_subr\macos_keychain.c" />
-    <ClCompile Include="libsvn_subr\magic.c" />
-    <ClCompile Include="libsvn_subr\md5.c" />
-    <ClCompile Include="libsvn_subr\mergeinfo.c" />
-    <ClCompile Include="libsvn_subr\mutex.c" />
-    <ClCompile Include="libsvn_subr\nls.c" />
-    <ClCompile Include="libsvn_subr\opt.c" />
-    <ClCompile Include="libsvn_subr\path.c" />
-    <ClCompile Include="libsvn_subr\pool.c" />
-    <ClCompile Include="libsvn_subr\prompt.c" />
-    <ClCompile Include="libsvn_subr\properties.c" />
-    <ClCompile Include="libsvn_subr\quoprint.c" />
-    <ClCompile Include="libsvn_subr\simple_providers.c" />
-    <ClCompile Include="libsvn_subr\skel.c" />
-    <ClCompile Include="libsvn_subr\sorts.c" />
-    <ClCompile Include="libsvn_subr\spillbuf.c" />
-    <ClCompile Include="libsvn_subr\ssl_client_cert_providers.c" />
-    <ClCompile Include="libsvn_subr\ssl_client_cert_pw_providers.c" />
-    <ClCompile Include="libsvn_subr\ssl_server_trust_providers.c" />
-    <ClCompile Include="libsvn_subr\stream.c" />
-    <ClCompile Include="libsvn_subr\string.c" />
-    <ClCompile Include="libsvn_subr\subst.c" />
-    <ClCompile Include="libsvn_subr\target.c" />
-    <ClCompile Include="libsvn_subr\temp_serializer.c" />
-    <ClCompile Include="libsvn_subr\time.c" />
-    <ClCompile Include="libsvn_subr\token.c" />
-    <ClCompile Include="libsvn_subr\types.c" />
-    <ClCompile Include="libsvn_subr\user.c" />
-    <ClCompile Include="libsvn_subr\username_providers.c" />
-    <ClCompile Include="libsvn_subr\utf.c" />
-    <ClCompile Include="libsvn_subr\utf8proc.c" />
-    <ClCompile Include="libsvn_subr\utf_validate.c" />
-    <ClCompile Include="libsvn_subr\utf_width.c" />
-    <ClCompile Include="libsvn_subr\validate.c" />
-    <ClCompile Include="libsvn_subr\win32_crashrpt.c" />
-    <ClCompile Include="libsvn_subr\win32_crypto.c" />
-    <ClCompile Include="libsvn_subr\win32_xlate.c" />
-    <ClCompile Include="libsvn_subr\xml.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\adler32.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\atomic.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\auth.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\base64.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cache-inprocess.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cache-membuffer.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cache-memcache.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cache.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cache_config.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\checksum.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\cmdline.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\compat.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\config.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\config_auth.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\config_file.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\config_win.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\crypto.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\ctype.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\date.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\debug.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\dirent_uri.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\dso.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\eol.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\error.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\fnv1a.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\gpg_agent.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\hash.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\io.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\iter.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\lock.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\log.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\macos_keychain.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\magic.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\md5.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\mergeinfo.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\mutex.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\nls.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\opt.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\path.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\pool.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\prompt.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\properties.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\quoprint.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\simple_providers.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\skel.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\sorts.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\spillbuf.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\ssl_client_cert_providers.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\ssl_client_cert_pw_providers.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\ssl_server_trust_providers.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\stream.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\string.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\subst.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\target.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\temp_serializer.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\time.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\token.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\types.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\user.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\username_providers.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\utf.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\utf8proc.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\utf_validate.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\utf_width.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\validate.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\win32_crashrpt.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\win32_crypto.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\win32_xlate.c" />
+    <ClCompile Include="..\..\from_svn\libsvn_subr\xml.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_keys.inc" />
-    <ClInclude Include="libsvn_subr\auth.h" />
-    <ClInclude Include="libsvn_subr\config_impl.h" />
-    <ClInclude Include="libsvn_subr\dirent_uri.h" />
-    <ClInclude Include="libsvn_subr\win32_xlate.h" />
+    <ClInclude Include="..\..\from_svn\libsvn_subr\auth.h" />
+    <ClInclude Include="..\..\from_svn\libsvn_subr\config_impl.h" />
+    <ClInclude Include="..\..\from_svn\libsvn_subr\dirent_uri.h" />
+    <ClInclude Include="..\..\from_svn\libsvn_subr\win32_xlate.h" />
     <ClInclude Include="svn_private_config.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -18,27 +18,12 @@
 #pragma warning(disable: 4635)
 #pragma warning(disable: 4634) // XML document comment: cannot be applied:  Discarding XML document comment for invalid target.
 
-#include <apr-1/apr_version.h>
-#include <apr-1/apu_version.h>
+#include <apr_version.h>
+#include <apu_version.h>
 #include <openssl/opensslv.h>
 #include <zlib.h>
 #include <expat.h>
 #include <svn_version.h>
-
-extern "C" {
-#if _MSC_VER < 1900
-#define bool Q_bool
-#define false Q_false
-#define true Q_true
-#endif
-#undef ssize_t
-#include <../SharpGit-Additions/libsvn_subr/utf8proc/utf8proc.h>
-#if _MSC_VER < 1900
-#undef true
-#undef false
-#undef bool
-#endif
-};
 
 using namespace System;
 using namespace System::Reflection;
@@ -114,13 +99,23 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Psapi.lib")
 #pragma comment(lib, "Version.lib")
+#pragma comment(lib, "Crypt32.lib")
+#pragma comment(lib, "Rpcrt4.lib")
 
 //#include "../../imports/release/include/sharpsvn-imports.h"
-[assembly:AssemblyVersionAttribute("0.2000.*")]; 
+[assembly:AssemblyVersionAttribute("1.20000.*")]; 
 
-#pragma comment(lib, "xml.lib")
+#pragma comment(lib, "git2.lib")
+#pragma comment(lib, "http_parser.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "libexpatdMD.lib")
+#pragma comment(lib, "pcred.lib")
+#else
+#pragma comment(lib, "libexpatMD.lib")
+#pragma comment(lib, "pcre.lib")
+#endif
 #pragma comment(lib, "libssh2.lib")
-#pragma comment(lib, "libeay32.lib")
+#pragma comment(lib, "libcrypto.lib")
 #pragma comment(lib, "zlib.lib")
 
 

@@ -32,6 +32,7 @@
     <SccLocalPath>Svn</SccLocalPath>
     <SccProvider>SubversionScc</SccProvider>
     <Keyword>ManagedCProj</Keyword>
+    <VCPKG_ROOT Condition="'$(VCPKG_ROOT)' == ''">..\..\..\vcpkg</VCPKG_ROOT>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -124,7 +125,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -137,8 +138,7 @@
       <Message>Copying libraries</Message>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>../../imports/release/debug-lib/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\imports\release\lib;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\debug\lib;$(VCPKG_ROOT)\installed\x86-windows-static-md\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <TargetMachine>MachineX86</TargetMachine>
@@ -152,7 +152,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -165,8 +165,7 @@
       <Message>Copying libraries</Message>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>../../imports/release/debug-lib-x64/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\imports\release\lib-x64;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\debug\lib;$(VCPKG_ROOT)\installed\x64-windows-static-md\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <TargetMachine>MachineX64</TargetMachine>
@@ -179,7 +178,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -192,8 +191,7 @@
       <Message>Copying libraries</Message>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>../../imports/release/lib/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\imports\release\lib;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
@@ -210,7 +208,7 @@
     </Midl>
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\imports\release\include;..\..\imports\release\include\apr-1;..\..\imports\release\include\libssh2;..\SharpGit-Additions\libsvn_include;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -223,8 +221,7 @@
       <Message>Copying libraries</Message>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>../../imports/release/lib-x64/git2.lib;Advapi32.lib;shell32.lib;Rpcrt4.lib;Mswsock.lib;Crypt32.lib;User32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\imports\release\lib-x64;..\..\imports\release\lib-AnyCPU;..\..\imports\release\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX64</TargetMachine>
       <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
@@ -261,11 +258,6 @@
     <ClCompile Include="GitClient\GitStatus.cpp" />
     <ClCompile Include="GitClient\GitTools.cpp" />
     <ClCompile Include="GitClient\GitUnstage.cpp" />
-    <ClCompile Include="Plumbing\deep_wrap.c">
-      <CompileAsManaged>false</CompileAsManaged>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-    </ClCompile>
     <ClCompile Include="Plumbing\GitBranch.cpp" />
     <ClCompile Include="Plumbing\GitCommit.cpp" />
     <ClCompile Include="Plumbing\GitConfiguration.cpp" />
@@ -312,7 +304,6 @@
     <ClInclude Include="GitClient\GitUnstageArgs.h" />
     <ClInclude Include="GitId.h" />
     <ClInclude Include="GitLibraryAttribute.h" />
-    <ClInclude Include="Plumbing\deep_wrap.h" />
     <ClInclude Include="Plumbing\GitBlob.h" />
     <ClInclude Include="Plumbing\GitBranch.h" />
     <ClInclude Include="Plumbing\GitCommit.h" />

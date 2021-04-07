@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <new>
 #include "GitClient.h"
 #include "GitCheckOutArgs.h"
 
@@ -17,13 +18,18 @@ public:
   checkout_cb_info_t(GitCheckOutArgs ^args, apr_pool_t *pl)
     : Args(args), pool(pl)
     {}
+
+  ~checkout_cb_info_t()
+  {
+
+  }
 };
 
 static apr_status_t __cdecl cleanup_notify(void *baton)
 {
   checkout_cb_info_t *notify = reinterpret_cast<checkout_cb_info_t *>(baton);
 
-  delete notify;
+  notify->~checkout_cb_info_t(); // But don't delete
   return 0;
 }
 
@@ -130,7 +136,7 @@ git_checkout_options * GitCheckOutArgs::AllocCheckOutOptions(GitPool ^pool)
     if (this->NoRefresh)
         opts->checkout_strategy |= GIT_CHECKOUT_NO_REFRESH;
 
-    checkout_cb_info_t *payload = new checkout_cb_info_t(this, pool->Handle);
+    checkout_cb_info_t *payload = new ((checkout_cb_info_t *)pool->Alloc(sizeof(*payload))) checkout_cb_info_t(this, pool->Handle);
     apr_pool_cleanup_register(pool->Handle, payload, cleanup_notify, apr_pool_cleanup_null);
 
     opts->notify_payload = payload;

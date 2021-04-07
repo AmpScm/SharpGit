@@ -12,3 +12,5 @@
 #ifndef alloca
 #define alloca  _alloca
 #endif
+
+#define SVN_INTERNAL_UTF8PROC 1

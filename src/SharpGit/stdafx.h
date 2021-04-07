@@ -3,7 +3,7 @@
 #pragma warning(push)
 #pragma warning(disable: 4634 4635)
 #include <git2.h>
-#include <libssh2\libssh2.h>
+#include <libssh2.h>
 #include <apr.h>
 #include <apr_file_io.h>
 #include <svn_path.h>

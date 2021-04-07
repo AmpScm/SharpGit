@@ -18,7 +18,7 @@ namespace SharpGit.Tests
         {
             Assert.That(GitClient.Version, Is.GreaterThanOrEqualTo(new Version(0, 17)));
 
-            Assert.That(GitClient.SharpGitVersion, Is.GreaterThanOrEqualTo(new Version(0, 1700)));
+            Assert.That(GitClient.SharpGitVersion, Is.GreaterThanOrEqualTo(new Version(GitClient.Version.Major, 100 * GitClient.Version.Minor)));
             Assert.That(GitClient.AdministrativeDirectoryName, Is.EqualTo(".git"));
             Assert.That(GitClient.GitLibraries, Is.Not.Empty);
         }
@@ -386,6 +386,7 @@ namespace SharpGit.Tests
         }
 
         [TestMethod]
+        [TestCategory("NeedsNetwork")]
         public void ClonePublic()
         {
             string repos = GetTempPath();
@@ -446,7 +447,7 @@ namespace SharpGit.Tests
                     {
                         Assert.That(b.IsRemote, "Remote branch");
                         Assert.That(b.IsLocal, Is.False, "Not local");
-                        Assert.That(b.Name, Is.StringStarting("refs/remotes/origin/"));
+                        Assert.That(b.Name, Is.SubPathOf("refs/remotes/origin/"));
                         Assert.That(b.IsHead, Is.False);
                         Assert.That(b.UpstreamReference, Is.Null);
                         Assert.That(b.LocalUpstreamName, Is.Null);
@@ -457,7 +458,7 @@ namespace SharpGit.Tests
                     {
                         Assert.That(b.IsLocal, "Local branch");
                         Assert.That(b.IsRemote, Is.False, "Not remote");
-                        Assert.That(b.Name, Is.StringStarting("refs/").Or.EqualTo("master"));
+                        Assert.That(b.Name, Is.SubPathOf("refs/").Or.EqualTo("master"));
                         Assert.That(b.IsHead, Is.EqualTo(b.ShortName == "master"));
                         Assert.That(b.RemoteName, Is.EqualTo("origin"));
                         if (!b.IsHead)
@@ -674,7 +675,7 @@ int main(int argc, const char **argv)
                 }
                 catch(GitException ge)
                 {
-                    Assert.That(ge.Message, Is.StringContaining("Cannot push"));
+                    Assert.IsTrue(ge.Message.Contains("Cannot push"));
                 }
 
                 GitPullArgs pa = new GitPullArgs();
@@ -709,7 +710,7 @@ int main(int argc, const char **argv)
                 }
                 catch (GitException ge)
                 {
-                    Assert.That(ge.Message, Is.StringContaining("Cannot push"));
+                    Assert.IsTrue(ge.Message.Contains("Cannot push"));
                 }
 
                 GitResetArgs ra = new GitResetArgs();

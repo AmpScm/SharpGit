@@ -36,15 +36,8 @@ namespace SharpGit.Tests
         }
 
 
-        Microsoft.VisualStudio.TestTools.UnitTesting.TestContext _tcx;
-        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
-        {
-            get { return _tcx; }
-            set
-            {
-                _tcx = value;
-            }
-        }
+        [CLSCompliant(false)]
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
 
         protected void BuildGreek(string path)
         {

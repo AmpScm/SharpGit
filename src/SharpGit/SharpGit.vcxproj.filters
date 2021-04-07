@@ -95,9 +95,6 @@
     <ClCompile Include="GitClient\GitPush.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Plumbing\deep_wrap.c">
-      <Filter>Plumbing</Filter>
-    </ClCompile>
     <ClCompile Include="Plumbing\GitRefSpec.cpp">
       <Filter>Plumbing</Filter>
     </ClCompile>
@@ -183,9 +180,6 @@
     </ClInclude>
     <ClInclude Include="UnmanagedStructs.h" />
     <ClInclude Include="Plumbing\GitRemote.h">
-      <Filter>Plumbing</Filter>
-    </ClInclude>
-    <ClInclude Include="Plumbing\deep_wrap.h">
       <Filter>Plumbing</Filter>
     </ClInclude>
     <ClInclude Include="Plumbing\GitRefSpec.h">

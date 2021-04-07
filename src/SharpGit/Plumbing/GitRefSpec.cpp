@@ -2,7 +2,6 @@
 
 #include "GitRefSpec.h"
 #include "GitClientContext.h"
-#include "deep_wrap.h"
 
 using namespace SharpGit;
 using namespace SharpGit::Implementation;
@@ -62,7 +61,7 @@ bool GitRefSpec::TryParse(String ^refspec, [Out]GitRefSpec ^%value)
 
     GitPool pool;
     git_refspec *result;
-    if (sharpgit_refspec_parse(&result, pool.AllocString(refspec), true))
+    if (git_refspec_parse(&result, pool.AllocString(refspec), true))
     {
         giterr_clear();
         value = nullptr;
@@ -76,7 +75,7 @@ bool GitRefSpec::TryParse(String ^refspec, [Out]GitRefSpec ^%value)
     }
     finally
     {
-        sharpgit_refspec_free(result);
+        git_refspec_free(result);
     }
 }
 

@@ -20,11 +20,12 @@ namespace SharpGit.Tests
                 sa.GenerateVersionedDirs = true;
                 sa.IncludeUnmodified = true;
                 sa.IncludeIgnored = true; // Directories with 0 files are ignored
+                sa.IncludeDirectories = true;
 
                 BuildGreek(dir);
 
                 {
-                    List<string> paths = new List<string>();
+                    var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     int n = 0;
                     foreach (string[] s in GreekTree())
                         paths.Add(GitTools.GetNormalizedFullPath(Path.Combine(dir, s[0])));
@@ -62,8 +63,8 @@ namespace SharpGit.Tests
                             }
                             n++;
                         });
-                    Assert.AreEqual(21, n);
-                    Assert.AreEqual(0, paths.Count);
+                    Assert.AreEqual(19, n);
+                    Assert.AreEqual(2, paths.Count);
                 }
 
                 foreach (string[] k in GreekTree())
@@ -84,11 +85,11 @@ namespace SharpGit.Tests
                             Assert.IsTrue(e.FullPath.StartsWith(A_dir + "\\") || e.FullPath == A_dir);
                             n++;
                         });
-                    Assert.AreEqual(6, n);
+                    Assert.AreEqual(5, n);
                 }
 
                 {
-                    List<string> paths = new List<string>();
+                    var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     int n = 0;
                     foreach (string[] s in GreekTree())
                         paths.Add(GitTools.GetNormalizedFullPath(Path.Combine(dir, s[0])));
@@ -126,8 +127,8 @@ namespace SharpGit.Tests
                             }
                             n++;
                         });
-                    Assert.AreEqual(21, n);
-                    Assert.AreEqual(0, paths.Count);
+                    Assert.AreEqual(19, n);
+                    Assert.AreEqual(2, paths.Count);
                 }
 
                 client.Commit(dir);
@@ -151,8 +152,8 @@ namespace SharpGit.Tests
                             Assert.IsFalse(e.WorkingDirectoryModified);
                             n++;
                         });
-                    Assert.AreEqual(21, n);
-                    Assert.AreEqual(0, paths.Count);
+                    Assert.AreEqual(19, n);
+                    Assert.AreEqual(2, paths.Count);
                 }
             }
         }
