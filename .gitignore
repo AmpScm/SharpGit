@@ -3,3 +3,5 @@
 .vs/
 *.user
 [Tt]est[Rr]esults/
+src/packages/
+src/MigrationBackup/

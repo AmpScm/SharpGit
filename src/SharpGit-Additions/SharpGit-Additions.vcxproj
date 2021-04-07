@@ -107,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -123,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;APR_DECLARE_STATIC;APU_DECLARE_STATIC;XML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;.;..\..\from_svn\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4100;4127;4206;4512;4701;4706;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>

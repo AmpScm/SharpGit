@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props" Condition="Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" />
   <PropertyGroup Label="PlatformFix">
     <!-- To allow including project in Sandcastle Helpfile Builder tools -->
     <Platform Condition="'$(Platform)' == 'x86'">Win32</Platform>
@@ -128,7 +129,7 @@
       <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <WarningLevel>Level4</WarningLevel>
@@ -155,7 +156,7 @@
       <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\from_svn\include;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <WarningLevel>Level4</WarningLevel>
@@ -278,6 +279,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="SharpGit.snk" />
     <None Include="SharpGit.vcproj" />
   </ItemGroup>
@@ -328,5 +330,13 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets" Condition="Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props'))" />
+    <Error Condition="!Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets'))" />
+  </Target>
 </Project>
