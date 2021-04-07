@@ -710,7 +710,7 @@ int main(int argc, const char **argv)
                 }
                 catch (GitException ge)
                 {
-                    Assert.IsTrue(ge.Message.Contains("Cannot push"));
+                    Assert.That(ge.Message, Contains.Substring(/*C*/"annot push"));
                 }
 
                 GitResetArgs ra = new GitResetArgs();

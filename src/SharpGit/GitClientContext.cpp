@@ -389,6 +389,7 @@ int GitBase::WrapError(Exception ^e)
     return -1;
 }
 
+#if 0
 extern "C" void __cdecl sharpgit_set_error(int error_class)
 {
     if (_threadExceptionDepth > 0)
@@ -404,6 +405,7 @@ extern "C" void __cdecl sharpgit_set_error(int error_class)
         }
     }
 }
+#endif
 
 bool GitArgs::HandleGitError(Object^ q, int r)
 {
