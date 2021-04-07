@@ -138,10 +138,6 @@ bool GitClient::Stage(IEnumerable<String^>^ paths, GitStageArgs^ args)
                 nIndex++;
             else if (svn_relpath_skip_ancestor(c_path, entry->path))
             {
-                svn_node_kind_t kind;
-
-                SVN_THROW(svn_io_check_path(abspath, &kind, pool.Handle));
-
                 if (kind == svn_node_file)
                 {
                     int r = git_index_remove_directory(index, c_path, 0);
