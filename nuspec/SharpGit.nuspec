@@ -1,0 +1,21 @@
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>SharpGit</id>
+    <version>1.0.0.0</version>
+    <authors>SharpSvn</authors>
+    <owners>SharpSvn</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/ampscm/SharpGit</projectUrl>
+    <description>SharpGit wraps Libgit2 for .Net 4.5+ and .Net Core..</description>
+    <repository type="git" url="https://github.com/ampscm/SharpGit.git" branch="main" />
+  </metadata>
+  <files>
+    <file src="..\src\SharpGit\bin\Win32_release\SharpGit.dll" target="runtimes/win-x86/lib/net45" />
+    <file src="..\src\SharpGit\bin\Win32_release\SharpGit.xml" target="runtimes/win-x86/lib/net45" />
+    <file src="..\src\SharpGit\bin\x64_release\SharpGit.dll" target="runtimes/win-x64/lib/net45" />
+    <file src="..\src\SharpGit\bin\x64_release\SharpGit.xml" target="runtimes/win-x64/lib/net45" />
+    <file src="..\src\SharpGit\bin\Win32_release\SharpGit.dll" target="ref/net45" />
+    <file src="..\src\SharpGit\bin\Win32_release\SharpGit.xml" target="ref/net45" />
+  </files>
+</package>
