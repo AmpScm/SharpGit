@@ -3,8 +3,8 @@
 .vs/
 *.user
 [Tt]est[Rr]esults/
-src/packages/
-src/MigrationBackup/
+packages/
+MigrationBackup/
 
 
 # Buildbot Scripting
