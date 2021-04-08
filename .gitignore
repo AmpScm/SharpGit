@@ -5,3 +5,8 @@
 [Tt]est[Rr]esults/
 src/packages/
 src/MigrationBackup/
+
+
+# Buildbot Scripting
+scripts/*.cache.bat
+scripts/msbuild-version.rsp
