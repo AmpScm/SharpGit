@@ -1,15 +1,16 @@
 name: SharpGit
 
-on: [push]
+on:
+  push:
+    branches: [ main, stable/* ]
+  pull_request:
+    branches: [ main, stable/* ]
 
 env:
-  # Path to the solution file relative to the root of the Project.
-  SOLUTION_FILE_PATH: SharpGit/src/SharpGit.sln
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: SharpProj/src/SharpProj.sln
+  buildDir: '${{ github.workspace }}/build'
 
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Release
 
 jobs:
   build:
@@ -21,7 +22,12 @@ jobs:
       with:
         path: SharpGit
 
-    - name: Build Dependencies via VCPKG
+
+    - name: Get latest CMake and ninja
+      # Using 'latest' branch, the most recent CMake and ninja are installed.
+      uses: lukka/get-cmake@latest
+
+    - name: Build proj via VCPKG
       uses: lukka/run-vcpkg@v7
       with:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
@@ -39,13 +45,18 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore SharpGit\src\SharpGit\SharpGit.vcxproj -SolutionDirectory SharpGit\src
 
+    - name: Setup version
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: cmd.exe /C SharpProj\scripts\gh-version-setup vcpkg\installed\x86-windows-static-md\include\git2\version.h ${{ github.run_number }}
+
     - name: Build-x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /restore /p:Platform=x86 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /restore /p:Platform=x86 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
 
     - name: Build-x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /restore /p:Platform=x64 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /restore /p:Platform=x64 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
+
 
     - name: VSTest-x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -54,3 +65,14 @@ jobs:
     - name: VSTest-x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: vstest.console.exe /InIsolation /Platform:x64 SharpGit/src/SharpGit.Tests/bin/x64/Release/SharpGit.Tests.dll "--testcasefilter:TestCategory!=NeedsNetwork"
+
+
+    - name: Create nupkg files
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: cmd.exe /C SharpGit\scripts\gh-build-nuget.cmd
+
+    - name: Package nupkg files
+      uses: actions/upload-artifact@v2
+      with:
+        name: nupkg-files
+        path: SharpGit/nuspec/bin/*.nupkg
