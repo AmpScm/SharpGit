@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include "pch.h"
 #include "GitClientContext.h"
 #include "GitId.h"
 #include "UnmanagedStructs.h"

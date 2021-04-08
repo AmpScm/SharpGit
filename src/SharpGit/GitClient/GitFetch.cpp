@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "GitClient.h"
 #include "GitDeleteArgs.h"
 #include "GitFetchArgs.h"

@@ -28,9 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="GitClient\GitClient.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
@@ -119,16 +116,13 @@
     <ClCompile Include="GitClient\GitTools.cpp">
       <Filter>GitClient\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SharpGit.snk" />
     <None Include="SharpGit.vcproj" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
     <ClInclude Include="GitClientContext.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -234,5 +228,6 @@
     <ClInclude Include="GitClient\GitTools.h">
       <Filter>GitClient\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

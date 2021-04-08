@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-#include "stdafx.h"
+#include "pch.h"
 #include "GitLibraryAttribute.h"
 
 #pragma warning(disable: 4635)
@@ -97,7 +97,9 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #pragma comment(lib, "winhttp.lib")
 
 #pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "Advapi32.lib")
 #pragma comment(lib, "Psapi.lib")
+#pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "Version.lib")
 #pragma comment(lib, "Crypt32.lib")
 #pragma comment(lib, "Rpcrt4.lib")
@@ -125,6 +127,9 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #elif (APR_MAJOR_VERSION == 1)
 #  pragma comment(lib, "apr-1.lib")
 #  pragma comment(lib, "aprutil-1.lib")
+#elif (APR_MAJOR_VERSION == 2)
+#  pragma comment(lib, "apr-2.lib")
+#  pragma comment(lib, "aprutil-2.lib")
 #else
 #  error Only apr 0.9.* and 1.* are supported at this time
 #endif

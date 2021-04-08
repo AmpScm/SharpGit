@@ -1,24 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props" Condition="Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" />
-  <PropertyGroup Label="PlatformFix">
-    <!-- To allow including project in Sandcastle Helpfile Builder tools -->
-    <Platform Condition="'$(Platform)' == 'x86'">Win32</Platform>
-    <!-- To allow building using VS2010 with the VS2008 toolset -->
-    <TargetFrameworkVersion Condition="'$(PlatformToolset)' == 'v90'">v2.0</TargetFrameworkVersion>
-  </PropertyGroup>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props" Condition="Exists('..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -26,211 +20,147 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{0D01253E-6359-43FC-A3C8-1A3754C4468D}</ProjectGuid>
-    <RootNamespace>SharpGit</RootNamespace>
-    <SccProjectName>Svn</SccProjectName>
-    <SccAuxPath>Svn</SccAuxPath>
-    <SccLocalPath>Svn</SccLocalPath>
-    <SccProvider>SubversionScc</SccProvider>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>SharpGit</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <SharpSvnUpdateVersionResource>true</SharpSvnUpdateVersionResource>
     <VCPKG_ROOT Condition="'$(VCPKG_ROOT)' == ''">..\..\..\vcpkg</VCPKG_ROOT>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ReferencePath>..\..\imports\release\lib-AnyCPU;$(ReferencePath)</ReferencePath>
-    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <LinkKeyFile>SharpGit.snk</LinkKeyFile>
-    <KeyOriginatorFile>SharpGit.snk</KeyOriginatorFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ReferencePath>..\..\imports\release\lib-AnyCPU;$(ReferencePath)</ReferencePath>
-    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <LinkKeyFile>SharpGit.snk</LinkKeyFile>
-    <KeyOriginatorFile>SharpGit.snk</KeyOriginatorFile>
+    <LinkKeyFile>..\SharpGit.snk</LinkKeyFile>
+    <OutDir>bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ReferencePath>..\..\imports\release\lib-AnyCPU;$(ReferencePath)</ReferencePath>
-    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-    <LinkKeyFile>SharpGit.snk</LinkKeyFile>
-    <KeyOriginatorFile>SharpGit.snk</KeyOriginatorFile>
+    <LinkKeyFile>..\SharpGit.snk</LinkKeyFile>
+    <OutDir>bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)_$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkKeyFile>..\SharpGit.snk</LinkKeyFile>
+    <OutDir>bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ReferencePath>..\..\imports\release\lib-AnyCPU;$(ReferencePath)</ReferencePath>
-    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-    <LinkKeyFile>SharpGit.snk</LinkKeyFile>
-    <KeyOriginatorFile>SharpGit.snk</KeyOriginatorFile>
+    <LinkKeyFile>..\SharpGit.snk</LinkKeyFile>
+    <OutDir>bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <PreLinkEvent>
-      <Message>Copying libraries</Message>
-    </PreLinkEvent>
     <Link>
+      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\debug\lib;$(VCPKG_ROOT)\installed\x86-windows-static-md\lib</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AssemblyDebug>true</AssemblyDebug>
-      <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>MSVCRT.lib</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
-      <KeyFile>SharpGit.snk</KeyFile>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <PreprocessorDefinitions>_DEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <PreLinkEvent>
-      <Message>Copying libraries</Message>
-    </PreLinkEvent>
     <Link>
+      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\debug\lib;$(VCPKG_ROOT)\installed\x64-windows-static-md\lib</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AssemblyDebug>true</AssemblyDebug>
-      <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>MSVCRT.lib</IgnoreSpecificDefaultLibraries>
-      <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
-      <KeyFile>SharpGit.snk</KeyFile>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <PreLinkEvent>
-      <Message>Copying libraries</Message>
-    </PreLinkEvent>
     <Link>
+      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x86-windows-static-md\lib</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <TargetMachine>MachineX86</TargetMachine>
-      <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
-      <KeyFile>SharpGit.snk</KeyFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <SetChecksum>true</SetChecksum>
-      <OptimizeReferences>true</OptimizeReferences>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
     <ClCompile>
-      <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <PreprocessorDefinitions>NDEBUG;GIT_SSH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\include;..\..\from_svn\include;.</AdditionalIncludeDirectories>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <PreLinkEvent>
-      <Message>Copying libraries</Message>
-    </PreLinkEvent>
     <Link>
+      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VCPKG_ROOT)\installed\x64-windows-static-md\lib</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <TargetMachine>MachineX64</TargetMachine>
-      <DelayLoadDLLs>ws2_32.dll;crypt32.dll;shell32.dll</DelayLoadDLLs>
-      <KeyFile>SharpGit.snk</KeyFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <SetChecksum>true</SetChecksum>
-      <OptimizeReferences>true</OptimizeReferences>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Reference Include="System">
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GitClientContext.cpp" />
@@ -263,7 +193,7 @@
     <ClCompile Include="Plumbing\GitRepository.cpp" />
     <ClCompile Include="Plumbing\GitTag.cpp" />
     <ClCompile Include="Plumbing\GitTree.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -272,7 +202,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="SharpGit.snk" />
     <None Include="SharpGit.vcproj" />
   </ItemGroup>
   <ItemGroup>
@@ -312,7 +241,7 @@
     <ClInclude Include="Plumbing\GitRepository.h" />
     <ClInclude Include="Plumbing\GitTag.h" />
     <ClInclude Include="Plumbing\GitTree.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="UnmanagedStructs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -320,15 +249,19 @@
       <Project>{234035df-232d-483e-a602-6327c234df27}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets" Condition="Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" />
+    <Import Project="..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets" Condition="Exists('..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props'))" />
-    <Error Condition="!Exists('..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets'))" />
+    <Error Condition="!Exists('..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.props'))" />
+    <Error Condition="!Exists('..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SharpSvn.AnnotateAssembly.0.25.2\build\SharpSvn.AnnotateAssembly.targets'))" />
   </Target>
 </Project>
