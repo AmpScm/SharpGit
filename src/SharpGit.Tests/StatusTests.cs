@@ -160,6 +160,7 @@ namespace SharpGit.Tests
 
         [TestMethod]
         public void TreeReplacements()
+
         {
             using (GitClient client = new GitClient())
             {

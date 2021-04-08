@@ -73,17 +73,7 @@ GitPool::!GitPool()
 
 GitPool::~GitPool()
 {
-    if (_pool)
-    {
-        try
-        {
-            svn_pool_destroy(_pool);
-        }
-        finally
-        {
-            _pool = nullptr;
-        }
-    }
+    GitPool::!GitPool();
 }
 
 char *GitPool::Alloc(size_t sz)

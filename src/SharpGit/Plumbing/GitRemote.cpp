@@ -41,16 +41,7 @@ GitRemote::!GitRemote()
 
 GitRemote::~GitRemote()
 {
-    if (_remote)
-        try
-        {
-            _connected = false;
-            git_remote_free(_remote);
-        }
-        finally
-        {
-            _remote = nullptr;
-        }
+    GitRemote::!GitRemote();
 }
 
 String ^ GitRemote::Name::get()

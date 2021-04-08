@@ -90,7 +90,7 @@ using SharpGit::Implementation::GitLibraryAttribute;
 [assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
 #endif
 
-[assembly:RuntimeCompatibility(WrapNonExceptionThrows = true)];
+//[assembly:RuntimeCompatibility(WrapNonExceptionThrows = true)];
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "Gdi32.lib")
 #pragma comment(lib, "User32.lib")
@@ -112,13 +112,15 @@ using SharpGit::Implementation::GitLibraryAttribute;
 #ifdef _DEBUG
 #pragma comment(lib, "libexpatdMD.lib")
 #pragma comment(lib, "pcred.lib")
+#pragma comment(lib, "zlibd.lib")
 #else
 #pragma comment(lib, "libexpatMD.lib")
 #pragma comment(lib, "pcre.lib")
+#pragma comment(lib, "zlib.lib")
 #endif
 #pragma comment(lib, "libssh2.lib")
 #pragma comment(lib, "libcrypto.lib")
-#pragma comment(lib, "zlib.lib")
+
 
 
 #if (APR_MAJOR_VERSION == 0)
