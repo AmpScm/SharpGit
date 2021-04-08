@@ -8,7 +8,7 @@ on:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: SharpProj/src/SharpProj.sln
+  SOLUTION_FILE_PATH: SharpGit/src/SharpGit.sln
   buildDir: '${{ github.workspace }}/build'
 
 
@@ -47,15 +47,15 @@ jobs:
 
     - name: Setup version
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: cmd.exe /C SharpProj\scripts\gh-version-setup vcpkg\installed\x86-windows-static-md\include\git2\version.h ${{ github.run_number }}
+      run: cmd.exe /C SharpGit\scripts\gh-version-setup vcpkg\installed\x86-windows-static-md\include\git2\version.h ${{ github.run_number }}
 
     - name: Build-x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /restore /p:Platform=x86 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
+      run: msbuild /m /restore /p:Platform=x86 /p:Configuration=Release ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
 
     - name: Build-x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /restore /p:Platform=x64 /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
+      run: msbuild /m /restore /p:Platform=x64 /p:Configuration=Release ${{env.SOLUTION_FILE_PATH}} @SharpGit\scripts\msbuild-version.rsp
 
 
     - name: VSTest-x86
