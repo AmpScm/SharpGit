@@ -27,7 +27,7 @@ if NOT EXIST ".\bin\." mkdir bin
 
 REM CALL :xmlpoke SharpGit.Core.nuspec //nu:metadata/nu:version %SharpGit_VER% || EXIT /B 1
 
-nuget pack SharpGit.Core.nuspec -version %SharpGit_VER% -OutputDirectory bin || exit /B 1
+nuget pack SharpGit.nuspec -version %SharpGit_VER% -OutputDirectory bin || exit /B 1
 echo "--done--"
 popd
 goto :eof
