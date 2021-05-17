@@ -120,11 +120,11 @@ bool GitClient::Commit(System::Collections::Generic::ICollection<String^> ^paths
 
     if (head)
     {
-        GitId ^commitId;
-        if (repo.ResolveReference(head, commitId))
+        GitId ^foundCommitId;
+        if (repo.ResolveReference(head, foundCommitId))
         {
             GitCommit^ commit;
-            if (repo.Lookup(commitId, commit))
+            if (repo.Lookup(foundCommitId, commit))
                 parents->Add(commit);
         }
     }

@@ -24,6 +24,7 @@
 #include <zlib.h>
 #include <expat.h>
 #include <svn_version.h>
+#include "../libsvn_subr/utf8proc/utf8proc_internal.h"
 
 using namespace System;
 using namespace System::Reflection;
