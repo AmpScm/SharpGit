@@ -1,5 +1,7 @@
 # SharpGit - Wrapping libgit2 within a clean .Net wrapper for .Net 4+ and .Net Core
 
+[![latest version](https://img.shields.io/nuget/v/SharpGit)](https://www.nuget.org/packages/SharpGit)
+
 Use the library libgit2, implemented the .Net way, reusable and available as simple to use package on NuGet
 
 https://www.nuget.org/packages/SharpGit/
