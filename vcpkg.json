@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "SharpGit",
+  "version": "1.0",
+  "dependencies": [
+     'libgit2',
+     'apr-util',
+     'libssh2'
+  ]
+}

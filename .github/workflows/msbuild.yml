@@ -28,18 +28,19 @@ jobs:
       uses: lukka/get-cmake@latest
 
     - name: Build proj via VCPKG
-      uses: lukka/run-vcpkg@v7
+      uses: lukka/run-vcpkg@v10
       with:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 4278a5f9eafbdadfaa65d7aafd914964841cba42
-        vcpkgArguments: libgit2:x64-windows-static-md libgit2:x86-windows-static-md apr-util:x64-windows-static-md apr-util:x86-windows-static-md libssh2:x64-windows-static-md libssh2:x86-windows-static-md
-        additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
+        vcpkgGitCommitId: 03ca9b59af1506a86840e3a3a01a092f3333a29b
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
     - name: Setup VSTest Path
       uses: darenm/Setup-VSTest@v1
+
+    - name: Ensure Proj packages are available
+      run: vcpkg.exe install libgit2:x64-windows-static-md libgit2:x86-windows-static-md apr-util:x64-windows-static-md apr-util:x86-windows-static-md libssh2:x64-windows-static-md libssh2:x86-windows-static-md
 
     - name: Restore NuGet package (legacy style, vcxproj only)
       working-directory: ${{env.GITHUB_WORKSPACE}}
